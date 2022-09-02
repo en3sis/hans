@@ -5,7 +5,7 @@ const SENTIMENT = new sentiment()
 export const sentimentAnalysis = async (text: string) => {
   const result = SENTIMENT.analyze(text)
   if (process.env.ISDEV) {
-    console.dir(result)
+    console.dir(`🧪 DEV: Sentiment result:`, result)
   }
 
   return result
