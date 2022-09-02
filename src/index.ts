@@ -2,6 +2,7 @@ import { Client, Collection, Intents } from 'discord.js'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
+import { mongoClient } from './lib/mongodb-driver'
 import { ProjectValidator } from './utils/pre-validation'
 
 /** =============================================================================
@@ -19,6 +20,7 @@ const Hans = new Client({
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 })
 
+Hans.mongo = mongoClient
 /** =============================================================================
  * 🎉 Command handlers
   ============================================================================== */

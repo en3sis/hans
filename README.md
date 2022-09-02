@@ -94,5 +94,5 @@ It's also possible to deploy the bot to a Kubernetes cluster, the necessary file
 
 1. You'll need your K8S cluster, ofc ;P
 2. Create the namespace `kubectl apply -f k8s/namespace.yaml`
-3. Run `cp k8s/bot-secrets.template.yaml k8s/bot-secrets.yaml`, fill it up and apply the secrets `kubectl apply -f k8s/bot-secrets.yaml`
-4. Deploy the workload `kubectl apply -f k8s/bot-deployment.yaml`
+3. Run `cp k8s/secrets.template.yaml k8s/secrets.yaml`, fill it up and apply the secrets `kubectl apply -f k8s/secrets.yaml`
+4. Deploy the workload `kubectl apply -f k8s/deployment.yaml`

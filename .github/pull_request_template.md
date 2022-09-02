@@ -1,10 +1,12 @@
-# Description
+Fix: #PR_NUMBER
 
-Please include a summary of the changes and the related issue. Please also include relevant motivation and context. List any dependencies that are required for this change.
+---
 
-Fixes # (issue)
+**IMPORTANT: Please do not create a Pull Request without creating an issue first.**
 
-## Type of change
+_Any change needs to be discussed before proceeding. Failure to do so may result in the rejection of the pull request._
+
+## 🗓 Changes
 
 Please delete options that are not relevant.
 
@@ -13,19 +15,23 @@ Please delete options that are not relevant.
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] This change requires a documentation update
 
-# How Has This Been Tested?
+Please provide enough information so that others can review your pull request:
 
-Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration
+<!-- You can skip this if you're fixing a typo or adding an app to the Showcase. -->
 
-- [ ] Test A
-- [ ] Test B
+## 🧬 Details
 
-# Checklist:
+Explain the details for making this change. What existing problem does the pull request solve?
 
-- [ ] My code follows the style guidelines of this project & I ran `npm run format` before commiting.
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation, if applicable.
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works, if applicable.
-- [ ] New and existing unit tests pass locally with my changes
+<!-- Example: When "Adding a function to do X", explain why it is necessary to have a way to do X. -->
+
+## 🧪 Testing
+
+Demonstrate the code is solid. Example: The exact commands you ran and their output, screenshots / videos if the pull request changes UI.
+
+---
+
+Checkboxes:
+
+- [ ] I ran `npm run lint` and there were no errors
+- [ ] I ran `npm run format` and there were no errors

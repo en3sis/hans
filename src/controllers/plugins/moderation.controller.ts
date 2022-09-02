@@ -14,7 +14,7 @@ export const sentimentAnalysisFn = async (
 ) => {
   const score = await sentimentAnalysis(message.content)
 
-  if (score.score >= 10 || reactToPositive) {
+  if (score.score >= 10 && reactToPositive) {
     message.react('🥰')
   } else if (score.score <= -8) {
     const channel = message.guild.channels.cache.get(notificationChannel) as TextChannel
