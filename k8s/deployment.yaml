@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hans-container
-          image: en3sis/hans
+          image: en3sis/hans:latest
           resources:
             limits:
               cpu: 300m
@@ -23,7 +23,7 @@ spec:
             requests:
               cpu: 300m
               memory: 1000Mi
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: DISCORD_TOKEN
               valueFrom:

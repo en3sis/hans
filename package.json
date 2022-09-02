@@ -1,6 +1,6 @@
 {
   "name": "hans",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Discord.JS Bot build with TS and a lot of love.",
   "main": "src/index.js",
   "scripts": {
