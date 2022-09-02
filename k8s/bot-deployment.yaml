@@ -45,6 +45,11 @@ spec:
                 secretKeyRef:
                   name: bot-secrets
                   key: MONGODB_CONNECTION
+            - name: MONGODB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: MONGODB_DATABASE
             - name: GITHUB_API_TOKEN
               valueFrom:
                 secretKeyRef:
