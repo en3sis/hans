@@ -1,0 +1,11 @@
+.env
+.todo
+/dist
+/k8s/*-secrets.yaml
+/k8s/*-kubeconfig.yaml
+/src/controllers/_development/*.ts
+!/src/controllers/_development/messageCreate.template.ts
+/src/commands/bots-playground/*.ts
+/node_modules/
+/src/config.ts
+build/

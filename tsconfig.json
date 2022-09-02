@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "rootDir": "./src",
+    "target": "es6",
+    "sourceMap": false,
+    "outDir": "./build",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
+    "importHelpers": true,
+    "removeComments": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": []
+  },
+  "lib": ["esnext"],
+  "typeRoots": ["./src"],
+  "exclude": ["node_modules", "build/", "tests/**"]
+}

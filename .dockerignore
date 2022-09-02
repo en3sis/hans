@@ -1,0 +1,9 @@
+.env
+.todo
+/dist
+/k8s/*-secrets.yaml
+/k8s/*-kubeconfig.yaml
+/src/controllers/_development/*.ts
+/node_modules/
+/src/config.ts
+build/

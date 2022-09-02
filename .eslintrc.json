@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "prettier",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "quotes": ["error", "single", { "avoidEscape": false, "allowTemplateLiterals": true }],
+    "no-trailing-spaces": 1,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/no-extra-semi": 0,
+    "@typescript-eslint/no-non-null-assertion": 0
+    // "eslint@typescript-eslint/no-explicit-any": 0
+  }
+}

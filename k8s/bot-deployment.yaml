@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hans-bot
+  namespace: bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      bot: hans
+  template:
+    metadata:
+      labels:
+        bot: hans
+    spec:
+      containers:
+        - name: hans-container
+          image: en3sis/hans
+          resources:
+            limits:
+              cpu: 300m
+              memory: 1000Mi
+            requests:
+              cpu: 300m
+              memory: 1000Mi
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: DISCORD_TOKEN
+            - name: DISCORD_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: DISCORD_CLIENT_ID
+            - name: BOT_GUILD_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: BOT_GUILD_ID
+            - name: MONGODB_CONNECTION
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: MONGODB_CONNECTION
+            - name: GITHUB_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: GITHUB_API_TOKEN
+            - name: WEATHER_API
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: WEATHER_API

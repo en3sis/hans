@@ -1,0 +1,55 @@
+{
+  "name": "hans",
+  "version": "1.0.0",
+  "description": "Discord.JS Bot build with TS and a lot of love.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node build/utils/deploy-commands.js && node build/index.js",
+    "dev": "nodemon",
+    "build": "rm -rf ./build && tsc --project ./",
+    "lint": "eslint . --fix",
+    "format": "npx prettier --write '**/*.ts'",
+    "prepare": "npx husky install",
+    "slash": "node build/utils/deploy-commands.js",
+    "slashDev": "npm run build && node build/utils/deploy-commands.js",
+    "test": "ts-mocha -p ./tsconfig.json ./tests/**/*.spec.ts"
+  },
+  "author": "en3sis",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/en3sis/hans"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@discordjs/builders": "^1.2.0",
+    "@discordjs/rest": "^1.1.0",
+    "@typegoose/typegoose": "^9.11.2",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^18.7.14",
+    "@types/sentiment": "^5.0.1",
+    "@types/ws": "^8.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.36.1",
+    "@typescript-eslint/parser": "^5.36.1",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.1",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.2"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "date-fns": "^2.29.2",
+    "discord-api-types": "^0.37.5",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.2",
+    "mongodb": "^4.9.1",
+    "node-cache": "^5.1.2",
+    "sentiment": "^5.0.2",
+    "socket.io-client": "^4.5.1"
+  }
+}

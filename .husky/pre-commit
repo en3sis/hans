@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+find . -name ".DS_Store" -delete && npm run lint && npm run format
