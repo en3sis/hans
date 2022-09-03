@@ -1,4 +1,3 @@
-
 export interface BotI extends BotConfigI {
   name: string
   website: string
@@ -11,7 +10,7 @@ export interface BotConfigI {
   }
   botStartAlertChannel: string
   activities: {
-    type: 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING',
-    name: 'you',
-  },
+    type: 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING'
+    name: 'you'
+  }
 }

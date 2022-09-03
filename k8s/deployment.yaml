@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hans-container
-          image: en3sis/hans:latest # Use hans:latest for more stable, hans:nightly for latest features.
+          image: en3sis/hans:nightly # Use hans:latest for more stable, hans:nightly for latest features.
           resources:
             limits:
               cpu: 300m

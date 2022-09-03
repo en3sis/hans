@@ -29,9 +29,7 @@ module.exports = {
       }
 
       Hans.user.setPresence({
-        activities: [
-          activity,
-        ],
+        activities: [activity],
       })
     } catch (error) {
       console.log('❌ ERROR: ready(): ', error)

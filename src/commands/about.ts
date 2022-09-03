@@ -27,5 +27,5 @@ module.exports = {
     } catch (error) {
       console.error('❌ ERROR: Command -> activities ', error)
     }
-  }
+  },
 }
