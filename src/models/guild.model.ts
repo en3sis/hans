@@ -34,6 +34,9 @@ export interface ModerationPluginI {
     watchAllChannels: boolean
     watchSpecificChannels: string[]
     logChannelId: string
+  },
+  messagesAlterations: {
+    logChannelId: string
   }
 }
 
@@ -51,7 +54,7 @@ export interface ThreadChannelConfigI {
 
 // Plugins Objects
 // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-export const moderation = {
+export const moderation: ModerationPluginI = {
   links: {
     enabled: false,
     allowedLinks: [],
@@ -64,9 +67,12 @@ export const moderation = {
     watchSpecificChannels: [],
     logChannelId: '',
   },
+  messagesAlterations: {
+    logChannelId: ''
+  }
 }
 
-export const guildMembersActivity = {
+export const guildMembersActivity: GuildMembersActivityPluginI = {
   enabled: false,
   logChannelId: '',
 }
@@ -78,9 +84,7 @@ export const threadChannels: ThreadChannelConfigI = {
   threadChannelId: '',
 }
 
-/**
- * Guild document model
- */
+// MongoDB Document
 export const documentDetails: GuildDocI = {
   guildEventsNotifications: {
     guildMemberAdd: false,
