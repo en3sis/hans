@@ -1,5 +1,5 @@
-import { Client, Message, TextChannel } from 'discord.js';
-import { resolveGuildEvents } from '../controllers/bot/guilds.controller';
+import { Client, Message, TextChannel } from 'discord.js'
+import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
 
 module.exports = {
   name: 'messageUpdate',

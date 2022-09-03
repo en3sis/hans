@@ -8,8 +8,8 @@ module.exports = {
   async execute(Hans: Client, message: Message) {
     try {
       if (message.author.bot) return
-      const args = message.content.slice(1).trim().split(/ +/g)
-      const command = args.shift().toLowerCase()
+      // const args = message.content.slice(1).trim().split(/ +/g)
+      // const command = args.shift().toLowerCase()
 
       // Server outage
       if (!message.guild?.available) return
@@ -26,7 +26,7 @@ module.exports = {
 
       // Plugins
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-      await pluginsController(message)
+      await pluginsController(Hans, message)
     } catch (error) {
       console.log('❌ messageCreate(): ', error)
     }

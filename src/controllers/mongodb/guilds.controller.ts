@@ -14,24 +14,31 @@ export const findOneGuild = async (guildId: string): Promise<GuildDocI> => {
   try {
     const guild = getFromCache(guildId)
 
-    if (guild) return guild
-
-    const document = await mongoClient
-      .db(process.env.MONGODB_DATABASE)
-      .collection('guilds')
-      .findOne({
-        _id: guildId,
-      })
-
-    if (document) {
-      setToCache(guildId, document, CACHE_TTL_GUILDS)
-
-      return document as unknown as GuildDocI
+    if (guild !== null) {
+      return guild
     } else {
-      throw new Error('Guild not found')
+      const document = await mongoClient
+        .db(process.env.MONGODB_DATABASE)
+        .collection('guilds')
+        .findOne({
+          _id: guildId,
+        })
+
+      if (document) {
+        setToCache(guildId, document, CACHE_TTL_GUILDS)
+
+        return document as unknown as GuildDocI
+      } else {
+        throw new Error()
+      }
     }
   } catch (error) {
-    console.log('ERROR: getGuildPluginsStatus(): ', error)
+    console.error('❌ ERROR: findOneGuild(): ', error)
+
+    throw {
+      status: 404,
+      message: `Guild with id ${guildId} not found`,
+    }
   }
 }
 
@@ -57,7 +64,7 @@ export const insertAllGuilds = async (Hans: Client) => {
       .collection('guilds')
       .insertMany(guilds)
   } catch (error) {
-    console.log('error: ', error)
+    console.error('❌ ERROR: insertAllGuilds(): ', error)
   }
 }
 
@@ -77,11 +84,11 @@ export const insetOneGuild = async (guild: Guild) => {
     }
 
     await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev'!)
+      .db(process.env.MONGODB_DATABASE! || 'dev')
       .collection('guilds')
-      .updateOne({ _id: guild.id }, { $set: guildData })
+      .updateOne({ _id: guild.id }, { $set: guildData }, { upsert: true })
   } catch (error) {
-    console.log('error: ', error)
+    console.error('❌ ERROR: insetOneGuild: ', error)
   }
 }
 
@@ -96,6 +103,6 @@ export const updateOneGuild = async (guild: Guild, update: Partial<GuildDocI>) =
       .collection('guilds')
       .updateOne({ _id: guild.id }, { $set: update })
   } catch (error) {
-    console.log('error: ', error)
+    console.error('❌ ERROR: updateOneGuild', error)
   }
 }

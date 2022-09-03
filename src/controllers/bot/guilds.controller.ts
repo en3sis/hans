@@ -1,6 +1,7 @@
 import { ClientEvents } from 'discord.js'
 import { mongoClient } from '../../lib/mongodb-driver'
 import { GuildI } from '../../models/guild.model'
+import { findOneGuild } from '../mongodb/guilds.controller'
 
 /**
  * If id is passed, returns the guild with the id. If id is not passed, returns all guilds
@@ -10,10 +11,16 @@ import { GuildI } from '../../models/guild.model'
 export const getGuildsSettings = async (id: string): Promise<GuildI> => {
   try {
     if (id) {
-      const guild = await mongoClient.db('dev').collection('guilds').findOne({ _id: id })
+      const guild = await findOneGuild(id)
+
       return guild as GuildI
     }
-    const guilds = await mongoClient.db('dev').collection('guilds').find({}).toArray()
+
+    const guilds = await mongoClient
+      .db(process.env.MONGODB_DATABASE)
+      .collection('guilds')
+      .find({})
+      .toArray()
 
     if (guilds) {
       return guilds as unknown as GuildI
@@ -34,13 +41,12 @@ export const getGuildsSettings = async (id: string): Promise<GuildI> => {
 export const resolveGuildEvents = async (id: string, event: keyof ClientEvents) => {
   try {
     const document = await getGuildsSettings(id)
-    if (!document) return
 
     return {
-      enabled: document.guildEventsNotifications[event],
+      enabled: document.guildEventsNotifications[event] || false,
       ...document,
     }
   } catch (error) {
-    console.log('❌ ERROR: resolveGuildEvents(): ', error)
+    console.error('❌ ERROR: resolveGuildEvents(): ', error)
   }
 }

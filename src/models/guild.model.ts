@@ -34,7 +34,7 @@ export interface ModerationPluginI {
     watchAllChannels: boolean
     watchSpecificChannels: string[]
     logChannelId: string
-  },
+  }
   messagesAlterations: {
     logChannelId: string
   }
@@ -68,8 +68,8 @@ export const moderation: ModerationPluginI = {
     logChannelId: '',
   },
   messagesAlterations: {
-    logChannelId: ''
-  }
+    logChannelId: '',
+  },
 }
 
 export const guildMembersActivity: GuildMembersActivityPluginI = {
