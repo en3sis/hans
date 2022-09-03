@@ -1,4 +1,5 @@
 import { mongoClient } from '../../lib/mongodb-driver'
+import { BotI } from '../../types'
 
 /**
  * Adds the bot configuration, this is for admins only.
@@ -6,6 +7,20 @@ import { mongoClient } from '../../lib/mongodb-driver'
  */
 export const insertConfiguration = async () => {
   try {
+    const config: BotI = {
+      name: 'Hans',
+      website: '',
+      guildId: `${process.env.BOT_GUILD_ID}`,
+      commandsDevGuild: {
+        folderName: '/bots-playground',
+      },
+      activities: {
+        type: 'WATCHING',
+        name: 'you',
+      },
+      botStartAlertChannel: ``, // This requires a github API
+    }
+
     const doc = await mongoClient
       .db('hans')
       .collection('config')
@@ -14,15 +29,7 @@ export const insertConfiguration = async () => {
           name: 'Hans',
         },
         {
-          $setOnInsert: {
-            name: 'Hans',
-            website: '',
-            guildId: `${process.env.BOT_GUILD_ID}`,
-            commandsDevGuild: {
-              folderName: '/bots-playground',
-            },
-            botStartAlertChannel: ``, // This requires a github API
-          },
+          $setOnInsert: config
         },
         { upsert: true }
       )

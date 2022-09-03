@@ -47,6 +47,7 @@ export const insertAllGuilds = async (Hans: Client) => {
         name: guild.name,
         avatar: guild.iconURL({ dynamic: true }),
         date: new Date(),
+        premium: false,
         ...documentDetails,
       }))
     )
@@ -70,6 +71,7 @@ export const insetOneGuild = async (guild: Guild) => {
       _id: guild.id as unknown as ObjectId,
       name: guild.name,
       date: new Date(),
+      premium: false,
       avatar: guild.iconURL({ dynamic: true }),
       ...documentDetails,
     }

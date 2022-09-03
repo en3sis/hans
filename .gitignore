@@ -9,6 +9,7 @@
 /src/controllers/_development/*.ts
 !/src/controllers/_development/messageCreate.template.ts
 /src/commands/bots-playground/*.ts
+!/src/commands/bots-playground/command.template.ts
 /node_modules/
 /src/config.ts
 build/

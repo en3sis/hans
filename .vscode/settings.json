@@ -1,3 +1,12 @@
 {
-  "cSpell.words": ["Cooldown", "ISDEV", "kubectl", "Kubernetes", "MYAPP", "Waifu"]
+  "cSpell.words": [
+    "Cooldown",
+    "davinci",
+    "ISDEV",
+    "kubectl",
+    "Kubernetes",
+    "MYAPP",
+    "openai",
+    "Waifu"
+  ]
 }

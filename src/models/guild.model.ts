@@ -5,6 +5,7 @@ export interface GuildI extends GuildDocI {
   name: string
   avatar: string
   date: Date
+  premium: boolean
 }
 
 export interface GuildDocI {
@@ -21,9 +22,6 @@ export interface GuildDocI {
   }
 }
 
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// ==-=-=-=-=-=-=-=-=             PLUGINS                    =-=-=-=-=-=-=-=-=-=
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 export interface ModerationPluginI {
   links: {
     enabled: boolean
@@ -51,7 +49,7 @@ export interface ThreadChannelConfigI {
   threadChannelId: string
 }
 
-// Plugins
+// Plugins Objects
 // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
 export const moderation = {
   links: {

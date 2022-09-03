@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hans-container
-          image: en3sis/hans:latest
+          image: en3sis/hans:latest # Use hans:latest for more stable, hans:nightly for latest features.
           resources:
             limits:
               cpu: 300m
@@ -40,6 +40,11 @@ spec:
                 secretKeyRef:
                   name: bot-secrets
                   key: BOT_GUILD_ID
+            - name: CRYPTO_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: CRYPTO_KEY
             - name: MONGODB_CONNECTION
               valueFrom:
                 secretKeyRef:
@@ -60,3 +65,13 @@ spec:
                 secretKeyRef:
                   name: bot-secrets
                   key: WEATHER_API
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: OPENAI_API_KEY
+            - name: OPENAI_ORGANIZATION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secrets
+                  key: OPENAI_ORGANIZATION_ID

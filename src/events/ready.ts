@@ -18,17 +18,19 @@ module.exports = {
       await insertConfiguration()
 
       // Fetches MongoDB for the configuration document.
-      await getBotConfiguration()
+      const settings = await getBotConfiguration()
 
       // Notify in the configuration.botStartAlertChannel that the bot is ready.
       notifyPulse(Hans)
 
+      const activity = {
+        type: settings.activities?.type || 'WATCHING',
+        name: settings.activities?.name || 'you',
+      }
+
       Hans.user.setPresence({
         activities: [
-          {
-            type: 'WATCHING',
-            name: `you `,
-          },
+          activity,
         ],
       })
     } catch (error) {

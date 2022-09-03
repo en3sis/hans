@@ -11,19 +11,21 @@ module.exports = {
       string.setName('user').setDescription('@username or ID').setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
-    // Prepare member
+    try {
+      let _member: string
 
-    let _member: string
+      if (/<@!?\d+>/g.test(interaction.options.getString('user'))) {
+        _member = interaction.options.getString('user').split(`<@!`)[1].replace('>', '')
+      } else {
+        _member = interaction.options.getString('user')
+      }
 
-    if (/<@!?\d+>/g.test(interaction.options.getString('user'))) {
-      _member = interaction.options.getString('user').split(`<@!`)[1].replace('>', '')
-    } else {
-      _member = interaction.options.getString('user')
+      const member: GuildMember = interaction.guild.members.cache.get(_member)
+
+      const createsEmbed = getUserInformation(member)
+      return interaction.reply({ embeds: [createsEmbed] })
+    } catch (error) {
+      console.error('❌ ERROR: Command -> activities ', error)
     }
-
-    const member: GuildMember = interaction.guild.members.cache.get(_member)
-
-    const createsEmbed = getUserInformation(member)
-    return interaction.reply({ embeds: [createsEmbed] })
-  },
+  }
 }

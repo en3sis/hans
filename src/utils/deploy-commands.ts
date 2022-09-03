@@ -25,11 +25,11 @@ const registryCommands = async (guild: { folderName: string; id: string | null }
       // If guildId is not provided, register commands globally
       const response = id
         ? await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID!, id), {
-          body: commands,
-        })
+            body: commands,
+          })
         : await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID!), {
-          body: commands,
-        })
+            body: commands,
+          })
 
       if (response) {
         resolve(
@@ -76,35 +76,35 @@ const fetchCommands = async ({
   })
 }
 
-  ; (async () => {
-    // Registry slash commands global & per guild
-    try {
-      console.log('📨 Creates document in MongoDB if not found')
-      await insertConfiguration()
+;(async () => {
+  // Registry slash commands global & per guild
+  try {
+    console.log('📨 Creates document in MongoDB if not found')
+    await insertConfiguration()
 
-      console.log('⏳ Loading configuration for commands...')
+    console.log('⏳ Loading configuration for commands...')
 
-      const config = await getBotConfiguration()
-      if (!config) return console.log('MongoDB document with the configuration for Hans not found')
+    const config = await getBotConfiguration()
+    if (!config) return console.log('MongoDB document with the configuration for Hans not found')
 
-      if (process.env.ISDEV) {
-        // Deploys to your development guild, those commands will be deployed instantly
-        await registryCommands({
-          folderName: config.commandsDevGuild.folderName,
-          id: config.guildId,
-        }).then((response) =>
-          console.log(`🏗  DEV: guildCommands(${config.commandsDevGuild.folderName}) => `, response)
-        )
-      } else {
-        // Deploys globally, those commands will take some time to be deployed.
-        await registryCommands({
-          folderName: '/',
-          id: null,
-        }).then((response) => console.log(`🏗  PROD: guildCommands() => `, response))
-      }
-    } catch (error) {
-      console.log('error: ', error)
-    } finally {
-      process.exit()
+    if (process.env.ISDEV) {
+      // Deploys to your development guild, those commands will be deployed instantly
+      await registryCommands({
+        folderName: config.commandsDevGuild.folderName,
+        id: config.guildId,
+      }).then((response) =>
+        console.log(`🏗  DEV: guildCommands(${config.commandsDevGuild.folderName}) => `, response)
+      )
+    } else {
+      // Deploys globally, those commands will take some time to be deployed.
+      await registryCommands({
+        folderName: '/',
+        id: null,
+      }).then((response) => console.log(`🏗  PROD: guildCommands() => `, response))
     }
-  })()
+  } catch (error) {
+    console.log('error: ', error)
+  } finally {
+    process.exit()
+  }
+})()

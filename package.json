@@ -49,6 +49,7 @@
     "dotenv": "^16.0.2",
     "mongodb": "^4.9.1",
     "node-cache": "^5.1.2",
+    "openai": "^3.0.0",
     "sentiment": "^5.0.2",
     "socket.io-client": "^4.5.1"
   }
