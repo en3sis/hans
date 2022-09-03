@@ -13,21 +13,21 @@ module.exports = {
 
     if (!enabled) return
     const channel = Hans.channels.cache.get(
-      _guildSettings.plugins.guildMembersActivity.logChannelId
+      _guildSettings.plugins.moderation.messagesAlterations.logChannelId
     ) as TextChannel
+
+    if (!channel) return
 
     channel.send({
       embeds: [
         {
           author: {
-            name: `${message.author?.username || 'Could not read'}#${
-              message.author?.discriminator || 'Could not read'
-            }`,
+            name: `${message.author?.username || 'Could not read'}#${message.author?.discriminator || 'Could not read'
+              }`,
             icon_url: message.author?.displayAvatarURL() || undefined,
           },
-          description: `Message deleted in <#${message.channel.id}> by <@${
-            message.author?.id || 'Could not read'
-          }> [Jump to message](${message.url}) `,
+          description: `Message deleted in <#${message.channel.id}> by <@${message.author?.id || 'Could not read'
+            }> [Jump to message](${message.url}) `,
           fields: [
             {
               name: 'Deleted message:',

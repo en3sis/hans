@@ -1,5 +1,5 @@
-import { Client, Message, TextChannel } from 'discord.js'
-import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
+import { Client, Message, TextChannel } from 'discord.js';
+import { resolveGuildEvents } from '../controllers/bot/guilds.controller';
 
 module.exports = {
   name: 'messageUpdate',
@@ -14,10 +14,10 @@ module.exports = {
 
       if (!enabled) return
       const channel = Hans.channels.cache.get(
-        _guildSettings.plugins.guildMembersActivity.logChannelId
+        _guildSettings.plugins.moderation.messagesAlterations.logChannelId
       ) as TextChannel
 
-      if (oldMessage.content === newMessage.content) return
+      if (oldMessage.content === newMessage.content || !channel) return
 
       channel.send({
         embeds: [
