@@ -21,18 +21,15 @@ export const insertConfiguration = async () => {
       botStartAlertChannel: ``, // This requires a github API
     }
 
-    const doc = await mongoClient
-      .db('hans')
-      .collection('config')
-      .updateOne(
-        {
-          name: 'Hans',
-        },
-        {
-          $setOnInsert: config
-        },
-        { upsert: true }
-      )
+    const doc = await mongoClient.db('hans').collection('config').updateOne(
+      {
+        name: 'Hans',
+      },
+      {
+        $setOnInsert: config,
+      },
+      { upsert: true }
+    )
 
     doc.modifiedCount > 0 ?? console.log(`📥  Initial configuration inserted`)
   } catch (error) {
