@@ -64,7 +64,9 @@ export const sentimentAnalysisFn = async (
 
 export const removeLinks = async (
   message: Message,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowedLinks: string[],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowedRoles: string[]
 ) => {
   if (

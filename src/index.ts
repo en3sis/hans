@@ -48,7 +48,7 @@ const setCommandsNames = () => {
         Hans.commands.map((ele) => ele.data.name).join(', ')
       )
   } catch (error) {
-    console.log('error: ', error)
+    console.error('❌ ERROR: setCommandsNames(): ', error)
   }
 }
 
