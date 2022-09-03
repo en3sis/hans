@@ -34,11 +34,13 @@ export const getGuildsSettings = async (id: string): Promise<GuildI> => {
 export const resolveGuildEvents = async (id: string, event: keyof ClientEvents) => {
   try {
     const document = await getGuildsSettings(id)
+    if (!document) return
+
     return {
       enabled: document.guildEventsNotifications[event],
       ...document,
     }
   } catch (error) {
-    console.log('ERROR: resolveGuildEvents(): ', error)
+    console.log('❌ ERROR: resolveGuildEvents(): ', error)
   }
 }

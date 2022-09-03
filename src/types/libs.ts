@@ -1,5 +1,5 @@
-import { Collection } from 'discord.js';
-import { MongoClient } from 'mongodb';
+import { Collection } from 'discord.js'
+import { MongoClient } from 'mongodb'
 
 declare module 'discord.js' {
   export interface Client {

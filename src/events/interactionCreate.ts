@@ -25,10 +25,10 @@ module.exports = {
 
     // DEBUG
     if (process.env.ISDEV) {
-      console.log('🔍 registered commands: ', command)
+      console.log('🔍 Command Details: ', command)
       console.log(
-        'commands name',
-        Hans.commands.map((ele) => ele.data.name)
+        '🤖 Hans registered commands: ',
+        Hans.commands.map((ele) => ele.data.name).join(', ')
       )
     }
 
