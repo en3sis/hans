@@ -1,7 +1,7 @@
 import { ClientEvents } from 'discord.js'
 import { mongoClient } from '../../lib/mongodb-driver'
 import { GuildI } from '../../models/guild.model'
-import { findOneGuild } from '../mongodb/guilds.controller'
+import { findOneGuild } from '../mongodb/mongo-guilds.controller'
 
 /**
  * If id is passed, returns the guild with the id. If id is not passed, returns all guilds
@@ -42,10 +42,13 @@ export const resolveGuildEvents = async (id: string, event: keyof ClientEvents) 
   try {
     const document = await getGuildsSettings(id)
 
-    return {
-      enabled: document.guildEventsNotifications[event] || false,
-      ...document,
+    if (document) {
+      return {
+        enabled: document.guildEventsNotifications[event] || false,
+        ...document,
+      }
     }
+
   } catch (error) {
     console.error('❌ ERROR: resolveGuildEvents(): ', error)
   }

@@ -1,5 +1,5 @@
-import { Client, Message, TextChannel } from 'discord.js';
-import { resolveGuildEvents } from '../controllers/bot/guilds.controller';
+import { Client, Message, TextChannel } from 'discord.js'
+import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
 
 module.exports = {
   name: 'messageDelete',
@@ -23,12 +23,14 @@ module.exports = {
         embeds: [
           {
             author: {
-              name: `${message.author?.username || 'Could not read'}#${message.author?.discriminator || 'Could not read'
-                }`,
+              name: `${message.author?.username || 'Could not read'}#${
+                message.author?.discriminator || 'Could not read'
+              }`,
               icon_url: message.author?.displayAvatarURL() || undefined,
             },
-            description: `Message deleted in <#${message.channel.id}> by <@${message.author?.id || 'Could not read'
-              }> [Jump to message](${message.url}) `,
+            description: `Message deleted in <#${message.channel.id}> by <@${
+              message.author?.id || 'Could not read'
+            }> [Jump to message](${message.url}) `,
             fields: [
               {
                 name: 'Deleted message:',

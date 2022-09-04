@@ -10,7 +10,9 @@ import { CACHE_TTL_GUILDS } from '../../utils/constants'
  * @param guildId string with the Guild ID
  * @returns guild document
  */
-export const findOneGuild = async (guildId: string): Promise<GuildDocI> => {
+export const findOneGuild = async (
+  guildId: string
+): Promise<GuildDocI | { status: number; message: string }> => {
   try {
     const guild = getFromCache(guildId)
 
@@ -29,16 +31,14 @@ export const findOneGuild = async (guildId: string): Promise<GuildDocI> => {
 
         return document as unknown as GuildDocI
       } else {
-        throw new Error()
+        return {
+          status: 404,
+          message: `Guild with id ${guildId} not found`,
+        }
       }
     }
   } catch (error) {
     console.error('❌ ERROR: findOneGuild(): ', error)
-
-    throw {
-      status: 404,
-      message: `Guild with id ${guildId} not found`,
-    }
   }
 }
 

@@ -21,7 +21,8 @@ module.exports = {
       const settings = await getBotConfiguration()
 
       // Notify in the configuration.botStartAlertChannel that the bot is ready.
-      notifyPulse(Hans)
+
+      await notifyPulse(Hans)
 
       const activity = {
         type: settings.activities?.type || 'WATCHING',

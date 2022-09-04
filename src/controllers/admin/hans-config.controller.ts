@@ -18,7 +18,7 @@ export const insertConfiguration = async () => {
         type: 'WATCHING',
         name: 'you',
       },
-      botStartAlertChannel: ``, // This requires a github API
+      botStartAlertChannel: ``, // This requires a github API key set in your env variables
     }
 
     const doc = await mongoClient.db('hans').collection('config').updateOne(
@@ -33,6 +33,6 @@ export const insertConfiguration = async () => {
 
     doc.modifiedCount > 0 ?? console.log(`📥  Initial configuration inserted`)
   } catch (error) {
-    console.log('ERROR: insertConfiguration(): ', error)
+    console.log('❌ ERROR: insertConfiguration(): ', error)
   }
 }
