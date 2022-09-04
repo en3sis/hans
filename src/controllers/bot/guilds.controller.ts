@@ -48,7 +48,6 @@ export const resolveGuildEvents = async (id: string, event: keyof ClientEvents) 
         ...document,
       }
     }
-
   } catch (error) {
     console.error('❌ ERROR: resolveGuildEvents(): ', error)
   }

@@ -11,7 +11,7 @@ export const githubAPI = async (endpoint: string, auth = false) => {
     const { data } = await axios({
       method: 'get',
       url: `https://api.github.com/${endpoint}`,
-      headers: headers
+      headers: headers,
     })
 
     return data
