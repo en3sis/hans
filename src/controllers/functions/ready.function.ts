@@ -4,8 +4,8 @@ import { getFromCache } from '../../lib/node-cache'
 import { BotI } from '../../types'
 // Create a function that notify when the Discord.js Bot is online, send a message to a given channel
 export const notifyPulse = async (Hans: Client) => {
-  // We want to avoid spammin
-  // if (process.env.ISDEV!) return
+  // Disables pulse notification in development
+  if (process.env.ISDEV!) return
 
   try {
     const used = process.memoryUsage().heapUsed / 1024 / 1024
