@@ -1,5 +1,5 @@
 import { Client, Guild } from 'discord.js'
-import { insetOneGuild } from '../controllers/mongodb/guilds.controller'
+import { insetOneGuild } from '../controllers/mongodb/mongo-guilds.controller'
 
 module.exports = {
   name: 'guildCreate',

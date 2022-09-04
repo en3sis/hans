@@ -10,7 +10,9 @@ import { CACHE_TTL_GUILDS } from '../../utils/constants'
  * @param guildId string with the Guild ID
  * @returns guild document
  */
-export const findOneGuild = async (guildId: string): Promise<GuildDocI> => {
+export const findOneGuild = async (
+  guildId: string
+): Promise<GuildDocI | { status: number; message: string }> => {
   try {
     const guild = getFromCache(guildId)
 
@@ -18,7 +20,7 @@ export const findOneGuild = async (guildId: string): Promise<GuildDocI> => {
       return guild
     } else {
       const document = await mongoClient
-        .db(process.env.MONGODB_DATABASE)
+        .db(process.env.MONGODB_DATABASE || 'dev')
         .collection('guilds')
         .findOne({
           _id: guildId,
@@ -29,16 +31,14 @@ export const findOneGuild = async (guildId: string): Promise<GuildDocI> => {
 
         return document as unknown as GuildDocI
       } else {
-        throw new Error()
+        return {
+          status: 404,
+          message: `Guild with id ${guildId} not found`,
+        }
       }
     }
   } catch (error) {
     console.error('❌ ERROR: findOneGuild(): ', error)
-
-    throw {
-      status: 404,
-      message: `Guild with id ${guildId} not found`,
-    }
   }
 }
 
@@ -60,7 +60,7 @@ export const insertAllGuilds = async (Hans: Client) => {
     )
 
     return await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev'!)
+      .db(process.env.MONGODB_DATABASE! || 'dev')
       .collection('guilds')
       .insertMany(guilds)
   } catch (error) {
@@ -99,7 +99,7 @@ export const insetOneGuild = async (guild: Guild) => {
 export const updateOneGuild = async (guild: Guild, update: Partial<GuildDocI>) => {
   try {
     await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev'!)
+      .db(process.env.MONGODB_DATABASE! || 'dev')
       .collection('guilds')
       .updateOne({ _id: guild.id }, { $set: update })
   } catch (error) {

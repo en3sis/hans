@@ -5,14 +5,13 @@ import axios from 'axios'
  * @param endpoint The endpoint to call
  * @returns
  */
-export const githubAPI = async (endpoint: string) => {
+export const githubAPI = async (endpoint: string, auth = false) => {
   try {
+    const headers = auth ? { Authorization: `token ${process.env.GITHUB_TOKEN}` } : {}
     const { data } = await axios({
       method: 'get',
       url: `https://api.github.com/${endpoint}`,
-      headers: {
-        Authorization: `token ${process.env.GITHUB_API_TOKEN}`,
-      },
+      headers: headers,
     })
 
     return data
