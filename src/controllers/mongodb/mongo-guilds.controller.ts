@@ -20,7 +20,7 @@ export const findOneGuild = async (
       return guild
     } else {
       const document = await mongoClient
-        .db(process.env.MONGODB_DATABASE)
+        .db(process.env.MONGODB_DATABASE || 'dev')
         .collection('guilds')
         .findOne({
           _id: guildId,
@@ -60,7 +60,7 @@ export const insertAllGuilds = async (Hans: Client) => {
     )
 
     return await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev'!)
+      .db(process.env.MONGODB_DATABASE! || 'dev')
       .collection('guilds')
       .insertMany(guilds)
   } catch (error) {
@@ -99,7 +99,7 @@ export const insetOneGuild = async (guild: Guild) => {
 export const updateOneGuild = async (guild: Guild, update: Partial<GuildDocI>) => {
   try {
     await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev'!)
+      .db(process.env.MONGODB_DATABASE! || 'dev')
       .collection('guilds')
       .updateOne({ _id: guild.id }, { $set: update })
   } catch (error) {

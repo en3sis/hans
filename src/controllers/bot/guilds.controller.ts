@@ -17,7 +17,7 @@ export const getGuildsSettings = async (id: string): Promise<GuildI> => {
     }
 
     const guilds = await mongoClient
-      .db(process.env.MONGODB_DATABASE)
+      .db(process.env.MONGODB_DATABASE || 'dev')
       .collection('guilds')
       .find({})
       .toArray()
