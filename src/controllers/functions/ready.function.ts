@@ -19,7 +19,7 @@ export const notifyPulse = async (Hans: Client) => {
 
     const author = {
       name: `${lastCommit[0].commit.author.name}`,
-      url: `${lastCommit[0].commit.url}`,
+      url: `${lastCommit[0].html_url}`,
       iconURL: `${lastCommit[0].author.avatar_url}`,
     }
 
@@ -29,8 +29,9 @@ export const notifyPulse = async (Hans: Client) => {
         {
           author: author,
           description: `
-          💬 Last commit message:
+          **💬 Last commit message**:
           ${lastCommit[0].commit.message}`,
+          title: `✅  ${Hans.user.username} is now online!`,
           fields: [
             {
               name: '🖥 Memory usage',
@@ -38,12 +39,12 @@ export const notifyPulse = async (Hans: Client) => {
               inline: true,
             },
             {
-              name: '✅ Online',
-              value: `${Hans.user.username} is now online!`,
+              name: '🔰 Node Version',
+              value: `${process.env.NODE_VERSION || process.version}`,
               inline: true,
             },
           ],
-          timestamp: new Date(),
+          timestamp: lastCommit[0].commit.author.date,
           color: 0x00ff00,
         },
       ],

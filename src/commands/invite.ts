@@ -10,7 +10,7 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     try {
       const inviteEmbed = inviteBot(interaction.client)
-      await interaction.reply(inviteEmbed)
+      await interaction.reply({ ...inviteEmbed, fetchReply: true })
     } catch (error) {
       console.log('❌ invite(): ', error)
     }
