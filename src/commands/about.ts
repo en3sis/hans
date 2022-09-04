@@ -23,7 +23,7 @@ module.exports = {
       const member: GuildMember = interaction.guild.members.cache.get(_member)
 
       const createsEmbed = getUserInformation(member)
-      return interaction.reply({ embeds: [createsEmbed] })
+      return await interaction.reply({ embeds: [createsEmbed] })
     } catch (error) {
       console.error('❌ ERROR: Command -> activities ', error)
     }

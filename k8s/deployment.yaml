@@ -23,7 +23,7 @@ spec:
             requests:
               cpu: 300m
               memory: 1000Mi
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           env:
             - name: DISCORD_TOKEN
               valueFrom:

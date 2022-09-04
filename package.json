@@ -1,16 +1,19 @@
 {
   "name": "hans",
   "version": "1.0.1",
-  "description": "Discord.JS Bot build with TS and a lot of love.",
+  "description": "An open-source Discord bot built with Discord.JS & TypeScript",
   "main": "src/index.js",
   "scripts": {
     "start": "node build/utils/deploy-commands.js && node build/index.js",
-    "dev": "nodemon",
+    "dev": "nodemon hans",
     "build": "rm -rf ./build && tsc --project ./",
     "lint": "eslint . --fix",
     "format": "npx prettier --write '**/*.ts'",
     "prepare": "npx husky install",
     "slash": "node build/utils/deploy-commands.js",
+    "k8s:clean": "kubectl delete -f ./k8s/namespace.yaml",
+    "k8s:deploy": "kubectl apply -f ./k8s/namespace.yaml && kubectl apply -f ./k8s/service.yaml && kubectl apply -f ./k8s/secrets.yaml && kubectl apply -f ./k8s/deployment.yaml",
+    "k8s:prod": "kubectl apply -f ./k8s/namespace.yaml && kubectl apply -f ./k8s/service.yaml && kubectl apply -f ./k8s/secrets.prod.yaml && kubectl apply -f ./k8s/deployment.yaml",
     "slashDev": "npm run build && node build/utils/deploy-commands.js",
     "test": "ts-mocha -p ./tsconfig.json ./tests/**/*.spec.ts"
   },
