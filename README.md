@@ -7,6 +7,7 @@
 </div>
 
 ![Docker Pulls](https://img.shields.io/docker/pulls/en3sis/hans?style=for-the-badge)
+![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/en3sis/hans/latest?label=production%20image&style=for-the-badge)
 ![Discord](https://img.shields.io/discord/904719402044383273?style=for-the-badge)
 
 # Hans - Discord Bot

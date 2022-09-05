@@ -11,7 +11,21 @@ module.exports = {
         {
           title: '📨 Hans support',
           description:
-            'Please feel free to join Hans Discord server for support. [🔗 Invite link](https://discord.gg/WpTrnnvJXe)',
+            'Please feel free to join Hans Discord server for support. \n[🔗 Discord Server](https://discord.gg/WpTrnnvJXe)',
+          fields: [
+            {
+              name: '💢 Any issues?',
+              value:
+                '[Open an Issue](https://github.com/en3sis/hans/issues/new?assignees=&labels=bug&template=bug_report.md&title=%5BBUG%5D)',
+              inline: true,
+            },
+            {
+              name: '💡 Any ideas?',
+              value:
+                '[Send a suggestion](https://github.com/en3sis/hans/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=%5BFEATURE%5D)',
+              inline: true,
+            },
+          ],
         },
       ],
     })
