@@ -12,8 +12,12 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     const text = interaction.options.getString('text')
 
-
-    await interaction.channel.send(text.split('').map((letter, i) => (i % 2) == 0 ? letter.toUpperCase() : letter.toLowerCase()).join(''))
+    await interaction.channel.send(
+      text
+        .split('')
+        .map((letter, i) => (i % 2 == 0 ? letter.toUpperCase() : letter.toLowerCase()))
+        .join('')
+    )
     await interaction.channel.send('<:mock:1016362569088376924>')
 
     await interaction.reply({ content: 'Done :P', ephemeral: true })
