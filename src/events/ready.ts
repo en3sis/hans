@@ -1,7 +1,7 @@
 import { Client } from 'discord.js'
 import { insertConfiguration } from '../controllers/admin/hans-config.controller'
-import { getBotConfiguration } from '../controllers/events/ready.controller'
-import { notifyPulse } from '../controllers/functions/ready.function'
+import { getBotConfiguration, notifyPulse } from '../controllers/events/ready.controller'
+
 
 module.exports = {
   name: 'ready',

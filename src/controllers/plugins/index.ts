@@ -1,5 +1,4 @@
 import { Client, Message } from 'discord.js'
-import { ThreadChannelConfigI } from '../../models/guild.model'
 import { findOneGuild, insetOneGuild } from '../mongodb/mongo-guilds.controller'
 import { removeLinks, sentimentAnalysisFn } from './moderation.controller'
 import { threadAutoCreate } from './threads.controller'
@@ -41,9 +40,9 @@ export const pluginsController = async (Hans: Client, message: Message) => {
       }
 
       // PLUGINS: Threads
-      if (threadChannels) {
+      if ('enabled' in threadChannels) {
         const channelHasThreads = threadChannels.filter(
-          (ele: ThreadChannelConfigI) => ele.enabled
+          (ele) => ele.enabled
         )[0]
         if (channelHasThreads && channelHasThreads.threadChannelId === message.channelId) {
           await threadAutoCreate(message, channelHasThreads)

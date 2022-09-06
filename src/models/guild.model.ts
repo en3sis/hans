@@ -15,11 +15,15 @@ export interface GuildDocI {
     messageUpdate: boolean
   }
   plugins: {
-    moderation: typeof moderation
-    guildMembersActivity: typeof guildMembersActivity
-    threadChannels: typeof threadChannels[] | []
+    moderation: IModeration
+    guildMembersActivity: IGuildMembersActivity
+    threadChannels: IThreadChannels[]
   }
 }
+
+export type IThreadChannels = typeof threadChannels
+export type IGuildMembersActivity = typeof guildMembersActivity
+export type IModeration = typeof moderation
 
 
 // Plugins Objects
