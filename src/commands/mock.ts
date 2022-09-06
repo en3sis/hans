@@ -7,7 +7,7 @@ module.exports = {
     .setName('mock')
     .setDescription('MoCks YoUr TeXt')
     .addStringOption((string) =>
-      string.setName('text').setDescription('Your sentance to be mocked').setRequired(true)
+      string.setName('text').setDescription('Your sentence to be mocked').setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
     const text = interaction.options.getString('text')

@@ -1,7 +1,7 @@
 import { ClientEvents } from 'discord.js'
-import { mongoClient } from '../../lib/mongodb-driver'
 import { GuildI } from '../../models/guild.model'
 import { findOneGuild } from '../mongodb/mongo-guilds.controller'
+import { Hans } from './../../index'
 
 /**
  * If id is passed, returns the guild with the id. If id is not passed, returns all guilds
@@ -10,23 +10,9 @@ import { findOneGuild } from '../mongodb/mongo-guilds.controller'
  */
 export const getGuildsSettings = async (id: string): Promise<GuildI> => {
   try {
-    if (id) {
-      const guild = await findOneGuild(id)
+    const guild = await findOneGuild(id)
 
-      return guild as GuildI
-    }
-
-    const guilds = await mongoClient
-      .db(process.env.MONGODB_DATABASE || 'dev')
-      .collection('guilds')
-      .find({})
-      .toArray()
-
-    if (guilds) {
-      return guilds as unknown as GuildI
-    } else {
-      return [] as unknown as GuildI
-    }
+    return guild as GuildI
   } catch (error) {
     return error.message
   }
@@ -40,9 +26,9 @@ export const getGuildsSettings = async (id: string): Promise<GuildI> => {
  */
 export const resolveGuildEvents = async (id: string, event: keyof ClientEvents) => {
   try {
-    const document = await getGuildsSettings(id)
+    const document = await findOneGuild(id)
 
-    if (document) {
+    if ('name' in document) {
       return {
         enabled: document.guildEventsNotifications[event] || false,
         ...document,
@@ -52,3 +38,6 @@ export const resolveGuildEvents = async (id: string, event: keyof ClientEvents) 
     console.error('❌ ERROR: resolveGuildEvents(): ', error)
   }
 }
+
+// Allows to get guild user's settings directly from the client.
+Hans.guildSettings = async (guildId: string) => await findOneGuild(guildId)
