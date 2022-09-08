@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import { CommandInteraction } from 'discord.js'
-import { purgeMessages } from '../controllers/admin/purge.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -19,7 +18,8 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
-      await purgeMessages(interaction)
+      // await purgeMessages(interaction)
+      interaction.reply({ content: 'Purge command is disabled', ephemeral: true })
     } catch (error) {
       console.log('❌ ERROR: recipe(): ', error)
     }
