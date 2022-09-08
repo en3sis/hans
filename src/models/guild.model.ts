@@ -25,7 +25,6 @@ export type IThreadChannels = typeof threadChannels
 export type IGuildMembersActivity = typeof guildMembersActivity
 export type IModeration = typeof moderation
 
-
 // Plugins Objects
 // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
 export const moderation = {

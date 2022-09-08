@@ -75,3 +75,4 @@ for (const file of eventFiles) {
 }
 
 Hans.login(process.env.DISCORD_TOKEN!)
+Hans.on('error', (err) => console.log('❌ ERROR: initHans()', err))

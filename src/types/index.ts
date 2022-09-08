@@ -1,4 +1,4 @@
-export interface BotI extends BotConfigI {
+export interface IBot extends BotConfigI {
   name: string
   website: string
   guildId: string

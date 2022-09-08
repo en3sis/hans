@@ -1,7 +1,7 @@
 import { Client } from 'discord.js'
 import { insertConfiguration } from '../controllers/admin/hans-config.controller'
 import { getBotConfiguration, notifyPulse } from '../controllers/events/ready.controller'
-
+import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
 
 module.exports = {
   name: 'ready',
@@ -19,9 +19,13 @@ module.exports = {
 
       // Fetches MongoDB for the configuration document.
       const settings = await getBotConfiguration()
+      Hans.settings = settings
 
       // Notify in the configuration.botStartAlertChannel that the bot is ready.
       await notifyPulse(Hans)
+
+      // Init all cron jobs tasks
+      await CronJobsTasks(Hans)
 
       const activity = {
         type: settings.activities?.type || 'WATCHING',

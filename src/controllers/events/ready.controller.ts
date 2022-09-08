@@ -2,11 +2,11 @@ import { Client, TextChannel } from 'discord.js'
 import { githubAPI } from '../../lib/axios'
 import { mongoClient } from '../../lib/mongodb-driver'
 import { getFromCache, setToCache } from '../../lib/node-cache'
-import { BotI } from '../../types'
+import { IBot } from '../../types'
 import { insertConfiguration } from '../admin/hans-config.controller'
 
 // Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
-export const getBotConfiguration = async (): Promise<BotI> => {
+export const getBotConfiguration = async (): Promise<IBot> => {
   return new Promise(async (resolve, reject) => {
     try {
       // Checks is the bot configuration is in the cache
@@ -17,7 +17,7 @@ export const getBotConfiguration = async (): Promise<BotI> => {
 
       if (config) {
         setToCache('config', config)
-        resolve(config as unknown as BotI)
+        resolve(config as unknown as IBot)
       } else {
         await insertConfiguration()
       }
@@ -36,7 +36,7 @@ export const notifyPulse = async (Hans: Client) => {
     const used = process.memoryUsage().heapUsed / 1024 / 1024
 
     const lastCommit = await githubAPI('repos/en3sis/hans/commits')
-    const config: BotI = getFromCache('config')
+    const config: IBot = getFromCache('config')
 
     if (!config.botStartAlertChannel) return
 

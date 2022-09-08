@@ -41,9 +41,7 @@ export const pluginsController = async (Hans: Client, message: Message) => {
 
       // PLUGINS: Threads
       if ('enabled' in threadChannels) {
-        const channelHasThreads = threadChannels.filter(
-          (ele) => ele.enabled
-        )[0]
+        const channelHasThreads = threadChannels.filter((ele) => ele.enabled)[0]
         if (channelHasThreads && channelHasThreads.threadChannelId === message.channelId) {
           await threadAutoCreate(message, channelHasThreads)
         }

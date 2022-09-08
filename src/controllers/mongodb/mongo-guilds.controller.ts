@@ -62,7 +62,9 @@ export const insertAllGuilds = async (Hans: Client) => {
     return await mongoClient
       .db(process.env.MONGODB_DATABASE! || 'dev')
       .collection('guilds')
-      .insertMany(guilds)
+      .updateMany({}, guilds, {
+        upsert: true,
+      })
   } catch (error) {
     console.error('❌ ERROR: insertAllGuilds(): ', error)
   }

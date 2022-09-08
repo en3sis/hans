@@ -1,13 +1,18 @@
+export type TGuildAndChannel = {
+  id: string
+  channelId: string
+}
+
+export type TRedditModel = typeof RedditModel
+
 export const RedditModel = {
-  topic: 'javascript',
+  name: 'javascript',
   description: 'The programming language of the web',
   latestPostId: '',
   subscribedGuilds: [
     {
-      id: '123456789',
-      channelId: '123456789'
-    }
-  ]
+      id: '',
+      channelId: '',
+    },
+  ],
 }
-
-export type TRedditModel = typeof RedditModel

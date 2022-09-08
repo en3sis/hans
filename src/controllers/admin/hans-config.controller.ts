@@ -1,5 +1,5 @@
 import { mongoClient } from '../../lib/mongodb-driver'
-import { BotI } from '../../types'
+import { IBot } from '../../types'
 
 /**
  * Adds the bot configuration, this is for admins only.
@@ -7,7 +7,7 @@ import { BotI } from '../../types'
  */
 export const insertConfiguration = async () => {
   try {
-    const config: BotI = {
+    const config: IBot = {
       name: 'Hans',
       website: '',
       guildId: `${process.env.BOT_GUILD_ID}`,
