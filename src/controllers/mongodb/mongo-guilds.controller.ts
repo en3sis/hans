@@ -12,7 +12,7 @@ import { CACHE_TTL_GUILDS } from '../../utils/constants'
  */
 export const findOneGuild = async (
   guildId: string
-): Promise<GuildDocI | { status: number; message: string }> => {
+): Promise<GuildI | { status: number; message: string }> => {
   try {
     const guild = getFromCache(guildId)
 
@@ -29,7 +29,7 @@ export const findOneGuild = async (
       if (document) {
         setToCache(guildId, document, CACHE_TTL_GUILDS)
 
-        return document as unknown as GuildDocI
+        return document as unknown as GuildI
       } else {
         return {
           status: 404,
@@ -62,7 +62,9 @@ export const insertAllGuilds = async (Hans: Client) => {
     return await mongoClient
       .db(process.env.MONGODB_DATABASE! || 'dev')
       .collection('guilds')
-      .insertMany(guilds)
+      .updateMany({}, guilds, {
+        upsert: true,
+      })
   } catch (error) {
     console.error('❌ ERROR: insertAllGuilds(): ', error)
   }

@@ -1,9 +1,12 @@
 import NodeCache from 'node-cache'
-import { GenericObjectT } from '../types/objects'
 
 const CACHE = new NodeCache()
 // Creates a function for adding an item to the cache that has a ttl of 3 minutes
-export const setToCache = (key: string, value: GenericObjectT, ttl = 180) => {
+export const setToCache = (key: string, value: string | object, ttl = 180) => {
+  if (typeof value === 'string') {
+    CACHE.set(key, value, ttl)
+  }
+
   CACHE.set(key, JSON.stringify(value), ttl)
 }
 

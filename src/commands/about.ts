@@ -7,8 +7,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('about')
     .setDescription('Display information about a given user')
-    .addStringOption((string) =>
-      string.setName('user').setDescription('@username or ID').setRequired(true)
+    .addUserOption((option) =>
+      option.setName('user').setDescription('@username or ID').setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
     try {

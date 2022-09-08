@@ -7,15 +7,26 @@ const openai = new OpenAIApi(
   })
 )
 
-type models = 'ada' | 'davinci'
+interface IOpenAIRequestSettings {
+  model?: 'ada' | 'davinci'
+  predicate: string
+  input: string
+  max_tokens?: number
+  temperature?: number
+}
 
-export const OpenAiAPI = async (
-  model: models,
-  predicate: string,
-  input: string,
+/**
+ * OpenAI API request
+ * @param IOpenAIRequestSettings
+ * @returns Promise<string>
+ */
+export const OpenAiAPI = async ({
+  model = 'ada',
+  predicate,
+  input,
   max_tokens = 200,
-  temperature = 0.3
-) => {
+  temperature = 0.3,
+}: IOpenAIRequestSettings) => {
   try {
     const response = await openai.createCompletion({
       model: `text-${model}-001`,

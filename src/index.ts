@@ -10,12 +10,11 @@ import { ProjectValidator } from './utils/pre-validation'
   ============================================================================== */
 dotenv.config({ path: path.join(process.cwd(), `.env`) })
 
-// Validate project necessary files,
-// INFO: Disable this since we're now deploying to an K8s Cluster
+// Validate project necessary environment variables,
 const validator = new ProjectValidator()
 validator.runAllChecks()
 
-const Hans = new Client({
+export const Hans = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS],
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 })
@@ -38,7 +37,9 @@ const setCommandsNames = () => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const command = require(path.join(path.resolve(__dirname), `/commands${ele}/${file}`))
 
-        Hans.commands.set(command.data.name, command)
+        if ('data' in command) {
+          return Hans.commands.set(command.data.name, command)
+        }
       })
     })
 
@@ -74,3 +75,4 @@ for (const file of eventFiles) {
 }
 
 Hans.login(process.env.DISCORD_TOKEN!)
+Hans.on('error', (err) => console.log('❌ ERROR: initHans()', err))

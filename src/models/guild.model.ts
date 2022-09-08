@@ -7,7 +7,6 @@ export interface GuildI extends GuildDocI {
   date: Date
   premium: boolean
 }
-
 export interface GuildDocI {
   guildEventsNotifications: {
     guildMemberAdd: boolean
@@ -16,45 +15,19 @@ export interface GuildDocI {
     messageUpdate: boolean
   }
   plugins: {
-    moderation: ModerationPluginI
-    guildMembersActivity: GuildMembersActivityPluginI
-    threadChannels: ThreadChannelConfigI[] | []
+    moderation: IModeration
+    guildMembersActivity: IGuildMembersActivity
+    threadChannels: IThreadChannels[]
   }
 }
 
-export interface ModerationPluginI {
-  links: {
-    enabled: boolean
-    allowedLinks: string[]
-    allowedRoles: string[]
-  }
-  sentimentAnalysis: {
-    enabled: boolean
-    reactToPositive: boolean
-    watchAllChannels: boolean
-    watchSpecificChannels: string[]
-    logChannelId: string
-  }
-  messagesAlterations: {
-    logChannelId: string
-  }
-}
-
-export interface GuildMembersActivityPluginI {
-  enabled: boolean
-  logChannelId: string
-}
-
-export interface ThreadChannelConfigI {
-  enabled: boolean
-  threadTitle: string
-  botMessageInThread: string
-  threadChannelId: string
-}
+export type IThreadChannels = typeof threadChannels
+export type IGuildMembersActivity = typeof guildMembersActivity
+export type IModeration = typeof moderation
 
 // Plugins Objects
 // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-export const moderation: ModerationPluginI = {
+export const moderation = {
   links: {
     enabled: false,
     allowedLinks: [],
@@ -72,12 +45,12 @@ export const moderation: ModerationPluginI = {
   },
 }
 
-export const guildMembersActivity: GuildMembersActivityPluginI = {
+export const guildMembersActivity = {
   enabled: false,
   logChannelId: '',
 }
 
-export const threadChannels: ThreadChannelConfigI = {
+export const threadChannels = {
   enabled: false,
   threadTitle: '',
   botMessageInThread: '',

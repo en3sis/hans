@@ -1,8 +1,8 @@
 import { Message, NewsChannel, StartThreadOptions, TextChannel, ThreadChannel } from 'discord.js'
-import { ThreadChannelConfigI } from '../../models/guild.model'
+import { IThreadChannels } from '../../models/guild.model'
 import { isStaff } from '../../utils/permissions'
 
-export const threadAutoCreate = async (message: Message, config: ThreadChannelConfigI) => {
+export const threadAutoCreate = async (message: Message, config: IThreadChannels) => {
   try {
     if (!config.enabled) return
 
