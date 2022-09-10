@@ -1,4 +1,4 @@
-import { Message, Permissions, TextChannel } from 'discord.js'
+import { Message, TextChannel } from 'discord.js'
 import { sentimentAnalysis } from '../../lib/sentiment'
 import { sentimentUrgencyTable } from '../../utils/colors'
 
@@ -24,7 +24,7 @@ export const sentimentAnalysisFn = async (
         {
           author: {
             name: message.author.username,
-            iconURL: message.author.avatarURL(),
+            icon_url: message.author.avatarURL(),
           },
           title: `Message:`,
           description: `${message.content} \n\n Go to message: [click here](${message.url})`,
@@ -55,7 +55,7 @@ export const sentimentAnalysisFn = async (
               inline: true,
             },
           ],
-          color: sentimentUrgencyTable(score.score)[1],
+          color: sentimentUrgencyTable(score.score)[1] as number,
         },
       ],
     })
@@ -69,13 +69,7 @@ export const removeLinks = async (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowedRoles: string[]
 ) => {
-  if (
-    message.member.permissions.has([
-      Permissions.FLAGS.KICK_MEMBERS,
-      Permissions.FLAGS.DEAFEN_MEMBERS,
-    ])
-  )
-    return
+  if (message.member.permissions.has(['Administrator', 'DeafenMembers'])) return
 
   const expression =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi

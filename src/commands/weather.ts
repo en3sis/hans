@@ -12,7 +12,7 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     const { location, current } = await WeatherController(
-      interaction.options.getString('city') as string
+      interaction.options.get('city')!.value as string
     )
 
     await interaction.reply({

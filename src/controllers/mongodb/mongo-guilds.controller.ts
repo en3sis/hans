@@ -52,7 +52,7 @@ export const insertAllGuilds = async (Hans: Client) => {
       Hans.guilds.cache.map((guild) => ({
         _id: guild.id as unknown as ObjectId,
         name: guild.name,
-        avatar: guild.iconURL({ dynamic: true }),
+        avatar: guild.icon,
         date: new Date(),
         premium: false,
         ...documentDetails,
@@ -81,7 +81,7 @@ export const insetOneGuild = async (guild: Guild) => {
       name: guild.name,
       date: new Date(),
       premium: false,
-      avatar: guild.iconURL({ dynamic: true }),
+      avatar: guild.icon,
       ...documentDetails,
     }
 

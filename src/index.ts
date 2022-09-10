@@ -1,4 +1,4 @@
-import { Client, Collection, Intents } from 'discord.js'
+import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
@@ -15,8 +15,12 @@ const validator = new ProjectValidator()
 validator.runAllChecks()
 
 export const Hans = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS],
-  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMembers,
+  ],
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 })
 
 Hans.mongo = mongoClient
@@ -76,3 +80,4 @@ for (const file of eventFiles) {
 
 Hans.login(process.env.DISCORD_TOKEN!)
 Hans.on('error', (err) => console.log('❌ ERROR: initHans()', err))
+Hans.on('debug', (msg) => process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))

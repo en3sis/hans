@@ -12,12 +12,13 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
+      const user = interaction.options.get('user')!.value as string
       let _member: string
 
-      if (/<@!?\d+>/g.test(interaction.options.getString('user'))) {
-        _member = interaction.options.getString('user').split(`<@!`)[1].replace('>', '')
+      if (/<@!?\d+>/g.test(user)) {
+        _member = user.split(`<@!`)[1].replace('>', '')
       } else {
-        _member = interaction.options.getString('user')
+        _member = user
       }
 
       const member: GuildMember = interaction.guild.members.cache.get(_member)

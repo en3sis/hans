@@ -31,7 +31,7 @@ export const findOne = async ({ dataBase, collection, query, cache, ttl }: TMong
   }
 }
 
-export const findMany = async ({ dataBase, collection, query, cache, ttl }: TMongoCRUD) => {
+export const find = async ({ dataBase, collection, query, cache, ttl }: TMongoCRUD) => {
   try {
     const b = Buffer.from(JSON.stringify({ find: true })).toString('base64')
     if (cache) {

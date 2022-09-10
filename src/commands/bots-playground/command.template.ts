@@ -6,6 +6,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('test')
     .setDescription('This is a test command')
+    .setDefaultMemberPermissions('0')
     .addStringOption((string) =>
       string.setName('user').setDescription('@username or ID').setRequired(true)
     ),

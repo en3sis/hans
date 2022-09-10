@@ -6,19 +6,6 @@ module.exports = {
   enabled: true,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(Hans: Client, interaction: Interaction) {
-    if (interaction.isSelectMenu()) {
-      if (interaction.values[0] === 'correctVerify') {
-        const role = Hans.guilds.cache
-          .get(interaction.guildId)
-          .roles.cache.find((role) => role.name === 'Miner')
-
-        return await Hans.guilds.cache
-          .get(interaction.guildId)
-          .members.cache.get(interaction.user.id)
-          .roles.add(role)
-      }
-    }
-
     if (!interaction.isCommand()) return
 
     const command = Hans.commands.get(interaction.commandName)

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Client, TextChannel } from 'discord.js'
 import { RedditModel, TGuildAndChannel, TRedditModel } from '../../models/plugins/reddit.model'
 import { sleep } from '../../utils/dates'
-import { findMany, insertOne, updateOne } from '../mongodb/mongo-crud'
+import { find, insertOne, updateOne } from '../mongodb/mongo-crud'
 
 // exports a function that search a subreddit latest post vía the reddit API
 export const fetchSubReddit = async (subreddit: string) => {
@@ -18,7 +18,7 @@ export const fetchSubReddit = async (subreddit: string) => {
 
 export const redditPluginInit = async (Hans: Client) => {
   try {
-    const documents = (await findMany({
+    const documents = (await find({
       dataBase: 'plugins',
       collection: 'reddit',
       query: {},
@@ -36,63 +36,154 @@ export const redditPluginInit = async (Hans: Client) => {
     // For each subreddit, fetch the latest post and compare it with the one in the database.
     const data = await Promise.all(
       documents.map(async (document: TRedditModel, i) => {
-        const result = await fetchSubReddit(document.name)
-        // Ignore if the post is the same as the one in the database.
+        try {
+          const result = await fetchSubReddit(document.name)
+          // Ignore if the post is the same as the one in the database.
 
-        // Iterates over ele.subscribedGuilds and send the message to each guild
-        document.subscribedGuilds.map(async (ele: TGuildAndChannel) => {
-          if (!ele.channelId || !!ele.id) return
+          if (result.data.id === document.latestPostId) return
 
-          // Avoid rate limit
-          await sleep(500)
+          // Iterates over ele.subscribedGuilds and send the message to each guild
+          document.subscribedGuilds.map(async (ele: TGuildAndChannel) => {
+            try {
+              if (!ele.channelId || !ele.id) return
 
-          const guild = Hans.guilds.cache.get(ele.id)
-          const channel = guild?.channels.cache.get(ele.channelId) as TextChannel
+              // Avoid rate limit
+              await sleep(500)
 
-          channel.send({
-            embeds: [
-              {
-                author: {
-                  name: result.data.author,
-                  url: result.data.url,
-                },
-                title: result.data.title,
-                description: result.data.selftext || `No description was added to the post.`,
-                thumbnail: {
-                  url: result.data.thumbnail,
-                },
-                fields: [
+              const guild = Hans.guilds.cache.get(ele.id)
+              const channel = guild?.channels.cache.get(ele.channelId) as TextChannel
+
+              console.log(
+                '🚀 ~ file: reddit.controller.ts ~ line 71 ~ document.subscribedGuilds.map ~ esult.data?.thumbnail',
+                result.data?.thumbnail
+              )
+              await channel.send({
+                embeds: [
                   {
-                    name: 'Reddit Link 🔗',
-                    value: `[To Reddit](https://www.reddit.com${result.data.permalink})`,
+                    author: {
+                      name: result.data.author,
+                      url: result.data.url,
+                    },
+                    title: result.data.title,
+                    description:
+                      result.data.selftext ||
+                      document.description ||
+                      `No description was added to the post.`,
+                    thumbnail: {
+                      url: result.data?.thumbnail.startsWith('https://')
+                        ? result.data?.thumbnail
+                        : 'https://cdn.discordapp.com/attachments/626034007087513601/1014802216831438879/hans-fff.png',
+                    },
+                    fields: [
+                      {
+                        name: 'Reddit Link 🔗',
+                        value: `[To Reddit](https://www.reddit.com${result.data.permalink})`,
+                      },
+                    ],
+                    // timestamp: formatISO(result.data?.created) || formatISO(new Date()),
+                    color: 0xff9800,
+                    footer: {
+                      text: `From /r/${document.name}`,
+                      icon_url: 'https://i.imgur.com/sdO8tAw.png',
+                    },
                   },
                 ],
-                timestamp: result.data.created_utc,
-                color: 0xff9800
-              },
-            ],
-          })
-        })
+              })
 
-        // If the post is different, update the database with the new post.
-        if (result?.data.id !== null) {
-          await updateOne({
-            dataBase: 'plugins',
-            collection: 'reddit',
-            query: { name: document.name },
-            data: { $set: { latestPostId: result.data.id } },
+              if (process.env.ISDEV)
+                console.log(
+                  '🟢 INFO: reddit(): ',
+                  `${result.data.title} was sent to the guilds ${ele.channelId}`
+                )
+            } catch (error) {
+              console.log('❌ ERROR: reddit()-> subscribedGuilds: ', error)
+            }
           })
+
+          // If the post is different, update the database with the new post.
+          if (result?.data.id !== null) {
+            await updateOne({
+              dataBase: 'plugins',
+              collection: 'reddit',
+              query: { name: document.name },
+              data: { $set: { latestPostId: result.data.id } },
+            })
+          }
+
+          // Avoid rate limit
+          await sleep(2000 * i + 1)
+
+          return result
+        } catch (error) {
+          console.log('❌ ERROR: reddit()-> map: ', error)
         }
-
-        // Avoid rate limit
-        await sleep(2000 * i + 1)
-
-        return result
       })
     )
 
     return data
   } catch (error) {
-    console.error('❌ ERROR: redditPluginInit(): ', error)
+    console.error('❌ ERROR: redditPluginInit(): ', error.embeds)
+  }
+}
+
+// Export a new function that checks the mongodb document to see if the guild is subscribed to the subreddit, if not, creates it.
+export const subscribeToSubreddit = async (
+  subreddit: string,
+  guildId: string,
+  channelId: string
+) => {
+  try {
+    const document = (await find({
+      dataBase: 'plugins',
+      collection: 'reddit',
+      query: { name: subreddit },
+    })) as unknown as TRedditModel[]
+
+    if (!document.length) {
+      await insertOne({
+        dataBase: 'plugins',
+        collection: 'reddit',
+        data: {
+          name: subreddit,
+          latestPostId: '',
+          subscribedGuilds: [{ id: guildId, channelId }],
+        },
+      })
+    } else {
+      const guild = document[0].subscribedGuilds.find((ele) => ele.id === guildId)
+
+      if (!guild) {
+        await updateOne({
+          dataBase: 'plugins',
+          collection: 'reddit',
+          query: { name: subreddit },
+          data: { $push: { subscribedGuilds: { id: guildId, channelId } } },
+        })
+      }
+    }
+  } catch (error) {
+    console.error('❌ ERROR: subscribeToSubreddit(): ', error)
+  }
+}
+
+// Export a new function that checks the mongodb document to see if the guild is subscribed to the subreddit, if so, removes it.
+export const unsubscribeToSubreddit = async (subreddit: string, guildId: string) => {
+  try {
+    const document = (await find({
+      dataBase: 'plugins',
+      collection: 'reddit',
+      query: { name: subreddit },
+    })) as unknown as TRedditModel[]
+
+    if (!document.length) return
+
+    await updateOne({
+      dataBase: 'plugins',
+      collection: 'reddit',
+      query: { name: subreddit },
+      data: { $pull: { subscribedGuilds: { id: guildId } } },
+    })
+  } catch (error) {
+    console.error('❌ ERROR: unsubscribeToSubreddit(): ', error)
   }
 }
