@@ -19,7 +19,6 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     try {
       await purgeMessages(interaction)
-      interaction.reply({ content: 'Purge command is disabled', ephemeral: true })
     } catch (error) {
       console.log('❌ ERROR: recipe(): ', error)
     }
