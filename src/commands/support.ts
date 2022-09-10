@@ -12,7 +12,7 @@ module.exports = {
         {
           title: '📨 Hans support',
           description:
-            `Please feel free to join Hans Discord server for support. \n[🔗 Discord Server](${Hans.settings.permaInvite})`,
+            `Please feel free to join Hans Discord server for support. \n[🔗 Discord Server](${Hans.settings?.permaInvite})`,
           fields: [
             {
               name: '💢 Any issues?',
