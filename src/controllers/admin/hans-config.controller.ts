@@ -18,6 +18,7 @@ export const insertConfiguration = async () => {
         type: 'WATCHING',
         name: 'you',
       },
+      permaInvite: 'https://discord.gg/2tK7PhkZ',
       botStartAlertChannel: ``, // This requires a github API key set in your env variables
     }
 

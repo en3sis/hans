@@ -27,13 +27,13 @@ module.exports = {
       // Init all cron jobs tasks
       await CronJobsTasks(Hans)
 
-      const activity = {
-        type: settings.activities?.type || 'WATCHING',
-        name: settings.activities?.name || 'you',
-      }
-
       Hans.user.setPresence({
-        activities: [activity],
+        activities: [
+          {
+            name: settings.activities?.name || 'you',
+            type: 4,
+          },
+        ],
       })
     } catch (error) {
       console.log('❌ ERROR: ready(): ', error)

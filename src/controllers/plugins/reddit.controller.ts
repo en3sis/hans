@@ -39,9 +39,11 @@ export const redditPluginInit = async (Hans: Client) => {
         const result = await fetchSubReddit(document.name)
         // Ignore if the post is the same as the one in the database.
 
+        if (result.data.id === document.latestPostId) return
+
         // Iterates over ele.subscribedGuilds and send the message to each guild
         document.subscribedGuilds.map(async (ele: TGuildAndChannel) => {
-          if (!ele.channelId || !!ele.id) return
+          if (!ele.channelId || !ele.id) return
 
           // Avoid rate limit
           await sleep(500)
@@ -57,7 +59,10 @@ export const redditPluginInit = async (Hans: Client) => {
                   url: result.data.url,
                 },
                 title: result.data.title,
-                description: result.data.selftext || `No description was added to the post.`,
+                description:
+                  result.data.selftext ||
+                  document.description ||
+                  `No description was added to the post.`,
                 thumbnail: {
                   url: result.data.thumbnail,
                 },
@@ -68,7 +73,7 @@ export const redditPluginInit = async (Hans: Client) => {
                   },
                 ],
                 timestamp: result.data.created_utc,
-                color: 0xff9800
+                color: 0xff9800,
               },
             ],
           })

@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js'
 
 export const purgeMessages = async (interaction: CommandInteraction) => {
   try {
-    const amount = interaction.options.getNumber('n') as number
+    const amount = interaction.options.get('n').value as number
 
     if (amount > 100) {
       return interaction.reply({

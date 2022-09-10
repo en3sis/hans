@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
+import { Hans } from '..'
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
   data: new SlashCommandBuilder()
@@ -11,7 +12,7 @@ module.exports = {
         {
           title: '📨 Hans support',
           description:
-            'Please feel free to join Hans Discord server for support. \n[🔗 Discord Server](https://discord.gg/WpTrnnvJXe)',
+            `Please feel free to join Hans Discord server for support. \n[🔗 Discord Server](${Hans.settings.permaInvite})`,
           fields: [
             {
               name: '💢 Any issues?',

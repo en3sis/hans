@@ -10,7 +10,7 @@ module.exports = {
       string.setName('text').setDescription('Your sentence to be mocked').setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
-    const text = interaction.options.getString('text')
+    const text = interaction.options.get('text')!.value as string
 
     await interaction.channel.send(
       text
