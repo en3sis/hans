@@ -10,8 +10,8 @@
     "lint": "eslint . --fix",
     "format": "npx prettier --write '**/*.ts'",
     "prepare": "npx husky install",
-    "slash": "npm run build && node build/utils/deploy-commands.js",
-    "slashDev": "ISDEV=true npm run build && node build/utils/deploy-commands.js",
+    "slash": "export ISDEV=false && npm run build && node build/utils/deploy-commands.js",
+    "slashDev": "export ISDEV=true && npm run build && node build/utils/deploy-commands.js",
     "test": "ts-mocha -p ./tsconfig.json ./tests/**/*.spec.ts"
   },
   "author": "en3sis",
