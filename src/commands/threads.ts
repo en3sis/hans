@@ -1,12 +1,12 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { addThread, removeThread } from '../../controllers/plugins/threads.controller'
+import { addThread, removeThread } from '../controllers/plugins/threads.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('threads')
-    .setDescription('Automaticlly creates threads in given channels')
+    .setDescription('Automatically creates threads in given channels')
     .setDefaultMemberPermissions('0')
     .addSubcommand((subcommand) =>
       subcommand
@@ -51,9 +51,8 @@ module.exports = {
         await addThread(interaction.guildId, channel, title, response)
 
         return interaction.reply({
-          content: `✅ Threads enabled for ${
-            interaction.guild.channels.cache.get(channel).name
-          }. It might take up to 5 minutes to see the changes.`,
+          content: `✅ Threads enabled for ${interaction.guild.channels.cache.get(channel).name
+            }. It might take up to 5 minutes to see the changes.`,
           ephemeral: true,
         })
       } else if (interaction.options.getSubcommand() === 'remove') {
@@ -61,17 +60,15 @@ module.exports = {
 
         if (res.modifiedCount) {
           return interaction.reply({
-            content: `🗑 Threads disabled for ${
-              interaction.guild.channels.cache.get(channel).name
-            }. It might take up to 5 minutes to see the changes.`,
+            content: `🗑 Threads disabled for ${interaction.guild.channels.cache.get(channel).name
+              }. It might take up to 5 minutes to see the changes.`,
             ephemeral: true,
           })
         }
 
         return interaction.reply({
-          content: `❌  Threads are not enabled for ${
-            interaction.guild.channels.cache.get(channel).name
-          }`,
+          content: `❌  Threads are not enabled for ${interaction.guild.channels.cache.get(channel).name
+            }`,
           ephemeral: true,
         })
       }
