@@ -76,6 +76,10 @@ export const redditPluginInit = async (Hans: Client) => {
                     },
                     fields: [
                       {
+                        name: 'Offer link 🏷',
+                        value: `[To Offer](${result.data.url})`,
+                      },
+                      {
                         name: 'Reddit Link 🔗',
                         value: `[To Reddit](https://www.reddit.com${result.data.permalink})`,
                       },

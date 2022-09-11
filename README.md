@@ -14,7 +14,22 @@
 
 Discord Bot build with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), and lots of ❤️
 
+## 🔗 Invite hans to your server
+
+You can invite the bot [here 🔗](https://discord.com/api/oauth2/authorize?client_id=403523619222847488&permissions=0&scope=bot%20applications.commands). It's using the latest hans:nightly image with the latest features.
+
+## ❇️ Commands and Functionality
+
+The list of commands can be found [here 🔗](https://github.com/en3sis/hans/wiki/Commands) and,
+the list of functionalities can be found [here 🔗](https://github.com/en3sis/hans/wiki/Functionality)
+
+## 📜 Terms of Services & Privacy Policy
+
+The Terms of Services for using Hans can be found [here 🔗](https://github.com/en3sis/hans/wiki/Terms-of-Services-&-Privacy-Policy)
+
 ---
+
+# Developing Hans
 
 > 🪬 **NOTE**: Please consider opening an issue and PR for bugs, suggestions or new features.
 
@@ -47,7 +62,7 @@ All commands (under `src/commands`) are built with the [Slash Command](https://d
 
 All commands under the main folder are available globally (it will take a second to have them available) while the ones under `bots-playground` are guild specific and are instantly deployed, use this folder for debugging & development purposes.
 
-To deploy the commands, run `npm run slash`.
+To deploy the commands: `npm run slashDev` or `npm run slash` in production.
 
 > 🪬 **IMPORTANT**: Since the command process is isolated, make sure to export the mongodb connection string to your current shell, ex: `export MONGODB_CONNECTION="mongodb://hans:S3cret@localhost:27017"`
 

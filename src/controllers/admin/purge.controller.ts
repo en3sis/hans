@@ -21,15 +21,14 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
       limit: amount,
     })
 
-    await interaction.channel.bulkDelete(fetched)
-      .catch((err) => {
-        console.error(err)
+    await interaction.channel.bulkDelete(fetched).catch((err) => {
+      console.error(err)
 
-        return interaction.reply({
-          content: `💢 ${err}`,
-          ephemeral: true,
-        })
+      return interaction.reply({
+        content: `💢 ${err}`,
+        ephemeral: true,
       })
+    })
 
     await interaction.reply({ content: `🗑 Deleted ${amount} messages.`, ephemeral: true })
   } catch (error) {

@@ -15,7 +15,7 @@ export const insertConfiguration = async () => {
         folderName: '/bots-playground',
       },
       activities: {
-        type: 'WATCHING',
+        type: 4,
         name: 'you',
       },
       permaInvite: 'https://discord.gg/2tK7PhkZ',

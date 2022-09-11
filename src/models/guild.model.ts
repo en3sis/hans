@@ -51,7 +51,6 @@ export const guildMembersActivity = {
 }
 
 export const threadChannels = {
-  enabled: false,
   threadTitle: '',
   botMessageInThread: '',
   threadChannelId: '',

@@ -1,3 +1,5 @@
+import { ActivityType } from 'discord.js'
+
 export interface IBot extends BotConfigI {
   name: string
   website: string
@@ -11,7 +13,7 @@ export interface BotConfigI {
   }
   botStartAlertChannel: string
   activities: {
-    type: 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING'
+    type: Exclude<ActivityType, ActivityType.Custom>
     name: 'you'
   }
 }
