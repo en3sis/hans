@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import {
   subscribeToSubreddit,
-  unsubscribeToSubreddit
+  unsubscribeToSubreddit,
 } from '../controllers/plugins/reddit.controller'
 
 // TODO: Add a subcommand to list all the subreddits the guild is subscribed to

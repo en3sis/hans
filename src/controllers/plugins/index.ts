@@ -42,11 +42,13 @@ export const pluginsController = async (Hans: Client, message: Message) => {
       // PLUGINS: Threads
       if (threadChannels.length) {
         const channelHasThreads = threadChannels.filter((ele) => ele.enabled)
-        Promise.all(channelHasThreads.map(async (channel) => {
-          if ('enabled' in channel && channel.threadChannelId === message.channelId) {
-            await threadAutoCreate(message, channel)
-          }
-        }))
+        Promise.all(
+          channelHasThreads.map(async (channel) => {
+            if ('enabled' in channel && channel.threadChannelId === message.channelId) {
+              await threadAutoCreate(message, channel)
+            }
+          })
+        )
       }
     }
   } catch (error) {

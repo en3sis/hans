@@ -59,9 +59,13 @@ export const disallowCommentsInPublicThreads = async (message: Message) => {
   }
 }
 
-
 // Exports a function that will add a new thread to the database in guilds db, threadChannels document
-export const addThread = async (guildId: string, channelId: string, customTitle: string, botResponse: string) => {
+export const addThread = async (
+  guildId: string,
+  channelId: string,
+  customTitle: string,
+  botResponse: string
+) => {
   try {
     await updateOne({
       dataBase: process.env.MONGODB_DATABASE,
@@ -73,7 +77,7 @@ export const addThread = async (guildId: string, channelId: string, customTitle:
             enabled: true,
             threadTitle: customTitle,
             botMessageInThread: botResponse,
-            threadChannelId: channelId
+            threadChannelId: channelId,
           },
         },
       },
