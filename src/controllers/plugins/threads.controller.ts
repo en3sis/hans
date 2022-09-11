@@ -1,6 +1,7 @@
 import { Message, NewsChannel, StartThreadOptions, TextChannel, ThreadChannel } from 'discord.js'
 import { IThreadChannels } from '../../models/guild.model'
 import { isStaff } from '../../utils/permissions'
+import { updateOne } from '../mongodb/mongo-crud'
 
 export const threadAutoCreate = async (message: Message, config: IThreadChannels) => {
   try {
@@ -13,7 +14,6 @@ export const threadAutoCreate = async (message: Message, config: IThreadChannels
     if (!(channel instanceof TextChannel) && !(channel instanceof NewsChannel)) return
     if (message.hasThread) return
 
-    // const creationDate = message.createdAt.toISOString().slice(0, 10)
     const authorName =
       authorMember === null || authorMember.nickname === null
         ? authorUser.username
@@ -53,8 +53,54 @@ export const disallowCommentsInPublicThreads = async (message: Message) => {
     await message.delete()
     await message.channel
       .send('🪬 Only Owner & Staff can comment in public threads in this channel.')
-      .then((msg) => setTimeout(() => msg.delete(), 5000))
+      .then((msg: Message) => setTimeout(() => msg.delete(), 5000))
   } catch (error) {
     console.log('ERROR: disallowCommentsInPublicThreads: ', error)
+  }
+}
+
+
+// Exports a function that will add a new thread to the database in guilds db, threadChannels document
+export const addThread = async (guildId: string, channelId: string, customTitle: string, botResponse: string) => {
+  try {
+    await updateOne({
+      dataBase: process.env.MONGODB_DATABASE,
+      collection: 'guilds',
+      query: { _id: guildId },
+      data: {
+        $push: {
+          'plugins.threadChannels': {
+            enabled: true,
+            threadTitle: customTitle,
+            botMessageInThread: botResponse,
+            threadChannelId: channelId
+          },
+        },
+      },
+    })
+  } catch (error) {
+    console.log('ERROR: addThread(): ', error)
+  }
+}
+
+// Removes the subdocument from plugins, threadChannels array
+export const removeThread = async (guildId: string, channelId: string) => {
+  try {
+    const r = await updateOne({
+      dataBase: process.env.MONGODB_DATABASE,
+      collection: 'guilds',
+      query: { _id: guildId },
+      data: {
+        $pull: {
+          'plugins.threadChannels': {
+            threadChannelId: channelId,
+          },
+        },
+      },
+    })
+
+    return r
+  } catch (error) {
+    console.log('ERROR: removeThread(): ', error)
   }
 }
