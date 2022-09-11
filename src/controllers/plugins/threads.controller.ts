@@ -5,7 +5,7 @@ import { updateOne } from '../mongodb/mongo-crud'
 
 export const threadAutoCreate = async (message: Message, config: IThreadChannels) => {
   try {
-    if (!config.enabled) return
+    if (!config.threadChannelId) return
 
     const authorUser = message.author
     const authorMember = message.member
@@ -69,12 +69,11 @@ export const addThread = async (
   try {
     await updateOne({
       dataBase: 'guilds',
-      collection: 'guilds',
+      collection: 'global',
       query: { _id: guildId },
       data: {
         $push: {
           'plugins.threadChannels': {
-            enabled: true,
             threadTitle: customTitle,
             botMessageInThread: botResponse,
             threadChannelId: channelId,
@@ -90,9 +89,9 @@ export const addThread = async (
 // Removes the sub-document from plugins, threadChannels array
 export const removeThread = async (guildId: string, channelId: string) => {
   try {
-    const r = await updateOne({
+    const response = await updateOne({
       dataBase: 'guilds',
-      collection: 'guilds',
+      collection: 'global',
       query: { _id: guildId },
       data: {
         $pull: {
@@ -103,7 +102,7 @@ export const removeThread = async (guildId: string, channelId: string) => {
       },
     })
 
-    return r
+    return response
   } catch (error) {
     console.log('ERROR: removeThread(): ', error)
   }

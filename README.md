@@ -62,7 +62,7 @@ All commands (under `src/commands`) are built with the [Slash Command](https://d
 
 All commands under the main folder are available globally (it will take a second to have them available) while the ones under `bots-playground` are guild specific and are instantly deployed, use this folder for debugging & development purposes.
 
-To deploy the commands, run `npm run slash`.
+To deploy the commands: `npm run slashDev` or `npm run slash` in production.
 
 > 🪬 **IMPORTANT**: Since the command process is isolated, make sure to export the mongodb connection string to your current shell, ex: `export MONGODB_CONNECTION="mongodb://hans:S3cret@localhost:27017"`
 
