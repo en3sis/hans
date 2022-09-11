@@ -19,12 +19,9 @@ export const findOneGuild = async (
     if (guild !== null) {
       return guild
     } else {
-      const document = await mongoClient
-        .db(process.env.MONGODB_DATABASE || 'dev')
-        .collection('guilds')
-        .findOne({
-          _id: guildId,
-        })
+      const document = await mongoClient.db('guilds').collection('global').findOne({
+        _id: guildId,
+      })
 
       if (document) {
         setToCache(guildId, document, CACHE_TTL_GUILDS)
@@ -59,12 +56,9 @@ export const insertAllGuilds = async (Hans: Client) => {
       }))
     )
 
-    return await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev')
-      .collection('guilds')
-      .updateMany({}, guilds, {
-        upsert: true,
-      })
+    return await mongoClient.db('guilds').collection('global').updateMany({}, guilds, {
+      upsert: true,
+    })
   } catch (error) {
     console.error('❌ ERROR: insertAllGuilds(): ', error)
   }
@@ -86,8 +80,8 @@ export const insetOneGuild = async (guild: Guild) => {
     }
 
     await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev')
-      .collection('guilds')
+      .db('guilds')
+      .collection('global')
       .updateOne({ _id: guild.id }, { $set: guildData }, { upsert: true })
   } catch (error) {
     console.error('❌ ERROR: insetOneGuild: ', error)
@@ -101,8 +95,8 @@ export const insetOneGuild = async (guild: Guild) => {
 export const updateOneGuild = async (guild: Guild, update: Partial<GuildDocI>) => {
   try {
     await mongoClient
-      .db(process.env.MONGODB_DATABASE! || 'dev')
-      .collection('guilds')
+      .db('guilds')
+      .collection('global')
       .updateOne({ _id: guild.id }, { $set: update })
   } catch (error) {
     console.error('❌ ERROR: updateOneGuild', error)

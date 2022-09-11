@@ -68,7 +68,7 @@ export const addThread = async (
 ) => {
   try {
     await updateOne({
-      dataBase: process.env.MONGODB_DATABASE,
+      dataBase: 'guilds',
       collection: 'guilds',
       query: { _id: guildId },
       data: {
@@ -87,11 +87,11 @@ export const addThread = async (
   }
 }
 
-// Removes the subdocument from plugins, threadChannels array
+// Removes the sub-document from plugins, threadChannels array
 export const removeThread = async (guildId: string, channelId: string) => {
   try {
     const r = await updateOne({
-      dataBase: process.env.MONGODB_DATABASE,
+      dataBase: 'guilds',
       collection: 'guilds',
       query: { _id: guildId },
       data: {

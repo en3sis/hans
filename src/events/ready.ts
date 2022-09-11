@@ -30,8 +30,8 @@ module.exports = {
       Hans.user.setPresence({
         activities: [
           {
+            type: settings.activities?.type || 3,
             name: settings.activities?.name || 'you',
-            type: 4,
           },
         ],
       })
