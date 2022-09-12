@@ -8,6 +8,7 @@ export interface IBot extends BotConfigI {
 }
 
 export interface BotConfigI {
+  disabledCommands: string[]
   commandsDevGuild: {
     folderName: string
   }

@@ -74,14 +74,16 @@ export const redditPluginInit = async (Hans: Client) => {
                       {
                         name: 'Offer link 🏷',
                         value: `[To Offer](${result.data.url})`,
+                        inline: true,
                       },
                       {
                         name: 'Reddit Link 🔗',
                         value: `[To Reddit](https://www.reddit.com${result.data.permalink})`,
+                        inline: true,
                       },
                     ],
                     // timestamp: formatISO(result.data?.created) || formatISO(new Date()),
-                    color: 0xff9800,
+                    color: 0xff4500,
                     footer: {
                       text: `From /r/${document.name}`,
                       icon_url: 'https://i.imgur.com/sdO8tAw.png',

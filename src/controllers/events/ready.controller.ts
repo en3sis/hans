@@ -3,7 +3,7 @@ import { githubAPI } from '../../lib/axios'
 import { mongoClient } from '../../lib/mongodb-driver'
 import { getFromCache, setToCache } from '../../lib/node-cache'
 import { IBot } from '../../types'
-import { insertConfiguration } from '../admin/hans-config.controller'
+import { insertConfiguration } from '../bot/hans-config.controller'
 
 // Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
 export const getBotConfiguration = async (): Promise<IBot> => {
