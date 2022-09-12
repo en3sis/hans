@@ -189,3 +189,24 @@ export const unsubscribeToSubreddit = async (subreddit: string, guildId: string)
     console.error('❌ ERROR: unsubscribeToSubreddit(): ', error)
   }
 }
+
+// Export a function that checks all the subreddit the guild is subscribed to and returns an array with the names.
+export const getSubscribedSubreddits = async (guildId: string) => {
+  try {
+    const documents = (await find({
+      dataBase: 'plugins',
+      collection: 'reddit',
+      query: {},
+    })) as unknown as TRedditModel[]
+
+    const result = documents.map((ele) => {
+      const guild = ele.subscribedGuilds.find((ele) => ele.id === guildId)
+
+      if (guild) return ele.name
+    })
+
+    return result
+  } catch (error) {
+    console.error('❌ ERROR: getSubscribedSubreddits(): ', error)
+  }
+}

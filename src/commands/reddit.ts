@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import {
+  getSubscribedSubreddits,
   subscribeToSubreddit,
   unsubscribeToSubreddit,
 } from '../controllers/plugins/reddit.controller'
 
-// TODO: Add a subcommand to list all the subreddits the guild is subscribed to
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
   data: new SlashCommandBuilder()
@@ -33,6 +33,11 @@ module.exports = {
         .addStringOption((string) =>
           string.setName('subreddit').setDescription('The name of the Subreddit').setRequired(true),
         ),
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('subscriptions')
+        .setDescription('Get an list of all the subreddits the guild is subscribed to'),
     ),
   async execute(interaction: CommandInteraction) {
     try {
@@ -43,7 +48,18 @@ module.exports = {
         })
       if (!interaction.isChatInputCommand()) return
 
-      const subreddit = interaction.options.get('subreddit')!.value as string
+      if (interaction.options.getSubcommand() === 'subscriptions') {
+        const list = await getSubscribedSubreddits(interaction.guildId)
+
+        return interaction.reply({
+          content: `📜 Subscribed to r/${list.join(
+            ', ',
+          )}. New notifications will be send to the specific channel`,
+          ephemeral: true,
+        })
+      }
+
+      const subreddit = interaction.options.get('subreddit')?.value as string
 
       if (interaction.options.getSubcommand() === 'subscribe') {
         const channel = interaction.options.get('channel')!.value as string
