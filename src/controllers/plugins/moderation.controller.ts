@@ -120,10 +120,6 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
 
 // exports a function that enables sentiment analysis in the database
 export const enableSentimentAnalysis = async (interaction: CommandInteraction) => {
-  console.log(
-    '🚀 ~ file: moderation.controller.ts ~ line 128 ~ enableSentimentAnalysis ~ nteraction.options.get',
-    interaction.options.get('channel')?.value,
-  )
   await updateOneGuild(interaction.guild, {
     'plugins.moderation.sentimentAnalysis': {
       enabled: true,
