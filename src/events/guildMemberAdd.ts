@@ -10,7 +10,7 @@ module.exports = {
     try {
       const { enabled, ..._guildSettings } = await resolveGuildEvents(
         member.guild.id,
-        'guildMemberAdd'
+        'guildMemberAdd',
       )
 
       // Check it the guild has enabled the event
@@ -20,7 +20,7 @@ module.exports = {
       }
 
       const targetChannel = Hans.channels.cache.get(
-        _guildSettings.plugins.guildMembersActivity.logChannelId
+        _guildSettings.plugins.guildMembersActivity.logChannelId,
       ) as TextChannel
 
       if (!targetChannel) return

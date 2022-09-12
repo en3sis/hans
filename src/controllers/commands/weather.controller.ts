@@ -7,7 +7,7 @@ export const WeatherController = async (city: string) => {
     if (dataInCache) return dataInCache
 
     const { data } = await axios.get(
-      `https://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API!}&q=${city}&aqi=no`
+      `https://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API!}&q=${city}&aqi=no`,
     )
 
     setToCache(city, data, 60 * 5)

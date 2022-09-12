@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('This is a test command')
     .setDefaultMemberPermissions('0')
     .addStringOption((string) =>
-      string.setName('user').setDescription('@username or ID').setRequired(true)
+      string.setName('user').setDescription('@username or ID').setRequired(true),
     ),
   async execute(interaction: CommandInteraction) {
     return interaction.reply({

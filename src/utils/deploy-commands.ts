@@ -34,8 +34,8 @@ const registryCommands = async (guild: { folderName: string; id: string | null }
       if (response) {
         resolve(
           `✅ Successfully registered commands for ${folderName}, response: ${JSON.stringify(
-            response
-          )}`
+            response,
+          )}`,
         )
       } else {
         reject(`❌ Failed to register commands for ${folderName}`)
@@ -93,7 +93,7 @@ const fetchCommands = async ({
         folderName: config.commandsDevGuild.folderName,
         id: config.guildId,
       }).then((response) =>
-        console.log(`🏗  DEV: guildCommands(${config.commandsDevGuild.folderName}) => `, response)
+        console.log(`🏗  DEV: guildCommands(${config.commandsDevGuild.folderName}) => `, response),
       )
     } else {
       // Deploys globally, those commands will take some time to be deployed.

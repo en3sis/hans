@@ -8,11 +8,11 @@ module.exports = {
     .setName('weather')
     .setDescription('Displays weather information from a location')
     .addStringOption((string) =>
-      string.setName('city').setDescription('City name').setRequired(true)
+      string.setName('city').setDescription('City name').setRequired(true),
     ),
   async execute(interaction: CommandInteraction) {
     const { location, current } = await WeatherController(
-      interaction.options.get('city')!.value as string
+      interaction.options.get('city')!.value as string,
     )
 
     await interaction.reply({

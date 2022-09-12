@@ -1,5 +1,6 @@
 import { Client, Message, TextChannel } from 'discord.js'
 import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
+import { NO_INTENT } from '../utils/constants'
 
 module.exports = {
   name: 'messageUpdate',
@@ -9,12 +10,12 @@ module.exports = {
     try {
       const { enabled, ..._guildSettings } = await resolveGuildEvents(
         oldMessage.guildId,
-        'messageUpdate'
+        'messageUpdate',
       )
 
       if (!enabled) return
       const channel = Hans.channels.cache.get(
-        _guildSettings.plugins.moderation.messagesAlterations.logChannelId
+        _guildSettings.plugins.moderation.messagesAlterations?.logChannelId,
       ) as TextChannel
 
       if (oldMessage.content === newMessage.content || !channel) return
@@ -30,7 +31,7 @@ module.exports = {
             fields: [
               {
                 name: 'Before:',
-                value: oldMessage.content || 'Could not read',
+                value: oldMessage.content || NO_INTENT,
               },
               {
                 name: 'After:',

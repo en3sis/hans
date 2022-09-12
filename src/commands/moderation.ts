@@ -13,8 +13,8 @@ module.exports = {
         .setName('purge')
         .setDescription('Removes {n} number of messages')
         .addNumberOption((option) =>
-          option.setRequired(true).setName('n').setDescription('Amount of messages, max 100')
-        )
+          option.setRequired(true).setName('n').setDescription('Amount of messages, max 100'),
+        ),
     ),
   async execute(interaction: CommandInteraction) {
     try {

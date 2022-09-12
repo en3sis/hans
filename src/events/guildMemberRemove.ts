@@ -9,7 +9,7 @@ module.exports = {
     try {
       const { enabled, ..._guildSettings } = await resolveGuildEvents(
         member.guild.id,
-        'guildMemberRemove'
+        'guildMemberRemove',
       )
 
       // Check it the guild has enabled the event
@@ -19,7 +19,7 @@ module.exports = {
       }
 
       const targetChannel = Hans.channels.cache.get(
-        _guildSettings.plugins.guildMembersActivity.logChannelId
+        _guildSettings.plugins.guildMembersActivity.logChannelId,
       ) as TextChannel
 
       const msg = `<@${member.user.id}> has left the server. We'll be missing him/her`

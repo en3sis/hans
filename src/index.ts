@@ -50,7 +50,7 @@ const setCommandsNames = () => {
     if (process.env.ISDEV)
       console.info(
         '🗓  All commands registered:',
-        Hans.commands.map((ele) => ele.data.name).join(', ')
+        Hans.commands.map((ele) => ele.data.name).join(', '),
       )
   } catch (error) {
     console.error('❌ ERROR: setCommandsNames(): ', error)

@@ -15,7 +15,7 @@ module.exports = {
       console.log('🔍 Command Details: ', command)
       console.log(
         '🤖 Hans registered commands: ',
-        Hans.commands.map((ele) => ele.data.name).join(', ')
+        Hans.commands.map((ele) => ele.data.name).join(', '),
       )
     }
 

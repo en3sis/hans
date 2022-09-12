@@ -10,7 +10,7 @@ import { sentimentUrgencyTable } from '../../utils/colors'
 export const sentimentAnalysisFn = async (
   message: Message,
   notificationChannel: string,
-  reactToPositive: boolean
+  reactToPositive: boolean,
 ) => {
   const score = await sentimentAnalysis(message.content)
 
@@ -67,7 +67,7 @@ export const removeLinks = async (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowedLinks: string[],
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  allowedRoles: string[]
+  allowedRoles: string[],
 ) => {
   if (message.member.permissions.has(['Administrator', 'DeafenMembers'])) return
 

@@ -13,14 +13,14 @@ module.exports = {
         .setName('add')
         .setDescription('Add a new thread channel')
         .addStringOption((string) =>
-          string.setName('channel').setDescription('channel').setRequired(true)
+          string.setName('channel').setDescription('channel').setRequired(true),
         )
         .addStringOption((string) => string.setName('title').setDescription('Thread cutom title'))
         .addStringOption((string) =>
           string
             .setName('response')
-            .setDescription('Bot response message inside the thread (if instructions needed)')
-        )
+            .setDescription('Bot response message inside the thread (if instructions needed)'),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -30,8 +30,8 @@ module.exports = {
           string
             .setName('channel')
             .setDescription('Channel ID, to disable thread functionality')
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     ),
   async execute(interaction: CommandInteraction) {
     try {
@@ -51,8 +51,9 @@ module.exports = {
         await addThread(interaction.guildId, channel, title, response)
 
         return interaction.reply({
-          content: `✅ Threads enabled for ${interaction.guild.channels.cache.get(channel).name
-            }. It might take up to 5 minutes to see the changes.`,
+          content: `✅ Threads enabled for ${
+            interaction.guild.channels.cache.get(channel).name
+          }. It might take up to 5 minutes to see the changes.`,
           ephemeral: true,
         })
       } else if (interaction.options.getSubcommand() === 'remove') {
@@ -60,15 +61,17 @@ module.exports = {
 
         if (res.modifiedCount) {
           return interaction.reply({
-            content: `🗑 Threads disabled for ${interaction.guild.channels.cache.get(channel).name
-              }. It might take up to 5 minutes to see the changes.`,
+            content: `🗑 Threads disabled for ${
+              interaction.guild.channels.cache.get(channel).name
+            }. It might take up to 5 minutes to see the changes.`,
             ephemeral: true,
           })
         }
 
         return interaction.reply({
-          content: `❌  Threads are not enabled for ${interaction.guild.channels.cache.get(channel).name
-            }`,
+          content: `❌  Threads are not enabled for ${
+            interaction.guild.channels.cache.get(channel).name
+          }`,
           ephemeral: true,
         })
       }
