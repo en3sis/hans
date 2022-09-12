@@ -61,8 +61,13 @@ const fetchCommands = async ({
       const commandsFiles = fs
         .readdirSync(path.join(path.resolve(__dirname), `../commands${folderPath}`))
         .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
+      console.log(
+        '🚀 ~ file: deploy-commands.ts ~ line 64 ~ returnnewPromise ~ commandsFiles',
+        commandsFiles,
+      )
 
       for (const file of commandsFiles) {
+        console.log('🚀 ~ file: deploy-commands.ts ~ line 70 ~ returnnewPromise ~ file', file)
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const command = require(`${(path.resolve(__dirname), `../commands${folderPath}/${file}`)}`)
         commands.push(command.data.toJSON())

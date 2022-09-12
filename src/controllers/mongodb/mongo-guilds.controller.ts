@@ -92,7 +92,7 @@ export const insetOneGuild = async (guild: Guild) => {
  * Update a new guild into the database
  * @param guild Guild Object from discord.js
  */
-export const updateOneGuild = async (guild: Guild, update: Partial<GuildDocI>) => {
+export const updateOneGuild = async (guild: Guild, update: Partial<GuildDocI | object>) => {
   try {
     await mongoClient
       .db('guilds')

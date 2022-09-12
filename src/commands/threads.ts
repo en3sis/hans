@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { addThread, removeThread } from '../controllers/plugins/threads.controller'
+import { HAS_CACHE_MESSAGE } from '../utils/constants'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -53,7 +54,7 @@ module.exports = {
         return interaction.reply({
           content: `✅ Threads enabled for ${
             interaction.guild.channels.cache.get(channel).name
-          }. It might take up to 5 minutes to see the changes.`,
+          }. ${HAS_CACHE_MESSAGE}`,
           ephemeral: true,
         })
       } else if (interaction.options.getSubcommand() === 'remove') {
@@ -63,7 +64,7 @@ module.exports = {
           return interaction.reply({
             content: `🗑 Threads disabled for ${
               interaction.guild.channels.cache.get(channel).name
-            }. It might take up to 5 minutes to see the changes.`,
+            }. ${HAS_CACHE_MESSAGE}`,
             ephemeral: true,
           })
         }

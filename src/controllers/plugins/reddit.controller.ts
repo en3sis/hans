@@ -10,7 +10,7 @@ export const fetchSubReddit = async (subreddit: string) => {
     const { data } = await axios(`https://www.reddit.com/r/${subreddit}/new.json`)
 
     // TODO: Filter the ones with mod-tag, we only want the games publications
-    return data.data.children[0]
+    return data.data?.children[0]
   } catch (error) {
     console.error('❌ ERROR: reddit(): ', error)
   }
@@ -38,9 +38,10 @@ export const redditPluginInit = async (Hans: Client) => {
       documents.map(async (document: TRedditModel, i) => {
         try {
           const result = await fetchSubReddit(document.name)
+          if (!result.data) return
           // Ignore if the post is the same as the one in the database.
 
-          if (result.data.id === document.latestPostId) return
+          if (result.data?.id === document.latestPostId) return
 
           // Iterates over ele.subscribedGuilds and send the message to each guild
           document.subscribedGuilds.map(async (ele: TGuildAndChannel) => {
