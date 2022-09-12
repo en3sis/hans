@@ -87,7 +87,7 @@ const fetchCommands = async ({
     const config = await getBotConfiguration()
     if (!config) return console.log('MongoDB document with the configuration for Hans not found')
 
-    if (process.env.ISDEV) {
+    if (process.env.ISDEV === 'true') {
       // Deploys to your development guild, those commands will be deployed instantly
       await registryCommands({
         folderName: config.commandsDevGuild.folderName,
