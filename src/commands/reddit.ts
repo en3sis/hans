@@ -19,11 +19,8 @@ module.exports = {
         .addStringOption((string) =>
           string.setName('subreddit').setDescription('The name of the Subreddit').setRequired(true),
         )
-        .addStringOption((string) =>
-          string
-            .setName('channel')
-            .setDescription('Channel ID for the notifications')
-            .setRequired(true),
+        .addChannelOption((string) =>
+          string.setName('channel').setDescription('Channel for Hans to post.').setRequired(true),
         ),
     )
     .addSubcommand((subcommand) =>

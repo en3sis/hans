@@ -13,7 +13,7 @@ module.exports = {
       subcommand
         .setName('add')
         .setDescription('Add a new thread channel')
-        .addStringOption((string) =>
+        .addChannelOption((string) =>
           string.setName('channel').setDescription('channel').setRequired(true),
         )
         .addStringOption((string) => string.setName('title').setDescription('Thread cutom title'))
@@ -27,10 +27,10 @@ module.exports = {
       subcommand
         .setName('remove')
         .setDescription('Removes configuration for a thread channel')
-        .addStringOption((string) =>
+        .addChannelOption((string) =>
           string
             .setName('channel')
-            .setDescription('Channel ID, to disable thread functionality')
+            .setDescription('Channel to disable thread functionality')
             .setRequired(true),
         ),
     ),
