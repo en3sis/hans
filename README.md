@@ -10,20 +10,20 @@
 ![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/en3sis/hans/latest?label=production%20image&style=for-the-badge)
 ![Discord](https://img.shields.io/discord/904719402044383273?style=for-the-badge)
 
-# Hans - Discord Bot
+# 🤖 Hans - Discord Bot
 
 Discord Bot build with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), and lots of ❤️
 
-## 🔗 Invite hans to your server
+## Invite hans to your server
 
 You can invite the bot [here 🔗](https://discord.com/api/oauth2/authorize?client_id=403523619222847488&permissions=0&scope=bot%20applications.commands). It's using the latest hans:nightly image with the latest features.
 
-## ❇️ Commands and Functionality
+## Commands and Functionality
 
 The list of commands can be found [here 🔗](https://github.com/en3sis/hans/wiki/Commands) and,
 the list of functionalities can be found [here 🔗](https://github.com/en3sis/hans/wiki/Functionality)
 
-## 📜 Terms of Services & Privacy Policy
+## Terms of Services & Privacy Policy
 
 The Terms of Services for using Hans can be found [here 🔗](https://github.com/en3sis/hans/wiki/Terms-of-Services-&-Privacy-Policy)
 
