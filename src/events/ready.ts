@@ -1,5 +1,5 @@
 import { Client } from 'discord.js'
-import { insertConfiguration } from '../controllers/admin/hans-config.controller'
+import { insertConfiguration } from '../controllers/bot/hans-config.controller'
 import { getBotConfiguration, notifyPulse } from '../controllers/events/ready.controller'
 import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
 
