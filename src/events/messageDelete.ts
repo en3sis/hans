@@ -1,5 +1,6 @@
 import { Client, Message, TextChannel } from 'discord.js'
 import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
+import { NO_INTENT } from '../utils/constants'
 
 module.exports = {
   name: 'messageDelete',
@@ -9,12 +10,12 @@ module.exports = {
     try {
       const { enabled, ..._guildSettings } = await resolveGuildEvents(
         message.guild.id,
-        'messageDelete'
+        'messageDelete',
       )
 
       if (!enabled) return
       const channel = Hans.channels.cache.get(
-        _guildSettings.plugins.moderation.messagesAlterations.logChannelId
+        _guildSettings.plugins.moderation.messagesAlterations?.logChannelId,
       ) as TextChannel
 
       if (!channel) return
@@ -23,18 +24,18 @@ module.exports = {
         embeds: [
           {
             author: {
-              name: `${message.author?.username || 'Could not read'}#${
-                message.author?.discriminator || 'Could not read'
+              name: `${message.author?.username || NO_INTENT}#${
+                message.author?.discriminator || NO_INTENT
               }`,
               icon_url: message.author?.displayAvatarURL() || undefined,
             },
             description: `Message deleted in <#${message.channel.id}> by <@${
-              message.author?.id || 'Could not read'
+              message.author?.id || NO_INTENT
             }> [Jump to message](${message.url}) `,
             fields: [
               {
                 name: 'Deleted message:',
-                value: message.content! || 'Could not read',
+                value: message.content! || NO_INTENT,
               },
             ],
             color: 0xa8102d,

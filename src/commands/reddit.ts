@@ -17,22 +17,22 @@ module.exports = {
         .setName('subscribe')
         .setDescription('Subscribe to a subreddit')
         .addStringOption((string) =>
-          string.setName('subreddit').setDescription('The name of the Subreddit').setRequired(true)
+          string.setName('subreddit').setDescription('The name of the Subreddit').setRequired(true),
         )
         .addStringOption((string) =>
           string
             .setName('channel')
             .setDescription('Channel ID for the notifications')
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('unsubscribe')
         .setDescription('Unsubscribe from a subreddit')
         .addStringOption((string) =>
-          string.setName('subreddit').setDescription('The name of the Subreddit').setRequired(true)
-        )
+          string.setName('subreddit').setDescription('The name of the Subreddit').setRequired(true),
+        ),
     ),
   async execute(interaction: CommandInteraction) {
     try {

@@ -8,7 +8,7 @@ export const sentimentAnalysis = async (text: string) => {
   if (process.env.ISDEV) {
     console.dir(
       `🧪 DEV: Sentiment result:`,
-      text.length ? text : 'No result, probably no message intend'
+      text.length ? text : 'No result, probably no message intend',
     )
   }
 

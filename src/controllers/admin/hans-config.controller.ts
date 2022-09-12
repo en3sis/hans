@@ -29,7 +29,7 @@ export const insertConfiguration = async () => {
       {
         $setOnInsert: config,
       },
-      { upsert: true }
+      { upsert: true },
     )
 
     doc.modifiedCount > 0 ?? console.log(`📥  Initial configuration inserted`)

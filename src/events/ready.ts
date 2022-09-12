@@ -12,7 +12,7 @@ module.exports = {
       console.log(`👾  ${Hans.user.username} is ready`)
       console.log(
         `🔗  Bot invite link: https://discord.com/api/oauth2/authorize?client_id=${process.env
-          .DISCORD_CLIENT_ID!}&permissions=0&scope=bot%20applications.commands`
+          .DISCORD_CLIENT_ID!}&permissions=0&scope=bot%20applications.commands`,
       )
       // If no configuration is found, insert one
       await insertConfiguration()

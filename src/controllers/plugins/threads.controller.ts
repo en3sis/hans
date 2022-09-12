@@ -64,7 +64,7 @@ export const addThread = async (
   guildId: string,
   channelId: string,
   customTitle: string,
-  botResponse: string
+  botResponse: string,
 ) => {
   try {
     await updateOne({

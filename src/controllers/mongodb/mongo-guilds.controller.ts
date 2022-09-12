@@ -11,7 +11,7 @@ import { CACHE_TTL_GUILDS } from '../../utils/constants'
  * @returns guild document
  */
 export const findOneGuild = async (
-  guildId: string
+  guildId: string,
 ): Promise<GuildI | { status: number; message: string }> => {
   try {
     const guild = getFromCache(guildId)
@@ -53,7 +53,7 @@ export const insertAllGuilds = async (Hans: Client) => {
         date: new Date(),
         premium: false,
         ...documentDetails,
-      }))
+      })),
     )
 
     return await mongoClient.db('guilds').collection('global').updateMany({}, guilds, {

@@ -8,7 +8,7 @@ module.exports = {
     .setName('about')
     .setDescription('Display information about a given user')
     .addUserOption((option) =>
-      option.setName('user').setDescription('@username or ID').setRequired(true)
+      option.setName('user').setDescription('@username or ID').setRequired(true),
     ),
   async execute(interaction: CommandInteraction) {
     try {

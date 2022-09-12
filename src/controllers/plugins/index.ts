@@ -23,13 +23,13 @@ export const pluginsController = async (Hans: Client, message: Message) => {
             await sentimentAnalysisFn(
               message,
               sentimentAnalysis.logChannelId,
-              sentimentAnalysis.reactToPositive
+              sentimentAnalysis.reactToPositive,
             )
           } else if (sentimentAnalysis.watchSpecificChannels.includes(message.channelId)) {
             await sentimentAnalysisFn(
               message,
               sentimentAnalysis.logChannelId,
-              sentimentAnalysis.reactToPositive
+              sentimentAnalysis.reactToPositive,
             )
           }
         }
@@ -44,10 +44,10 @@ export const pluginsController = async (Hans: Client, message: Message) => {
         const channelHasThreads = threadChannels.filter((ele) => ele.threadChannelId)
         Promise.all(
           channelHasThreads.map(async (channel) => {
-            if ('enabled' in channel && channel.threadChannelId === message.channelId) {
+            if (channel.threadChannelId === message.channelId) {
               await threadAutoCreate(message, channel)
             }
-          })
+          }),
         )
       }
     }

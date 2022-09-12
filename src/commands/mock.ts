@@ -7,7 +7,7 @@ module.exports = {
     .setName('mock')
     .setDescription('MoCks YoUr TeXt')
     .addStringOption((string) =>
-      string.setName('text').setDescription('Your sentence to be mocked').setRequired(true)
+      string.setName('text').setDescription('Your sentence to be mocked').setRequired(true),
     ),
   async execute(interaction: CommandInteraction) {
     const text = interaction.options.get('text')!.value as string
@@ -16,7 +16,7 @@ module.exports = {
       text
         .split('')
         .map((letter, i) => (i % 2 == 0 ? letter.toUpperCase() : letter.toLowerCase()))
-        .join('')
+        .join(''),
     )
     await interaction.channel.send('<:mock:1016362569088376924>')
 

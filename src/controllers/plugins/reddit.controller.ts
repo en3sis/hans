@@ -53,10 +53,6 @@ export const redditPluginInit = async (Hans: Client) => {
               const guild = Hans.guilds.cache.get(ele.id)
               const channel = guild?.channels.cache.get(ele.channelId) as TextChannel
 
-              console.log(
-                '🚀 ~ file: reddit.controller.ts ~ line 71 ~ document.subscribedGuilds.map ~ esult.data?.thumbnail',
-                result.data?.thumbnail
-              )
               await channel.send({
                 embeds: [
                   {
@@ -97,7 +93,7 @@ export const redditPluginInit = async (Hans: Client) => {
               if (process.env.ISDEV)
                 console.log(
                   '🟢 INFO: reddit(): ',
-                  `${result.data.title} was sent to the guilds ${ele.channelId}`
+                  `${result.data.title} was sent to the guilds ${ele.channelId}`,
                 )
             } catch (error) {
               console.log('❌ ERROR: reddit()-> subscribedGuilds: ', error)
@@ -121,7 +117,7 @@ export const redditPluginInit = async (Hans: Client) => {
         } catch (error) {
           console.log('❌ ERROR: reddit()-> map: ', error)
         }
-      })
+      }),
     )
 
     return data
@@ -134,7 +130,7 @@ export const redditPluginInit = async (Hans: Client) => {
 export const subscribeToSubreddit = async (
   subreddit: string,
   guildId: string,
-  channelId: string
+  channelId: string,
 ) => {
   try {
     const document = (await find({
