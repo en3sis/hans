@@ -14,18 +14,12 @@
 
 Discord Bot build with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), and lots of ❤️
 
-## Invite hans to your server
+### Invite hans to your server
 
-You can invite the bot [here 🔗](https://discord.com/api/oauth2/authorize?client_id=403523619222847488&permissions=0&scope=bot%20applications.commands). It's using the latest hans:nightly image with the latest features.
-
-## Commands and Functionality
+You can invite the bot [here 🔗](https://discord.com/api/oauth2/authorize?client_id=403523619222847488&permissions=0&scope=bot%20applications.commands). It's using the latest `hans:nightly` image with the latest features.
 
 The list of commands can be found [here 🔗](https://github.com/en3sis/hans/wiki/Commands) and,
 the list of functionalities can be found [here 🔗](https://github.com/en3sis/hans/wiki/Functionality)
-
-## Terms of Services & Privacy Policy
-
-The Terms of Services for using Hans can be found [here 🔗](https://github.com/en3sis/hans/wiki/Terms-of-Services-&-Privacy-Policy)
 
 ---
 

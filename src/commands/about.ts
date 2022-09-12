@@ -12,7 +12,14 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
-      const user = interaction.options.get('user')!.value as string
+      const user = interaction.options.get('user')?.value as string
+
+      if (!user)
+        interaction.reply({
+          content: 'Please provide a user',
+          ephemeral: true,
+        })
+
       let _member: string
 
       if (/<@!?\d+>/g.test(user)) {

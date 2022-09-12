@@ -19,6 +19,7 @@ export const pluginsController = async (Hans: Client, message: Message) => {
 
         // sentimentAnalysis plugin
         if (sentimentAnalysis.enabled && sentimentAnalysis.logChannelId) {
+          // TODO: implement for specific channels & maybe roles only.
           if (sentimentAnalysis.watchAllChannels) {
             await sentimentAnalysisFn(
               message,

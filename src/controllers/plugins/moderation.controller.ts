@@ -1,6 +1,8 @@
-import { Message, TextChannel } from 'discord.js'
-import { sentimentAnalysis } from '../../lib/sentiment'
+import { CommandInteraction, Message, TextChannel } from 'discord.js'
 import { sentimentUrgencyTable } from '../../utils/colors'
+import { HAS_CACHE_MESSAGE } from '../../utils/constants'
+import { updateOneGuild } from '../mongodb/mongo-guilds.controller'
+import { sentimentAnalysis } from './../../lib/sentiment'
 
 /**
  * @param message Message
@@ -77,5 +79,83 @@ export const removeLinks = async (
 
   if (message.content.match(regex) !== null) {
     await message.delete()
+  }
+}
+
+export const purgeMessages = async (interaction: CommandInteraction) => {
+  try {
+    const amount = interaction.options.get('n').value as number
+
+    if (!interaction.memberPermissions.has(['Administrator']))
+      return interaction.reply({
+        content: 'You do not have permission to use this command',
+        ephemeral: true,
+      })
+
+    if (amount > 100) {
+      return interaction.reply({
+        content: 'You can only delete up to 100 messages at once.',
+        ephemeral: true,
+      })
+    }
+
+    const fetched = await interaction.channel.messages.fetch({
+      limit: amount,
+    })
+
+    await interaction.channel.bulkDelete(fetched).catch((err) => {
+      console.error(err)
+
+      return interaction.reply({
+        content: `💢 ${err}`,
+        ephemeral: true,
+      })
+    })
+
+    await interaction.reply({ content: `🗑 Deleted ${amount} messages.`, ephemeral: true })
+  } catch (error) {
+    interaction.reply(`Couldn't delete messages because of: ${error}`)
+  }
+}
+
+// exports a function that enables sentiment analysis in the database
+export const enableSentimentAnalysis = async (interaction: CommandInteraction) => {
+  await updateOneGuild(interaction.guild, {
+    'plugins.moderation.sentimentAnalysis': {
+      enabled: true,
+      watchAllChannels: true,
+      logChannelId: interaction.options.get('channel')?.value as string,
+    },
+  })
+
+  return interaction.reply({
+    content: `Sentiment analysis enabled! ${HAS_CACHE_MESSAGE}`,
+    ephemeral: true,
+  })
+}
+
+export const toggleSentimentAnalysis = async (interaction: CommandInteraction) => {
+  try {
+    const status = interaction.options.get('status')?.value
+
+    if (status) {
+      await updateOneGuild(interaction.guild, {
+        'plugins.moderation.sentimentAnalysis.enabled': true,
+      })
+    } else {
+      await updateOneGuild(interaction.guild, {
+        'plugins.moderation.sentimentAnalysis.enabled': false,
+      })
+    }
+
+    return interaction.reply({
+      content: `Sentiment analysis ${status ? 'enabled' : 'disabled'}! ${HAS_CACHE_MESSAGE}`,
+      ephemeral: true,
+    })
+  } catch (error) {
+    return interaction.reply({
+      content: `💢 ${error}`,
+      ephemeral: true,
+    })
   }
 }
