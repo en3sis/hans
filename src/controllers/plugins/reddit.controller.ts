@@ -1,7 +1,10 @@
 import axios from 'axios'
 import { Client, TextChannel } from 'discord.js'
+import floor from 'lodash/floor'
+import words from 'lodash/words'
 import { RedditModel, TGuildAndChannel, TRedditModel } from '../../models/plugins/reddit.model'
 import { sleep } from '../../utils/dates'
+import { RedditTitleGroup } from '../../utils/regex'
 import { find, insertOne, updateOne } from '../mongodb/mongo-crud'
 
 // exports a function that search a subreddit latest post vía the reddit API
@@ -42,6 +45,7 @@ export const redditPluginInit = async (Hans: Client) => {
           // Ignore if the post is the same as the one in the database.
 
           if (result.data?.id === document.latestPostId) return
+          if (compareTitles(result.data?.title, document.lastPostTitle)) return
 
           // Iterates over ele.subscribedGuilds and send the message to each guild
           document.subscribedGuilds.map(async (ele: TGuildAndChannel) => {
@@ -109,7 +113,7 @@ export const redditPluginInit = async (Hans: Client) => {
               dataBase: 'plugins',
               collection: 'reddit',
               query: { name: document.name },
-              data: { $set: { latestPostId: result.data.id } },
+              data: { $set: { latestPostId: result.data.id, lastPostTitle: result.data.title } },
             })
           }
 
@@ -149,6 +153,7 @@ export const subscribeToSubreddit = async (
         data: {
           name: subreddit,
           latestPostId: '',
+          lastPostTitle: '',
           subscribedGuilds: [{ id: guildId, channelId }],
         },
       })
@@ -210,4 +215,30 @@ export const getSubscribedSubreddits = async (guildId: string) => {
   } catch (error) {
     console.error('❌ ERROR: getSubscribedSubreddits(): ', error)
   }
+}
+
+export const compareTitles = (title1: string, title2: string) => {
+  // Split the titles into arrays
+  const title1Array = words(cleanTitle(title1))
+  const title2Array = words(cleanTitle(title2))
+
+  if (title1 === title2) return 1
+
+  let matches = 0
+
+  for (let i = 0; i < title1Array.length; i++) {
+    for (let j = 0; j < title2Array.length; j++) {
+      if (title1Array[i] === title2Array[j]) {
+        matches++
+      }
+    }
+  }
+
+  // Return the number of matches divided by the length of the first array
+  const match = floor(matches / title1Array.length, 2) * 100
+  return match >= 50
+}
+
+const cleanTitle = (title: string) => {
+  return title.replace(RedditTitleGroup, '').toLocaleLowerCase()
 }

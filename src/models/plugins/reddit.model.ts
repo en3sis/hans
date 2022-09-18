@@ -9,6 +9,7 @@ export const RedditModel = {
   name: 'javascript',
   description: 'The programming language of the web',
   latestPostId: '',
+  lastPostTitle: '',
   subscribedGuilds: [
     {
       id: '',
