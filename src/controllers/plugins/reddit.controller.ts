@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Client, TextChannel } from 'discord.js'
 import floor from 'lodash/floor'
+import truncate from 'lodash/truncate'
 import words from 'lodash/words'
 import { RedditModel, TGuildAndChannel, TRedditModel } from '../../models/plugins/reddit.model'
 import { sleep } from '../../utils/dates'
@@ -45,7 +46,8 @@ export const redditPluginInit = async (Hans: Client) => {
           // Ignore if the post is the same as the one in the database.
 
           if (result.data?.id === document.latestPostId) return
-          if (compareTitles(result.data?.title, document.lastPostTitle)) return
+          if (document?.lastPostTitle && compareTitles(result.data?.title, document?.lastPostTitle))
+            return
 
           // Iterates over ele.subscribedGuilds and send the message to each guild
           document.subscribedGuilds.map(async (ele: TGuildAndChannel) => {
@@ -58,16 +60,37 @@ export const redditPluginInit = async (Hans: Client) => {
               const guild = Hans.guilds.cache.get(ele.id)
               const channel = guild?.channels.cache.get(ele.channelId) as TextChannel
 
+              const fields = result.data?.url
+                ? [
+                    {
+                      name: 'External link 🏷',
+                      value: `[To destination](${result.data?.url})`,
+                      inline: true,
+                    },
+                    {
+                      name: 'Reddit post 📝',
+                      value: `[To Reddit](https://www.reddit.com${result.data?.permalink})`,
+                      inline: true,
+                    },
+                  ]
+                : [
+                    {
+                      name: 'Reddit post 📝',
+                      value: `[To Reddit](https://www.reddit.com${result.data?.permalink})`,
+                      inline: true,
+                    },
+                  ]
+
               await channel.send({
                 embeds: [
                   {
                     author: {
-                      name: result.data.author,
-                      url: result.data.url,
+                      name: result.data?.author,
+                      url: result.data?.url,
                     },
-                    title: result.data.title,
+                    title: result.data?.title,
                     description:
-                      result.data.selftext ||
+                      truncate(result.data?.selftext, { length: 100, omission: '...' }) ||
                       document.description ||
                       `No description was added to the post.`,
                     thumbnail: {
@@ -75,22 +98,11 @@ export const redditPluginInit = async (Hans: Client) => {
                         ? result.data?.thumbnail
                         : 'https://cdn.discordapp.com/attachments/626034007087513601/1014802216831438879/hans-fff.png',
                     },
-                    fields: [
-                      {
-                        name: 'Offer link 🏷',
-                        value: `[To Offer](${result.data.url})`,
-                        inline: true,
-                      },
-                      {
-                        name: 'Reddit Link 🔗',
-                        value: `[To Reddit](https://www.reddit.com${result.data.permalink})`,
-                        inline: true,
-                      },
-                    ],
+                    fields: fields,
                     // timestamp: formatISO(result.data?.created) || formatISO(new Date()),
                     color: 0xff4500,
                     footer: {
-                      text: `From /r/${document.name}`,
+                      text: `From /r/${document?.name}`,
                       icon_url: 'https://i.imgur.com/sdO8tAw.png',
                     },
                   },
@@ -100,7 +112,7 @@ export const redditPluginInit = async (Hans: Client) => {
               if (process.env.ISDEV)
                 console.log(
                   '🟢 INFO: reddit(): ',
-                  `${result.data.title} was sent to the guilds ${ele.channelId}`,
+                  `${result.data?.title} was sent to the guilds ${ele.channelId}`,
                 )
             } catch (error) {
               console.log('❌ ERROR: reddit()-> subscribedGuilds: ', error)
@@ -108,12 +120,12 @@ export const redditPluginInit = async (Hans: Client) => {
           })
 
           // If the post is different, update the database with the new post.
-          if (result?.data.id !== null) {
+          if (result.data?.id !== null) {
             await updateOne({
               dataBase: 'plugins',
               collection: 'reddit',
               query: { name: document.name },
-              data: { $set: { latestPostId: result.data.id, lastPostTitle: result.data.title } },
+              data: { $set: { latestPostId: result.data?.id, lastPostTitle: result.data?.title } },
             })
           }
 
@@ -236,7 +248,7 @@ export const compareTitles = (title1: string, title2: string) => {
 
   // Return the number of matches divided by the length of the first array
   const match = floor(matches / title1Array.length, 2) * 100
-  return match >= 50
+  return match >= 60
 }
 
 const cleanTitle = (title: string) => {
