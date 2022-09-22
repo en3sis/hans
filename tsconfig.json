@@ -18,6 +18,6 @@
     "types": []
   },
   "lib": ["esnext"],
-  "typeRoots": ["./src"],
+  "typeRoots": ["./src", "./node_modules/@types"],
   "exclude": ["node_modules", "build/", "tests/**"]
 }

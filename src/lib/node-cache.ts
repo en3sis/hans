@@ -1,13 +1,17 @@
 import NodeCache from 'node-cache'
 
 const CACHE = new NodeCache()
-// Creates a function for adding an item to the cache that has a ttl of 3 minutes
-export const setToCache = (key: string, value: string | object, ttl = 180) => {
+/**
+ * @param key String of the cached
+ * @param value  Value to be cached
+ * @param ttl time to live in minutes
+ */
+export const setToCache = (key: string, value: string | object, ttl = 3) => {
   if (typeof value === 'string') {
-    CACHE.set(key, value, ttl)
+    CACHE.set(key, value, ttl * 60)
   }
 
-  CACHE.set(key, JSON.stringify(value), ttl)
+  return CACHE.set(key, JSON.stringify(value), ttl * 60)
 }
 
 // Creates a function for getting an item from the cache
