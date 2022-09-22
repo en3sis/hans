@@ -3,7 +3,9 @@ import { Client, TextChannel } from 'discord.js'
 import floor from 'lodash/floor'
 import truncate from 'lodash/truncate'
 import words from 'lodash/words'
+import { getFromCache, setToCache } from '../../lib/node-cache'
 import { RedditModel, TGuildAndChannel, TRedditModel } from '../../models/plugins/reddit.model'
+import { base64 } from '../../utils/crypto'
 import { sleep } from '../../utils/dates'
 import { RedditTitleGroup } from '../../utils/regex'
 import { find, insertOne, updateOne } from '../mongodb/mongo-crud'
@@ -46,7 +48,7 @@ export const redditPluginInit = async (Hans: Client) => {
           // Ignore if the post is the same as the one in the database.
 
           if (result.data?.id === document.latestPostId) return
-          if (document?.lastPostTitle && compareTitles(result.data?.title, document?.lastPostTitle))
+          if (document?.lastPostTitle && areSameTitle(result.data?.title, document?.lastPostTitle))
             return
 
           // Iterates over ele.subscribedGuilds and send the message to each guild
@@ -119,15 +121,16 @@ export const redditPluginInit = async (Hans: Client) => {
             }
           })
 
-          // If the post is different, update the database with the new post.
-          if (result.data?.id !== null) {
-            await updateOne({
-              dataBase: 'plugins',
-              collection: 'reddit',
-              query: { name: document.name },
-              data: { $set: { latestPostId: result.data?.id, lastPostTitle: result.data?.title } },
-            })
-          }
+          await updateOne({
+            dataBase: 'plugins',
+            collection: 'reddit',
+            query: { name: document.name },
+            data: { $set: { latestPostId: result.data?.id, lastPostTitle: result.data?.title } },
+          })
+
+          const encodeTitle = base64(cleanTitle(result.data.title))
+
+          setToCache(encodeTitle, {}, 1440)
 
           // Avoid rate limit
           await sleep(2000 * i + 1)
@@ -229,12 +232,15 @@ export const getSubscribedSubreddits = async (guildId: string) => {
   }
 }
 
-export const compareTitles = (title1: string, title2: string) => {
+export const areSameTitle = (title1: string, title2: string) => {
+  // Check in cache
+  const title1Cache = getFromCache(base64(cleanTitle(title1)))
+  if (title1Cache) return true
+  if (title1 === title2) return true
+
   // Split the titles into arrays
   const title1Array = words(cleanTitle(title1))
   const title2Array = words(cleanTitle(title2))
-
-  if (title1 === title2) return 1
 
   let matches = 0
 
@@ -246,11 +252,17 @@ export const compareTitles = (title1: string, title2: string) => {
     }
   }
 
+  const longestArray = title1Array.length > title2Array.length ? title1Array : title2Array
   // Return the number of matches divided by the length of the first array
-  const match = floor(matches / title1Array.length, 2) * 100
+  const match = floor(matches / longestArray.length, 2) * 100
   return match >= 60
 }
 
-const cleanTitle = (title: string) => {
-  return title.replace(RedditTitleGroup, '').toLocaleLowerCase()
+// Usually post have 'groups' in the title, this function removes them.
+export const cleanTitle = (title: string) => {
+  return title
+    .replace(RedditTitleGroup, '')
+    .replace(/\((.*?)\)/g, '')
+    .toLocaleLowerCase()
+    .trim()
 }

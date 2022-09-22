@@ -1,6 +1,7 @@
-import { Buffer } from 'node:buffer'
 import { mongoClient } from '../../lib/mongodb-driver'
 import { getFromCache, setToCache } from '../../lib/node-cache'
+import { CACHE_TTL } from '../../utils/constants'
+import { base64 } from '../../utils/crypto'
 
 type TMongoCRUD = {
   dataBase: string
@@ -11,43 +12,35 @@ type TMongoCRUD = {
   ttl?: number
 }
 
-export const findOne = async ({ dataBase, collection, query, cache, ttl }: TMongoCRUD) => {
+export const find = async ({ dataBase, collection, query, cache, ttl = CACHE_TTL }: TMongoCRUD) => {
   try {
-    const b = Buffer.from(JSON.stringify({ find: true })).toString('base64')
-    if (cache) {
-      const cached = getFromCache(JSON.stringify(b))
-
-      if (cached !== null) {
-        return cached
-      }
-    } else {
-      const document = await mongoClient.db(dataBase).collection(collection).findOne(query)
-
-      setToCache(b, document, ttl)
-      return document
-    }
-  } catch (error) {
-    console.error('❌ ERROR: findOne(): ', error)
-  }
-}
-
-export const find = async ({ dataBase, collection, query, cache, ttl }: TMongoCRUD) => {
-  try {
-    const b = Buffer.from(JSON.stringify({ find: true })).toString('base64')
-    if (cache) {
-      const cached = getFromCache(JSON.stringify(b))
+    const encoded = base64(query)
+    if (cache && query) {
+      const cached = getFromCache(encoded)
 
       if (cached !== null) {
         return cached
       } else {
         const document = await mongoClient.db(dataBase).collection(collection).find(query).toArray()
 
-        setToCache(b, document, ttl)
+        if (document.length === 1) {
+          // Acts like findOne
+          setToCache(encoded, document[0], ttl)
+          return document[0]
+        } else {
+          setToCache(encoded, document, ttl)
+          return document
+        }
       }
     } else {
       const document = await mongoClient.db(dataBase).collection(collection).find(query).toArray()
 
-      return document
+      if (document.length === 1) {
+        // Acts like findOne
+        return document[0]
+      } else {
+        return document
+      }
     }
   } catch (error) {
     console.error('❌ ERROR: findOne(): ', error)

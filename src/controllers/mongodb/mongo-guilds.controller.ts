@@ -3,10 +3,10 @@ import { ObjectId } from 'mongodb'
 import { mongoClient } from '../../lib/mongodb-driver'
 import { getFromCache, setToCache } from '../../lib/node-cache'
 import documentDetails, { GuildDocI, GuildI } from '../../models/guild.model'
-import { CACHE_TTL_GUILDS } from '../../utils/constants'
+import { CACHE_TTL } from '../../utils/constants'
 
 /**
- * Fetches guild in the DB, if found, sets it as a cache for CACHE_TTL_GUILDS and returns it.
+ * Fetches guild in the DB, if found, sets it as a cache for CACHE_TTL and returns it.
  * @param guildId string with the Guild ID
  * @returns guild document
  */
@@ -24,7 +24,7 @@ export const findOneGuild = async (
       })
 
       if (document) {
-        setToCache(guildId, document, CACHE_TTL_GUILDS)
+        setToCache(guildId, document, CACHE_TTL)
 
         return document as unknown as GuildI
       } else {

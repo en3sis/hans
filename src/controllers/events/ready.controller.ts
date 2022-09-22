@@ -1,9 +1,9 @@
 import { Client, TextChannel } from 'discord.js'
 import { githubAPI } from '../../lib/axios'
-import { mongoClient } from '../../lib/mongodb-driver'
 import { getFromCache, setToCache } from '../../lib/node-cache'
 import { IBot } from '../../types'
 import { insertConfiguration } from '../bot/hans-config.controller'
+import { find } from '../mongodb/mongo-crud'
 
 // Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
 export const getBotConfiguration = async (): Promise<IBot> => {
@@ -13,7 +13,11 @@ export const getBotConfiguration = async (): Promise<IBot> => {
       const configuration = getFromCache('config')
       if (configuration) return configuration
 
-      const config = await mongoClient.db('hans').collection('config').findOne({ name: 'Hans' })
+      const config = await find({
+        dataBase: 'hans',
+        collection: 'config',
+        query: { name: 'Hans' },
+      })
 
       if (config) {
         setToCache('config', config)
