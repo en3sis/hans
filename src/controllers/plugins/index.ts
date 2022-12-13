@@ -1,5 +1,6 @@
 import { Client, Message } from 'discord.js'
 import { findOneGuild, insetOneGuild } from '../mongodb/mongo-guilds.controller'
+import { gpt3Controller } from './chat-gpt3.controller'
 import { removeLinks, sentimentAnalysisFn } from './moderation.controller'
 import { threadAutoCreate } from './threads.controller'
 
@@ -50,6 +51,12 @@ export const pluginsController = async (Hans: Client, message: Message) => {
             }
           }),
         )
+      }
+
+      // PLUGINS: GPT-3 (AI)
+      // TODO: Move to plugins controller
+      if (document.premium) {
+        await gpt3Controller(Hans, message)
       }
     }
   } catch (error) {
