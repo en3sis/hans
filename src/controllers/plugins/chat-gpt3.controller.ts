@@ -7,8 +7,9 @@ export const gpt3Controller = async (Hans: Client, message: Message) => {
   if (user && user.id === Hans.user?.id) {
     const response = await OpenAiAPI({
       input: message.content.replace(user.toString(), ''),
-      predicate: 'Hans:',
+      predicate: '',
       model: 'davinci',
+      version: '003',
       max_tokens: 100,
     })
 
