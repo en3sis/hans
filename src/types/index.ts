@@ -2,6 +2,7 @@ import { ActivityType } from 'discord.js'
 
 export interface IBot extends BotConfigI {
   name: string
+  discordId: string
   website: string
   guildId: string
   permaInvite: string

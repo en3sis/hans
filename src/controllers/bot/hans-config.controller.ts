@@ -9,6 +9,7 @@ export const insertConfiguration = async () => {
   try {
     const config: IBot = {
       name: 'Hans',
+      discordId: `${process.env.DISCORD_CLIENT_ID}`,
       website: '',
       guildId: `${process.env.BOT_GUILD_ID}`,
       commandsDevGuild: {
