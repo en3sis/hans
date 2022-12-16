@@ -14,6 +14,8 @@ interface IOpenAIRequestSettings {
   input: string
   max_tokens?: number
   temperature?: number
+  presence_penalty?: number
+  frequency_penalty?: number
 }
 
 /**
@@ -26,8 +28,10 @@ export const OpenAiAPI = async ({
   version = '001',
   predicate,
   input,
-  max_tokens = 200,
+  max_tokens = 100,
   temperature = 0.3,
+  presence_penalty = 0,
+  frequency_penalty = 0.5,
 }: IOpenAIRequestSettings) => {
   try {
     const response = await openai.createCompletion({
@@ -36,8 +40,8 @@ export const OpenAiAPI = async ({
       temperature: temperature,
       max_tokens: max_tokens,
       top_p: 0.3,
-      presence_penalty: 0,
-      frequency_penalty: 0.5,
+      presence_penalty,
+      frequency_penalty,
     })
 
     return response
