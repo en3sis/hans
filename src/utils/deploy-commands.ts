@@ -5,7 +5,6 @@ import { Routes } from 'discord-api-types/v9'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-import { insertConfiguration } from '../controllers/bot/hans-config.controller'
 import { getBotConfiguration } from '../controllers/events/ready.controller'
 
 dotenv.config({ path: process.cwd() + '/.env' })
@@ -79,9 +78,6 @@ const fetchCommands = async ({
 ;(async () => {
   // Registry slash commands global & per guild
   try {
-    console.log('📨 Creates document in MongoDB if not found')
-    await insertConfiguration()
-
     console.log('⏳ Loading configuration for commands...')
 
     const config = await getBotConfiguration()
@@ -90,10 +86,10 @@ const fetchCommands = async ({
     if (process.env.ISDEV === 'true') {
       // Deploys to your development guild, those commands will be deployed instantly
       await registryCommands({
-        folderName: config.commandsDevGuild.folderName,
-        id: config.guildId,
+        folderName: config.bot_dev_folder,
+        id: config.bot_guild_id,
       }).then((response) =>
-        console.log(`🏗  DEV: guildCommands(${config.commandsDevGuild.folderName}) => `, response),
+        console.log(`🏗  DEV: guildCommands(${config.bot_dev_folder}) => `, response),
       )
     } else {
       // Deploys globally, those commands will take some time to be deployed.

@@ -1,27 +1,26 @@
 import { Client, TextChannel } from 'discord.js'
 import { githubAPI } from '../../lib/axios'
 import { getFromCache, setToCache } from '../../lib/node-cache'
-import { IBot } from '../../types'
+import supabase from '../../lib/supabase'
+import { BotSettingsT } from '../../types'
 import { insertConfiguration } from '../bot/hans-config.controller'
-import { find } from '../mongodb/mongo-crud'
 
 // Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
-export const getBotConfiguration = async (): Promise<IBot> => {
+export const getBotConfiguration = async (): Promise<BotSettingsT> => {
   return new Promise(async (resolve, reject) => {
     try {
       // Checks is the bot configuration is in the cache
       const configuration = getFromCache('config')
+
       if (configuration) return configuration
 
-      const config = await find({
-        dataBase: 'hans',
-        collection: 'config',
-        query: { name: 'Hans' },
-      })
+      // If not, query the database
+      const { data } = await supabase.from('config').select('*').single()
 
-      if (config) {
-        setToCache('config', config)
-        resolve(config as unknown as IBot)
+      // If the configuration is found, add it to the cache and return it
+      if (data) {
+        setToCache('config', data)
+        resolve(data as unknown as BotSettingsT)
       } else {
         await insertConfiguration()
       }
@@ -40,11 +39,11 @@ export const notifyPulse = async (Hans: Client) => {
     const used = process.memoryUsage().heapUsed / 1024 / 1024
 
     const lastCommit = await githubAPI('repos/en3sis/hans/commits')
-    const config: IBot = getFromCache('config')
+    const config: BotSettingsT = getFromCache('config')
 
-    if (!config.botStartAlertChannel) return
+    if (!config.notify_channel_id) return
 
-    const channel = Hans.channels.cache.get(config.botStartAlertChannel) as TextChannel
+    const channel = Hans.channels.cache.get(config.notify_channel_id) as TextChannel
 
     const author = {
       name: `${lastCommit[0].commit.author.name}`,

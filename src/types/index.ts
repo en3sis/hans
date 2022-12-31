@@ -1,4 +1,5 @@
 import { ActivityType } from 'discord.js'
+import { Database } from './database.types'
 
 export interface IBot extends BotConfigI {
   name: string
@@ -7,6 +8,8 @@ export interface IBot extends BotConfigI {
   guildId: string
   permaInvite: string
 }
+
+export type BotSettingsT = Database['public']['Tables']['config']['Row']
 
 export interface BotConfigI {
   disabledCommands: string[]

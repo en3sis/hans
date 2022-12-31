@@ -31,6 +31,8 @@ the list of functionalities can be found [here 🔗](https://github.com/en3sis/h
 
 ## 🔅 Prepare environment
 
+@TODO: Update to Supabase
+
 Before running any command, run `npm install` & `cp .env.template .env`, fill all the env variables needed. To create your application, visit [Discord's Developer Portal](https://discord.com/developers/docs/intro)
 
 > 🪬 **IMPORTANT**: A MongoDB instance is needed for the bot to work. A free Atlas cluster should be more than enough (even for small bots & communities) for development.

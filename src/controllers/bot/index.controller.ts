@@ -24,11 +24,6 @@ export const inviteBot = (client: Client) => {
           color: 0x5865f2,
         },
       ],
-      // files: [
-      //   new MessageAttachment(
-      //     `${'https://cdn.discordapp.com/attachments/626034007087513601/902147930369183744/global.png'}`
-      //   ),
-      // ],
     }
   } catch (error) {
     console.log('ERROR: utils > inviteBot() ', error)
