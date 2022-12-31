@@ -78,6 +78,14 @@ for (const file of eventFiles) {
   }
 }
 
+/** =============================================================================
+ * ⚙️ Plugins handler
+  ============================================================================== */
+// TODO: Add plugins handler
+
+// Login to Discord with your client's token
 Hans.login(process.env.DISCORD_TOKEN!)
+
+// Events listeners
 Hans.on('error', (err) => console.log('❌ ERROR: initHans()', err))
 Hans.on('debug', (msg) => process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))

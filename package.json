@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node build/utils/deploy-commands.js && node build/index.js",
     "dev": "ISDEV=true nodemon hans",
+    "supabase": "supabase start",
     "build": "rm -rf ./build && tsc --project ./",
     "lint": "eslint . --fix",
     "format": "npx prettier --write '**/*.ts'",
@@ -43,6 +44,7 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.2.2",
     "@types/lodash": "^4.14.184",
     "@types/node-cron": "^3.0.4",
     "axios": "^0.27.2",
@@ -51,6 +53,7 @@
     "discord.js": "^14.3.0",
     "dotenv": "^16.0.2",
     "lodash": "^4.17.21",
+    "mocha": "^10.2.0",
     "mongodb": "^4.9.1",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
