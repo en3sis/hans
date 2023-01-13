@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json }
+  | Json[]
 
 export interface Database {
   public: {
@@ -50,6 +56,35 @@ export interface Database {
           website?: string | null
         }
       }
+      guilds: {
+        Row: {
+          avatar: string | null
+          created_at: string | null
+          guild_id: string | null
+          id: number
+          name: string | null
+          plugins: string[] | null
+          premium: boolean | null
+        }
+        Insert: {
+          avatar?: string | null
+          created_at?: string | null
+          guild_id?: string | null
+          id?: number
+          name?: string | null
+          plugins?: string[] | null
+          premium?: boolean | null
+        }
+        Update: {
+          avatar?: string | null
+          created_at?: string | null
+          guild_id?: string | null
+          id?: number
+          name?: string | null
+          plugins?: string[] | null
+          premium?: boolean | null
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -62,3 +97,4 @@ export interface Database {
     }
   }
 }
+

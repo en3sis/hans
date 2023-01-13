@@ -3,7 +3,7 @@ import { githubAPI } from '../../lib/axios'
 import { getFromCache, setToCache } from '../../lib/node-cache'
 import supabase from '../../lib/supabase'
 import { BotSettingsT } from '../../types'
-import { insertConfiguration } from '../bot/hans-config.controller'
+import { insertConfiguration } from '../bot/config.controller'
 
 // Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
 export const getBotConfiguration = async (): Promise<BotSettingsT> => {

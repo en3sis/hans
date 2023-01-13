@@ -10,6 +10,7 @@ export interface IBot extends BotConfigI {
 }
 
 export type BotSettingsT = Database['public']['Tables']['config']['Row']
+export type GuildSettingsT = Database['public']['Tables']['guilds']['Row']
 
 export interface BotConfigI {
   disabledCommands: string[]
