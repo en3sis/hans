@@ -14,11 +14,11 @@ export const gpt3Controller = async (Hans: Client, message: Message) => {
     const response = await OpenAiAPI({
       input: `${prompt} ${message.content.replace(user.toString(), '')}`,
       predicate: '',
-      model: 'davinci',
+      // model: 'davinci',
       version: '003',
       max_tokens: 150,
     })
 
-    return await message.reply({ content: response.data.choices[0].text.replace('AI:', '') })
+    return await message.reply({ content: response.replace('AI:', '') })
   }
 }
