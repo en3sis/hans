@@ -1,4 +1,9 @@
-import { ChatCompletionResponseMessage, Configuration, OpenAIApi } from 'openai'
+import {
+  ChatCompletionRequestMessage,
+  ChatCompletionResponseMessage,
+  Configuration,
+  OpenAIApi,
+} from 'openai'
 
 const openai = new OpenAIApi(
   new Configuration({
@@ -18,6 +23,8 @@ interface IOpenAIRequestSettings {
   frequency_penalty?: number
 }
 
+// TODO: Keep history for 1 round per user per conversation
+const history = [] as ChatCompletionRequestMessage[]
 /**
  * OpenAI API request
  * @param IOpenAIRequestSettings
@@ -35,6 +42,7 @@ export const OpenAiAPI = async ({
 }: IOpenAIRequestSettings) => {
   try {
     let response: string | ChatCompletionResponseMessage
+
     if (model) {
       const completion = await openai.createCompletion({
         model: model ? `text-${model}-${version}` : 'gpt-3.5-turbo',
@@ -50,13 +58,20 @@ export const OpenAiAPI = async ({
     } else {
       const completion = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
+        n: 1,
         messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: 'Who won the world series in 2020?' },
-          { role: 'assistant', content: 'The Los Angeles Dodgers won the World Series in 2020.' },
+          {
+            role: 'system',
+            content: `You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Current date: ${new Date().toLocaleDateString()}`,
+          },
+          ...history,
           { role: 'user', content: input.split(', ').join('\n') },
         ],
       })
+
+      history.slice(0, 1)
+      history.push({ role: 'assistant', content: input.split(', ').join('\n') })
+
       response = completion.data.choices[0].message.content
     }
 
