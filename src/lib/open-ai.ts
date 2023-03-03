@@ -12,6 +12,8 @@ const openai = new OpenAIApi(
   }),
 )
 
+const regex = /@(\w+)/g
+
 interface IOpenAIRequestSettings {
   model?: 'ada' | 'davinci'
   version?: '003' | '001'
@@ -72,7 +74,7 @@ export const OpenAiAPI = async ({
       history.slice(0, 1)
       history.push({ role: 'assistant', content: input.split(', ').join('\n') })
 
-      response = completion.data.choices[0].message.content
+      response = completion.data.choices[0].message.content.replace(regex, '$1')
     }
 
     return response
