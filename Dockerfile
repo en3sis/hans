@@ -3,7 +3,7 @@ FROM node:16.13.0-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm instal
+RUN npm install
 
 # Rebuild the source code only when needed
 FROM node:16.13.0-alpine AS builder
@@ -27,6 +27,18 @@ COPY --from=builder --chown=NON_ROOT:nodejs /app/build ./build
 COPY --from=builder --chown=NON_ROOT:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=NON_ROOT:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=NON_ROOT:nodejs /app/package-lock.json ./package-lock.json
+
+
+# Copy the .env file to the working directory
+COPY .env .
+
+# Set build-time arguments for the environment file
+ARG ENV_FILE
+ENV ENV_FILE=${ENV_FILE:-.env}
+
+# Load environment variables from the .env file
+RUN set -o allexport; source $ENV_FILE; set +o allexport
+
 
 USER NON_ROOT
 
