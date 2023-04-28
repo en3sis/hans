@@ -1,6 +1,6 @@
 import { Client } from 'discord.js'
-import { insertConfiguration } from '../controllers/bot/hans-config.controller'
-import { getBotConfiguration, notifyPulse } from '../controllers/events/ready.controller'
+import { getBotConfiguration, insertConfiguration } from '../controllers/bot/config'
+import { notifyPulse } from '../controllers/events/ready.controller'
 import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
 
 module.exports = {
@@ -30,8 +30,8 @@ module.exports = {
       Hans.user.setPresence({
         activities: [
           {
-            type: settings.activities?.type || 3,
-            name: settings.activities?.name || 'you',
+            type: settings.activity_type || 3,
+            name: settings.activity_name || 'you',
           },
         ],
       })

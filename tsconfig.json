@@ -5,6 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "rootDir": "./src",
+    "baseUrl": "./",
     "target": "es6",
     "sourceMap": false,
     "outDir": "./build",
@@ -15,7 +16,12 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": []
+    "types": [],
+    "paths": {
+      // "lib": ["lib/*"],
+      "@/types/*": ["types/*"],
+      "@/controllers/*": ["src/controllers/*"]
+    }
   },
   "lib": ["esnext"],
   "typeRoots": ["./src", "./node_modules/@types"],

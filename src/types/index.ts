@@ -1,12 +1,7 @@
+import { BotConfig } from '@/controllers/bot/config'
 import { ActivityType } from 'discord.js'
 
-export interface IBot extends BotConfigI {
-  name: string
-  discordId: string
-  website: string
-  guildId: string
-  permaInvite: string
-}
+export type Hans = BotConfig
 
 export interface BotConfigI {
   disabledCommands: string[]

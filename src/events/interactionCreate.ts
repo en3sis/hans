@@ -10,7 +10,7 @@ module.exports = {
 
     const command = Hans.commands.get(interaction.commandName)
 
-    if (Hans.settings.disabledCommands.includes(command.data.name))
+    if (Hans.settings.disable_commands.includes(command.data.name))
       return interaction.reply({
         content: `❌ The command \`${command.data.name}\` is globally disabled.`,
         ephemeral: true,
