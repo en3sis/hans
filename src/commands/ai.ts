@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { findOneGuild } from '../controllers/mongodb/mongo-guilds.controller'
-import { gpt3Controller } from '../controllers/plugins/chat-gpt3.controller'
+import { findOneGuild } from '../../controllers/mongodb/mongo-guilds.controller'
+import { gpt3Controller } from '../../controllers/plugins/chat-gpt3.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -29,6 +29,18 @@ module.exports = {
           await interaction.editReply({
             embeds: [
               {
+                author: {
+                  name: `${interaction.user.username} asked:`,
+                  icon_url: interaction.user.avatarURL(),
+                },
+                description: `${text}`,
+                color: 0x5865f2,
+              },
+              {
+                author: {
+                  name: `${interaction.client.user.username} answered: `,
+                  icon_url: interaction.client.user.avatarURL(),
+                },
                 description: `${answer.response}`,
                 footer: {
                   text: `Tokens: ${answer.token} | Price: $${(
@@ -36,7 +48,7 @@ module.exports = {
                     0.002
                   ).toFixed(6)}`,
                 },
-                color: 0x5865f2,
+                color: 0x73ec8e,
               },
             ],
           })
