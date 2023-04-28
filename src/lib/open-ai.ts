@@ -1,9 +1,4 @@
-import {
-  ChatCompletionRequestMessage,
-  ChatCompletionResponseMessage,
-  Configuration,
-  OpenAIApi,
-} from 'openai'
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai'
 
 const openai = new OpenAIApi(
   new Configuration({
@@ -41,7 +36,10 @@ export const OpenAiAPI = async ({
   frequency_penalty = 0.5,
 }: IOpenAIRequestSettings) => {
   try {
-    let response: string | ChatCompletionResponseMessage
+    let response: {
+      response: string
+      token: number
+    }
 
     if (model) {
       const completion = await openai.createCompletion({
@@ -54,7 +52,10 @@ export const OpenAiAPI = async ({
         frequency_penalty,
       })
 
-      response = completion.data.choices[0].text
+      response = {
+        response: completion.data.choices[0].text,
+        token: completion.data.usage.total_tokens,
+      }
     } else {
       const completion = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
@@ -72,7 +73,10 @@ export const OpenAiAPI = async ({
       history.slice(0, 1)
       history.push({ role: 'assistant', content: input.split(', ').join('\n') })
 
-      response = completion.data.choices[0].message.content.replace(regex, '$1')
+      response = {
+        response: completion.data.choices[0].message.content.replace(regex, '$1'),
+        token: completion.data.usage.total_tokens,
+      }
     }
 
     return response
