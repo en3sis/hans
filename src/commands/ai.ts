@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { findOneGuild } from '../../controllers/mongodb/mongo-guilds.controller'
-import { gpt3Controller } from '../../controllers/plugins/chat-gpt3.controller'
+import { findOneGuild } from '../controllers/mongodb/mongo-guilds.controller'
+import { gpt3Controller } from '../controllers/plugins/chat-gpt3.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
