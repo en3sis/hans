@@ -1,5 +1,5 @@
+import supabase from '@/lib/supabase'
 import { Database } from '@/types/database.types'
-import supabase from '../../lib/supabase'
 
 export type BotConfig = Database['public']['Tables']['config']['Row']
 /**

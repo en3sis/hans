@@ -18,9 +18,11 @@
     "resolveJsonModule": true,
     "types": [],
     "paths": {
-      // "lib": ["lib/*"],
-      "@/types/*": ["types/*"],
-      "@/controllers/*": ["src/controllers/*"]
+      "@/lib/*": ["src/lib/*"],
+      "@/types/*": ["src/types/*"],
+      "@/controllers/*": ["src/controllers/*"],
+      "@/commands/*": ["src/commands/*"],
+      "@/utils/*": ["src/utils/*"]
     }
   },
   "lib": ["esnext"],
