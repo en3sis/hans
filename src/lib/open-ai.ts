@@ -17,7 +17,6 @@ const regex = /@(\w+)/g
 interface IOpenAIRequestSettings {
   model?: 'ada' | 'davinci'
   version?: '003' | '001'
-  predicate: string
   input: string
   max_tokens?: number
   temperature?: number
@@ -35,7 +34,6 @@ const history = [] as ChatCompletionRequestMessage[]
 export const OpenAiAPI = async ({
   model,
   version = '001',
-  predicate,
   input,
   max_tokens = 100,
   temperature = 0.3,
@@ -48,7 +46,7 @@ export const OpenAiAPI = async ({
     if (model) {
       const completion = await openai.createCompletion({
         model: model ? `text-${model}-${version}` : 'gpt-3.5-turbo',
-        prompt: `${predicate} \n ${input.split(', ').join('\n')}`,
+        prompt: `${input.split(', ').join('\n')}`,
         temperature: temperature,
         max_tokens: max_tokens,
         top_p: 0.3,
@@ -64,7 +62,7 @@ export const OpenAiAPI = async ({
         messages: [
           {
             role: 'system',
-            content: `You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Current date: ${new Date().toLocaleDateString()}`,
+            content: `You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible, sometimes you can be sarcastic. Current date: ${new Date().toLocaleDateString()}`,
           },
           ...history,
           { role: 'user', content: input.split(', ').join('\n') },
