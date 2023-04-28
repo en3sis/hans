@@ -16,29 +16,32 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
+      await interaction.deferReply()
       const document = await findOneGuild(interaction.guildId)
 
       if ('status' in document) {
-        return
+        await interaction.editReply('This feature is currently disabled.')
       } else {
         if (document.premium) {
           const text = interaction.options.get('prompt')!.value as string
 
           const answer = await gpt3Controller(text)
-          await interaction.reply({
+          await interaction.editReply({
             embeds: [
               {
-                title: 'AI generated response',
-                description: `${answer}`,
+                description: `${answer.response}`,
                 footer: {
-                  text: ``,
+                  text: `Tokens: ${answer.token} | Price: $${(
+                    (answer.token / 1000) *
+                    0.002
+                  ).toFixed(6)}`,
                 },
                 color: 0x5865f2,
               },
             ],
           })
         } else {
-          return await interaction.reply('This feature is only available for premium servers.')
+          return await interaction.editReply('This feature is only available for premium servers.')
         }
       }
     } catch (error) {
