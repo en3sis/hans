@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import {
-  enableSentimentAnalysis,
+  // enableSentimentAnalysis,
   purgeMessages,
-  toggleSentimentAnalysis,
 } from '../controllers/plugins/moderation.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
@@ -64,9 +63,9 @@ https: module.exports = {
 
       if (interaction.options.getSubcommandGroup() === 'sentiment') {
         if (interaction.options.getSubcommand() === 'toggle') {
-          await toggleSentimentAnalysis(interaction)
+          // await toggleSentimentAnalysis(interaction)
         } else {
-          await enableSentimentAnalysis(interaction)
+          // await enableSentimentAnalysis(interaction)
         }
       } else if (interaction.options.getSubcommandGroup() === 'messages') {
         await purgeMessages(interaction)

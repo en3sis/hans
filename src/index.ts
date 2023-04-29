@@ -2,7 +2,7 @@ import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-import { mongoClient } from './lib/mongodb-driver'
+import supabase from './lib/supabase'
 import { ProjectValidator } from './utils/pre-validation'
 
 /** =============================================================================
@@ -23,7 +23,7 @@ export const Hans = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 })
 
-Hans.mongo = mongoClient
+Hans.supabase = supabase
 /** =============================================================================
  * 🎉 Command handlers
   ============================================================================== */

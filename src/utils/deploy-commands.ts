@@ -5,14 +5,15 @@ import { Routes } from 'discord-api-types/v9'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-import { insertConfiguration } from '../controllers/bot/config'
-import { getBotConfiguration } from '../controllers/events/ready.controller'
+import { getBotConfiguration, insertConfiguration } from '../controllers/bot/config'
 
 dotenv.config({ path: process.cwd() + '/.env' })
 
 // Register commands
 const registryCommands = async (guild: { folderName: string; id: string | null }) => {
   // Instance REST client
+
+  console.log('📥  Registering commands...')
   return new Promise(async (resolve, reject) => {
     try {
       const { folderName, id } = guild
@@ -79,21 +80,21 @@ const fetchCommands = async ({
 ;(async () => {
   // Registry slash commands global & per guild
   try {
-    console.log('📨 Creates document in MongoDB if not found')
+    console.log('📨 Creates document if not found')
     await insertConfiguration()
 
     console.log('⏳ Loading configuration for commands...')
 
     const config = await getBotConfiguration()
-    if (!config) return console.log('MongoDB document with the configuration for Hans not found')
+    if (!config) return console.log('Row with the configuration for Hans not found')
 
     if (process.env.ISDEV === 'true') {
       // Deploys to your development guild, those commands will be deployed instantly
       await registryCommands({
-        folderName: config.commandsDevGuild.folderName,
-        id: config.guildId,
+        folderName: config.bot_dev_folder,
+        id: config.bot_guild_id,
       }).then((response) =>
-        console.log(`🏗  DEV: guildCommands(${config.commandsDevGuild.folderName}) => `, response),
+        console.log(`🏗  DEV: guildCommands(${config.bot_dev_folder}) => `, response),
       )
     } else {
       // Deploys globally, those commands will take some time to be deployed.

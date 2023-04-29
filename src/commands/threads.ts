@@ -59,8 +59,8 @@ module.exports = {
         })
       } else if (interaction.options.getSubcommand() === 'remove') {
         const res = await removeThread(interaction.guildId, channel)
-
-        if (res.modifiedCount) {
+        //TODO: Fix this
+        if (true) {
           return interaction.reply({
             content: `🗑 Threads disabled for ${
               interaction.guild.channels.cache.get(channel).name

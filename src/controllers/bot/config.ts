@@ -1,28 +1,31 @@
-import supabase from '@/lib/supabase'
-import { Database } from '@/types/database.types'
+import supabase from '../../lib/supabase'
+import { pluginsList } from '../../models/plugins.model'
+import { Database } from '../../types/database.types'
 
-export type BotConfig = Database['public']['Tables']['config']['Row']
+export type BotConfig = Database['public']['Tables']['configs']['Row']
+
 /** Adds the bot configuration, this is for admins only.
  * here you can set things like main discord guild
  */
 export const insertConfiguration = async () => {
   try {
     const { data, error } = await supabase
-      .from('config')
+      .from('configs')
       .upsert(
         {
-          name: 'Hans',
-          discord_client_id: `${process.env.DISCORD_CLIENT_ID}`,
-          bot_guild_id: `${process.env.BOT_GUILD_ID}`,
+          activity_name: !process.env.ISDEV ? 'you' : 'VSC',
+          activity_type: 3,
           bot_dev_folder: '/bots-playground',
-          activity_type: 4,
-          activity_name: 'VSC',
-          perma_invite: 'https://discord.gg/2tK7PhkZ',
-          disable_commands: [],
-          notify_channel_id: '',
-          website: '',
+          bot_guild_id: `${process.env.BOT_GUILD_ID}`,
           bot_id: `${process.env.DISCORD_CLIENT_ID}`,
+          created_at: new Date().toISOString(),
+          disable_commands: [],
+          discord_client_id: `${process.env.DISCORD_CLIENT_ID}`,
           id: 1,
+          name: 'Hans',
+          notify_channel_id: '1014228732728328202',
+          perma_invite: 'https://discord.gg/2tK7PhkZ',
+          website: '',
         },
         { onConflict: 'id' },
       )
@@ -33,7 +36,7 @@ export const insertConfiguration = async () => {
     }
 
     console.log(`📥  Initial configuration inserted`)
-    return data
+    return data as unknown as BotConfig
   } catch (error) {
     console.log('❌ ERROR: insertConfiguration(): ', error)
   }
@@ -41,15 +44,40 @@ export const insertConfiguration = async () => {
 
 export const getBotConfiguration = async (): Promise<BotConfig> => {
   try {
-    const config = (await supabase.from('config').select('*').single()) as unknown as BotConfig
+    const { data } = await supabase.from('configs').select('*').single()
 
-    if (config) {
-      return config
+    if (data) {
+      return data
     } else {
       const config = await insertConfiguration()
       return config
     }
   } catch (error) {
     console.log('❌ ERROR: getBotConfiguration(): ', error)
+  }
+}
+
+export const insertPlugins = async () => {
+  try {
+    Object.entries(pluginsList).forEach(async ([key, value]) => {
+      const { error } = await supabase.from('plugins').upsert(
+        {
+          created_at: new Date().toISOString(),
+          description: value.description,
+          enabled: value.enabled,
+          name: key,
+          premium: value.premium,
+        },
+        { onConflict: 'name' },
+      )
+
+      if (error) {
+        throw new Error(error.message)
+      }
+    })
+
+    console.log(`📥  Initial plugins list inserted`)
+  } catch (error) {
+    console.log('❌ ERROR: insertPlugins(): ', error)
   }
 }

@@ -3,7 +3,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Database {
   public: {
     Tables: {
-      config: {
+      configs: {
         Row: {
           activity_name: string | null
           activity_type: number | null
@@ -54,28 +54,80 @@ export interface Database {
         Row: {
           avatar: string | null
           created_at: string | null
+          events: string[] | null
           guild_id: string | null
           id: number
           name: string | null
-          plugins: string[] | null
           premium: boolean | null
         }
         Insert: {
           avatar?: string | null
           created_at?: string | null
+          events?: string[] | null
           guild_id?: string | null
           id?: number
           name?: string | null
-          plugins?: string[] | null
           premium?: boolean | null
         }
         Update: {
           avatar?: string | null
           created_at?: string | null
+          events?: string[] | null
           guild_id?: string | null
           id?: number
           name?: string | null
-          plugins?: string[] | null
+          premium?: boolean | null
+        }
+      }
+      'guilds-plugins': {
+        Row: {
+          created_at: string | null
+          enabled: boolean | null
+          id: number
+          metadata: Json | null
+          owner: number | null
+          plugin: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: number
+          metadata?: Json | null
+          owner?: number | null
+          plugin?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: number
+          metadata?: Json | null
+          owner?: number | null
+          plugin?: number | null
+        }
+      }
+      plugins: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          enabled: boolean | null
+          id: number
+          name: string | null
+          premium: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          id?: number
+          name?: string | null
+          premium?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          id?: number
+          name?: string | null
           premium?: boolean | null
         }
       }

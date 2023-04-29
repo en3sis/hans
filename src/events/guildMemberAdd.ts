@@ -1,6 +1,6 @@
 import formatDistance from 'date-fns/formatDistance'
 import { Client, GuildMember, TextChannel } from 'discord.js'
-import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
+import { resolveGuildPlugins } from '../controllers/bot/guilds.controller'
 
 module.exports = {
   name: 'guildMemberAdd',
@@ -8,20 +8,15 @@ module.exports = {
   enabled: true,
   async execute(Hans: Client, member: GuildMember) {
     try {
-      const { enabled, ..._guildSettings } = await resolveGuildEvents(
-        member.guild.id,
-        'guildMemberAdd',
-      )
+      const { enabled, metadata } = await resolveGuildPlugins(member.guild.id, 'guildMemberAdd')
 
       // Check it the guild has enabled the event
       if (!enabled) return
-      if (!_guildSettings.plugins.guildMembersActivity.logChannelId) {
+      if (metadata) {
         return console.error(`⚠️  No join/leave channel set for ${member.guild.name}`)
       }
 
-      const targetChannel = Hans.channels.cache.get(
-        _guildSettings.plugins.guildMembersActivity.logChannelId,
-      ) as TextChannel
+      const targetChannel = Hans.channels.cache.get(metadata.targetChannel) as TextChannel
 
       if (!targetChannel) return
 

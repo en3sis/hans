@@ -1,7 +1,6 @@
 import { Message, NewsChannel, StartThreadOptions, TextChannel, ThreadChannel } from 'discord.js'
 import { IThreadChannels } from '../../models/guild.model'
 import { isStaff } from '../../utils/permissions'
-import { updateOne } from '../mongodb/mongo-crud'
 
 export const threadAutoCreate = async (message: Message, config: IThreadChannels) => {
   try {
@@ -67,20 +66,21 @@ export const addThread = async (
   botResponse: string,
 ) => {
   try {
-    await updateOne({
-      dataBase: 'guilds',
-      collection: 'global',
-      query: { _id: guildId },
-      data: {
-        $push: {
-          'plugins.threadChannels': {
-            threadTitle: customTitle,
-            botMessageInThread: botResponse,
-            threadChannelId: channelId,
-          },
-        },
-      },
-    })
+    // TODO: Fix this
+    // await updateOne({
+    //   dataBase: 'guilds',
+    //   collection: 'global',
+    //   query: { _id: guildId },
+    //   data: {
+    //     $push: {
+    //       'plugins.threadChannels': {
+    //         threadTitle: customTitle,
+    //         botMessageInThread: botResponse,
+    //         threadChannelId: channelId,
+    //       },
+    //     },
+    //   },
+    // })
   } catch (error) {
     console.log('ERROR: addThread(): ', error)
   }
@@ -89,20 +89,20 @@ export const addThread = async (
 // Removes the sub-document from plugins, threadChannels array
 export const removeThread = async (guildId: string, channelId: string) => {
   try {
-    const response = await updateOne({
-      dataBase: 'guilds',
-      collection: 'global',
-      query: { _id: guildId },
-      data: {
-        $pull: {
-          'plugins.threadChannels': {
-            threadChannelId: channelId,
-          },
-        },
-      },
-    })
-
-    return response
+    // TODO: Fix this
+    // const response = await updateOne({
+    //   dataBase: 'guilds',
+    //   collection: 'global',
+    //   query: { _id: guildId },
+    //   data: {
+    //     $pull: {
+    //       'plugins.threadChannels': {
+    //         threadChannelId: channelId,
+    //       },
+    //     },
+    //   },
+    // })
+    // return response
   } catch (error) {
     console.log('ERROR: removeThread(): ', error)
   }

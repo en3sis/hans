@@ -17,7 +17,7 @@ module.exports = {
       })
 
     if (process.env.ISDEV) {
-      // DEBUG
+      // Enables the developer to see details in the console.
       console.log('🔍 Command Details: ', command)
       console.log(
         '🤖 Hans registered commands: ',

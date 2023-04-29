@@ -1,5 +1,5 @@
 import { Client } from 'discord.js'
-import { getBotConfiguration, insertConfiguration } from '../controllers/bot/config'
+import { getBotConfiguration, insertConfiguration, insertPlugins } from '../controllers/bot/config'
 import { notifyPulse } from '../controllers/events/ready.controller'
 import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
 
@@ -16,6 +16,7 @@ module.exports = {
       )
       // If no configuration is found, insert one
       await insertConfiguration()
+      await insertPlugins()
 
       // Fetches MongoDB for the configuration document.
       const settings = await getBotConfiguration()

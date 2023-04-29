@@ -1,7 +1,5 @@
 import { CommandInteraction, Message, TextChannel } from 'discord.js'
 import { sentimentUrgencyTable } from '../../utils/colors'
-import { HAS_CACHE_MESSAGE } from '../../utils/constants'
-import { updateOneGuild } from '../mongodb/mongo-guilds.controller'
 import { sentimentAnalysis } from './../../lib/sentiment'
 
 /**
@@ -118,44 +116,44 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
   }
 }
 
-// exports a function that enables sentiment analysis in the database
-export const enableSentimentAnalysis = async (interaction: CommandInteraction) => {
-  await updateOneGuild(interaction.guild, {
-    'plugins.moderation.sentimentAnalysis': {
-      enabled: true,
-      watchAllChannels: true,
-      logChannelId: interaction.options.get('channel')?.value as string,
-    },
-  })
+// // exports a function that enables sentiment analysis in the database
+// export const enableSentimentAnalysis = async (interaction: CommandInteraction) => {
+//   await updateOneGuild(interaction.guild, {
+//     'plugins.moderation.sentimentAnalysis': {
+//       enabled: true,
+//       watchAllChannels: true,
+//       logChannelId: interaction.options.get('channel')?.value as string,
+//     },
+//   })
 
-  return interaction.reply({
-    content: `Sentiment analysis enabled! ${HAS_CACHE_MESSAGE}`,
-    ephemeral: true,
-  })
-}
+//   return interaction.reply({
+//     content: `Sentiment analysis enabled! ${HAS_CACHE_MESSAGE}`,
+//     ephemeral: true,
+//   })
+// }
 
-export const toggleSentimentAnalysis = async (interaction: CommandInteraction) => {
-  try {
-    const status = interaction.options.get('status')?.value
+// export const toggleSentimentAnalysis = async (interaction: CommandInteraction) => {
+//   try {
+//     const status = interaction.options.get('status')?.value
 
-    if (status) {
-      await updateOneGuild(interaction.guild, {
-        'plugins.moderation.sentimentAnalysis.enabled': true,
-      })
-    } else {
-      await updateOneGuild(interaction.guild, {
-        'plugins.moderation.sentimentAnalysis.enabled': false,
-      })
-    }
+//     if (status) {
+//       await updateOneGuild(interaction.guild, {
+//         'plugins.moderation.sentimentAnalysis.enabled': true,
+//       })
+//     } else {
+//       await updateOneGuild(interaction.guild, {
+//         'plugins.moderation.sentimentAnalysis.enabled': false,
+//       })
+//     }
 
-    return interaction.reply({
-      content: `Sentiment analysis ${status ? 'enabled' : 'disabled'}! ${HAS_CACHE_MESSAGE}`,
-      ephemeral: true,
-    })
-  } catch (error) {
-    return interaction.reply({
-      content: `💢 ${error}`,
-      ephemeral: true,
-    })
-  }
-}
+//     return interaction.reply({
+//       content: `Sentiment analysis ${status ? 'enabled' : 'disabled'}! ${HAS_CACHE_MESSAGE}`,
+//       ephemeral: true,
+//     })
+//   } catch (error) {
+//     return interaction.reply({
+//       content: `💢 ${error}`,
+//       ephemeral: true,
+//     })
+//   }
+// }

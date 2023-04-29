@@ -5,7 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "rootDir": "./src",
-    "baseUrl": "./",
+    // "baseUrl": "./",
     "target": "es6",
     "sourceMap": false,
     "outDir": "./build",
@@ -18,14 +18,14 @@
     "resolveJsonModule": true,
     "types": [],
     "paths": {
-      "@/lib/*": ["src/lib/*"],
-      "@/types/*": ["src/types/*"],
-      "@/controllers/*": ["src/controllers/*"],
-      "@/commands/*": ["src/commands/*"],
-      "@/utils/*": ["src/utils/*"]
+      // "@/lib/*": ["src/lib/*"],
+      // "@/types/*": ["src/types/*"],
+      // "@/controllers/*": ["src/controllers/*"],
+      // "@/commands/*": ["src/commands/*"]
+      // "@/utils/*": ["src/utils/*"]
     }
   },
   "lib": ["esnext"],
-  "typeRoots": ["./src", "./node_modules/@types"],
-  "exclude": ["node_modules", "build/", "tests/**"]
+  "typeRoots": ["./src/", "./node_modules/@types"],
+  "exclude": ["node_modules/", "build/", "tests/**"]
 }
