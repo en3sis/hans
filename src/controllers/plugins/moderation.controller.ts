@@ -1,6 +1,6 @@
 import { CommandInteraction, Message, TextChannel } from 'discord.js'
+import { sentimentAnalysis } from '../../libs/sentiment'
 import { sentimentUrgencyTable } from '../../utils/colors'
-import { sentimentAnalysis } from './../../lib/sentiment'
 
 /**
  * @param message Message

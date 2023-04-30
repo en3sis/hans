@@ -1,5 +1,6 @@
 import { Client } from 'discord.js'
 import { getBotConfiguration, insertConfiguration, insertPlugins } from '../controllers/bot/config'
+import { insertAllGuilds } from '../controllers/bot/guilds.controller'
 import { notifyPulse } from '../controllers/events/ready.controller'
 import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
 
@@ -15,10 +16,11 @@ module.exports = {
           .DISCORD_CLIENT_ID!}&permissions=0&scope=bot%20applications.commands`,
       )
       // If no configuration is found, insert one
+      await insertAllGuilds(Hans)
       await insertConfiguration()
       await insertPlugins()
 
-      // Fetches MongoDB for the configuration document.
+      // Fetches for the configuration.
       const settings = await getBotConfiguration()
       Hans.settings = settings
 

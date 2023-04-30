@@ -1,6 +1,6 @@
 import formatDistance from 'date-fns/formatDistance'
 import { Client, GuildMember, TextChannel } from 'discord.js'
-import { resolveGuildPlugins } from '../controllers/bot/guilds.controller'
+import { resolveGuildPlugins } from '../controllers/bot/plugins.controller.'
 
 module.exports = {
   name: 'guildMemberAdd',

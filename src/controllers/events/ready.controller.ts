@@ -1,6 +1,6 @@
 import { Client, TextChannel } from 'discord.js'
-import { githubAPI } from '../../lib/axios'
-import { getFromCache } from '../../lib/node-cache'
+import { githubAPI } from '../../libs/axios'
+import { getFromCache } from '../../libs/node-cache'
 import { Hans } from '../../types'
 
 // Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache

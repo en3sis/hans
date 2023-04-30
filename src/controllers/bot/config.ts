@@ -1,4 +1,4 @@
-import supabase from '../../lib/supabase'
+import supabase from '../../libs/supabase'
 import { pluginsList } from '../../models/plugins.model'
 import { Database } from '../../types/database.types'
 
@@ -35,7 +35,7 @@ export const insertConfiguration = async () => {
       throw new Error(error.message)
     }
 
-    console.log(`📥  Initial configuration inserted`)
+    console.log(`📥 Initial configuration inserted/updated`)
     return data as unknown as BotConfig
   } catch (error) {
     console.log('❌ ERROR: insertConfiguration(): ', error)
@@ -56,27 +56,58 @@ export const getBotConfiguration = async (): Promise<BotConfig> => {
     console.log('❌ ERROR: getBotConfiguration(): ', error)
   }
 }
-
 export const insertPlugins = async () => {
   try {
-    Object.entries(pluginsList).forEach(async ([key, value]) => {
-      const { error } = await supabase.from('plugins').upsert(
-        {
-          created_at: new Date().toISOString(),
-          description: value.description,
-          enabled: value.enabled,
-          name: key,
-          premium: value.premium,
-        },
-        { onConflict: 'name' },
-      )
+    const { data: existingPlugins } = await supabase.from('plugins').select('*')
 
-      if (error) {
-        throw new Error(error.message)
+    const upsertPromises = Object.entries(pluginsList).map(async ([key, value]) => {
+      const existingPlugin = existingPlugins.find((plugin) => plugin.name === key)
+
+      // check if the existing plugin data doesn't match the values in pluginsList
+      if (
+        existingPlugin &&
+        (existingPlugin.description !== value.description ||
+          existingPlugin.enabled !== value.enabled ||
+          existingPlugin.premium !== value.premium)
+      ) {
+        const { error } = await supabase.from('plugins').upsert(
+          {
+            id: existingPlugin.id,
+            created_at: existingPlugin.created_at,
+            description: value.description,
+            enabled: value.enabled,
+            name: key,
+            premium: value.premium,
+          },
+          { onConflict: 'name' },
+        )
+
+        if (error) {
+          throw new Error(error.message)
+        }
+      }
+      // else create a new plugin row
+      else {
+        const { error } = await supabase.from('plugins').upsert(
+          {
+            created_at: new Date().toISOString(),
+            description: value.description,
+            enabled: value.enabled,
+            name: key,
+            premium: value.premium,
+          },
+          { onConflict: 'name' },
+        )
+
+        if (error) {
+          throw new Error(error.message)
+        }
       }
     })
 
-    console.log(`📥  Initial plugins list inserted`)
+    await Promise.all(upsertPromises)
+
+    console.log(`💠 Initial plugins list inserted/updated`)
   } catch (error) {
     console.log('❌ ERROR: insertPlugins(): ', error)
   }

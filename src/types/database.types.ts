@@ -28,7 +28,7 @@ export interface Database {
           created_at?: string | null
           disable_commands?: string[] | null
           discord_client_id?: string | null
-          id?: number
+          id: number
           name?: string | null
           notify_channel_id?: string | null
           perma_invite?: string | null
@@ -54,8 +54,7 @@ export interface Database {
         Row: {
           avatar: string | null
           created_at: string | null
-          events: string[] | null
-          guild_id: string | null
+          guild_id: string
           id: number
           name: string | null
           premium: boolean | null
@@ -63,8 +62,7 @@ export interface Database {
         Insert: {
           avatar?: string | null
           created_at?: string | null
-          events?: string[] | null
-          guild_id?: string | null
+          guild_id: string
           id?: number
           name?: string | null
           premium?: boolean | null
@@ -72,8 +70,7 @@ export interface Database {
         Update: {
           avatar?: string | null
           created_at?: string | null
-          events?: string[] | null
-          guild_id?: string | null
+          guild_id?: string
           id?: number
           name?: string | null
           premium?: boolean | null
@@ -85,24 +82,24 @@ export interface Database {
           enabled: boolean | null
           id: number
           metadata: Json | null
-          owner: number | null
-          plugin: number | null
+          name: string | null
+          owner: string | null
         }
         Insert: {
           created_at?: string | null
           enabled?: boolean | null
           id?: number
           metadata?: Json | null
-          owner?: number | null
-          plugin?: number | null
+          name?: string | null
+          owner?: string | null
         }
         Update: {
           created_at?: string | null
           enabled?: boolean | null
           id?: number
           metadata?: Json | null
-          owner?: number | null
-          plugin?: number | null
+          name?: string | null
+          owner?: string | null
         }
       }
       plugins: {

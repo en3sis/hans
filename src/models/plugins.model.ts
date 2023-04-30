@@ -10,22 +10,42 @@ const genericStructure: Omit<Plugins, 'id' | 'name' | 'description'> = {
 }
 
 export const pluginsList = {
-  guildCreate: { description: 'Notifies when a guild is created ', ...genericStructure },
-  guildDelete: { description: '', ...genericStructure },
-  guildMemberAdd: { description: '', ...genericStructure },
-  guildMemberRemove: { description: '', ...genericStructure },
-  messageDelete: { description: '', ...genericStructure },
-  messageUpdate: { description: '', ...genericStructure },
-  messageCreate: { description: '', ...genericStructure },
-  messageReactionAdd: { description: '', ...genericStructure },
-  messageReactionRemove: { description: '', ...genericStructure },
-  chatGtp: { description: '', ...genericStructure, premium: true },
-  moderation: { description: '', ...genericStructure },
-  threads: { description: '', ...genericStructure },
+  guildMemberAdd: {
+    description: 'Notifies when a new member joins the server.',
+    ...genericStructure,
+  },
+  guildMemberRemove: {
+    description: 'Notifies when a member leaves the server.',
+    ...genericStructure,
+  },
+  messageDelete: {
+    description: 'Notifies when a message is deleted in a channel.',
+    ...genericStructure,
+  },
+  messageUpdate: {
+    description: 'Notifies when a message is updated in a channel.',
+    ...genericStructure,
+  },
+  messageReactionAdd: {
+    description: 'Notifies when a reaction is added to a message.',
+    ...genericStructure,
+  },
+  messageReactionRemove: {
+    description: 'Notifies when a reaction is removed from a message.',
+    ...genericStructure,
+  },
+  chatGtp: {
+    description: 'Enables a conversation with ChatGPT, an AI chatbot.',
+    ...genericStructure,
+    premium: true,
+  },
+  removeLinks: {
+    description:
+      'Removes any links posted in a channel, with the option to allow specific roles or links to be posted.',
+    ...genericStructure,
+  },
+  threads: {
+    description: 'Allows for the automatic creation of threads in a specific channel.',
+    ...genericStructure,
+  },
 }
-
-// export const guildPluginsStructure: Omit<GuildPlugins, 'id'> = {
-//   created_at: new Date().toISOString(),
-//   enabled: false,
-
-// }
