@@ -1,11 +1,8 @@
 import { Client, TextChannel } from 'discord.js'
 import { githubAPI } from '../../libs/axios'
 
-// Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
-
-// Create a function that notify when the Discord.js Bot is online, send a message to a given channel
 export const notifyPulse = async (Hans: Client) => {
-  // Disables pulse notification in development
+  // INFO Disables pulse notification in development
   if (process.env.ISDEV!) return
 
   try {
@@ -24,7 +21,6 @@ export const notifyPulse = async (Hans: Client) => {
       iconURL: `${lastCommit[0].author.avatar_url}`,
     }
 
-    // Send a text to the channel notifying that the bot is online
     await channel.send({
       embeds: [
         {

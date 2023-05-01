@@ -33,5 +33,5 @@ Fix: #PR_NUMBER
 
 Checkboxes:
 
-- [ ] I ran `npm run lint` and there were no errors
-- [ ] I ran `npm run format` and there were no errors
+- [ ] I ran `yarn lint` and there were no errors
+- [ ] I ran `yarn format` and there were no errors

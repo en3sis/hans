@@ -5,7 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "rootDir": "./src",
-    // "baseUrl": "./",
+    // "baseUrl": "./src",
     "target": "es6",
     "sourceMap": false,
     "outDir": "./build",
@@ -18,7 +18,7 @@
     "resolveJsonModule": true,
     "types": [],
     "paths": {
-      // "@/lib/*": ["src/lib/*"],
+      // "@/libs/*": ["libs/*"]
       // "@/types/*": ["src/types/*"],
       // "@/controllers/*": ["src/controllers/*"],
       // "@/commands/*": ["src/commands/*"]

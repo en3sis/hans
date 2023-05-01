@@ -54,7 +54,11 @@ export const findGuildPlugins = async (guild_id: string) => {
   }
 }
 
-export type GuildPluginData = { enabled: boolean; metadata: any; data: GuildPlugin | object }
+export type GuildPluginData = {
+  enabled: boolean
+  metadata: any
+  data: GuildPlugin | object
+}
 
 export const resolveGuildPlugins = async (
   guild_id: string,
@@ -67,7 +71,9 @@ export const resolveGuildPlugins = async (
       .eq('guild_id', guild_id)
       .single()
 
-    const matchingPlugin = guildPlugin?.['guilds-plugins'].find((ele) => ele.name === pluginName)
+    const matchingPlugin = guildPlugin?.['guilds-plugins'].find(
+      (ele: GuildPlugin) => ele.name === pluginName,
+    )
 
     if (matchingPlugin && matchingPlugin.plugins.enabled && matchingPlugin.enabled) {
       return {
