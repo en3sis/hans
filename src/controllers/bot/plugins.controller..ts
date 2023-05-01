@@ -54,23 +54,24 @@ export const findGuildPlugins = async (guild_id: string) => {
   }
 }
 
+export type GuildPluginData = { enabled: boolean; metadata: any; data: GuildPlugin | object }
+
 export const resolveGuildPlugins = async (
   guild_id: string,
   pluginName: string,
-): Promise<{ enabled: boolean; metadata: any; data: GuildPlugin | object }> => {
+): Promise<GuildPluginData> => {
   try {
     const { data: guildPlugin } = await supabase
       .from('guilds')
       .select('*, guilds-plugins(*, plugins(enabled, description, premium))')
       .eq('guild_id', guild_id)
-      .eq('name', pluginName)
       .single()
 
-    const matchingPlugin = guildPlugin?.['guilds-plugins']?.[0]
+    const matchingPlugin = guildPlugin?.['guilds-plugins'].find((ele) => ele.name === pluginName)
 
     if (matchingPlugin && matchingPlugin.plugins.enabled && matchingPlugin.enabled) {
       return {
-        enabled: matchingPlugin[pluginName] || false,
+        enabled: matchingPlugin.enabled || false,
         metadata: JSON.parse(JSON.stringify(matchingPlugin.metadata)),
         data: matchingPlugin,
       }

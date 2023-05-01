@@ -2,7 +2,7 @@ import { Client, Guild } from 'discord.js'
 import supabase from '../../libs/supabase'
 import { Database } from '../../types/database.types'
 import { Hans } from './../../index'
-import { insertGuildPlugin } from './plugins.controller.'
+import { insertGuildPlugin, resolveGuildPlugins } from './plugins.controller.'
 
 export type GuildSettings = Database['public']['Tables']['guilds']['Row']
 export type GuildPlugin = Database['public']['Tables']['guilds-plugins']['Row']
@@ -118,4 +118,5 @@ export const insetOneGuild = async (guild: Guild) => {
 
 // Allows to get guild user's settings directly from the client.
 Hans.guildSettings = async (guildId: string) => await findOneGuild(guildId)
-// Hans.guildPlugins = async (guildId: string) => await findOneGuild(guildId)
+Hans.guildPluginSettings = async (guildId: string, plugin_name: string) =>
+  await resolveGuildPlugins(guildId, plugin_name)

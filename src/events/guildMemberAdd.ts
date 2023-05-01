@@ -12,15 +12,15 @@ module.exports = {
 
       // Check it the guild has enabled the event
       if (!enabled) return
-      if (metadata) {
-        return console.error(`⚠️  No join/leave channel set for ${member.guild.name}`)
-      }
+      // Check if metadata is not an empty object
+      if (!Object.keys(metadata).length)
+        return console.error(`⚠️ No join/leave channel set for ${member.guild.name}`)
 
-      const targetChannel = Hans.channels.cache.get(metadata.targetChannel) as TextChannel
+      const targetChannel = Hans.channels.cache.get(metadata.channelId) as TextChannel
 
       if (!targetChannel) return
 
-      const msg = `<@${member.user.id}> has has joined the server`
+      const msg = `<@${member.user.id}> has has joined the server. Give him/her a warm welcome!`
 
       return await targetChannel.send({
         embeds: [

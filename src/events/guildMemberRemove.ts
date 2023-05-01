@@ -11,13 +11,12 @@ module.exports = {
 
       // Check it the guild has enabled the event
       if (!enabled) return
-      if (!metadata) {
-        return console.error(`⚠️  No join/leave channel set for ${member.guild.name}`)
-      }
+      if (!Object.keys(metadata).length)
+        return console.error(`⚠️ No join/leave channel set for ${member.guild.name}`)
 
-      const targetChannel = Hans.channels.cache.get(metadata.logChannelId) as TextChannel
+      const targetChannel = Hans.channels.cache.get(metadata.channelId) as TextChannel
 
-      const msg = `<@${member.user.id}> has left the server. We'll be missing him/her`
+      const msg = `<@${member.user.id}> has left the server. We'll be missing him/her so much! :sob:`
 
       return await targetChannel.send({
         embeds: [

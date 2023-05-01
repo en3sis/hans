@@ -16,7 +16,7 @@ module.exports = {
         .addChannelOption((string) =>
           string.setName('channel').setDescription('channel').setRequired(true),
         )
-        .addStringOption((string) => string.setName('title').setDescription('Thread cutom title'))
+        .addStringOption((string) => string.setName('title').setDescription('Thread custom title'))
         .addStringOption((string) =>
           string
             .setName('response')

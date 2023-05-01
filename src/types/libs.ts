@@ -2,6 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import { Collection } from 'discord.js'
 import { Hans } from '.'
 import { GuildSettings } from '../controllers/bot/guilds.controller'
+import { GuildPluginData } from '../controllers/bot/plugins.controller.'
 import { Database } from './database.types'
 
 declare module 'discord.js' {
@@ -11,5 +12,6 @@ declare module 'discord.js' {
     settings: Hans
     supabase: SupabaseClient<Database>
     guildSettings: (guildId: string) => Promise<GuildSettings>
+    guildPluginSettings: (guildId: string, plugin_name: string) => Promise<GuildPluginData>
   }
 }
