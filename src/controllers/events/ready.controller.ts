@@ -1,7 +1,5 @@
 import { Client, TextChannel } from 'discord.js'
 import { githubAPI } from '../../libs/axios'
-import { getFromCache } from '../../libs/node-cache'
-import { Hans } from '../../types'
 
 // Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
 
@@ -14,7 +12,7 @@ export const notifyPulse = async (Hans: Client) => {
     const used = process.memoryUsage().heapUsed / 1024 / 1024
 
     const lastCommit = await githubAPI('repos/en3sis/hans/commits')
-    const config: Hans = getFromCache('config')
+    const config = Hans.settings
 
     if (!config.notify_channel_id) return
 

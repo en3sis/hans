@@ -21,8 +21,7 @@ module.exports = {
       await insertPlugins()
 
       // Fetches for the configuration.
-      const settings = await getBotConfiguration()
-      Hans.settings = settings
+      Hans.settings = await getBotConfiguration()
 
       // Notify in the configuration.botStartAlertChannel that the bot is ready.
       await notifyPulse(Hans)
@@ -33,8 +32,8 @@ module.exports = {
       Hans.user.setPresence({
         activities: [
           {
-            type: settings.activity_type || 3,
-            name: settings.activity_name || 'you',
+            type: Hans.settings.activity_type || 3,
+            name: Hans.settings.activity_name || 'you',
           },
         ],
       })
