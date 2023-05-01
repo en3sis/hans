@@ -59,7 +59,7 @@ export const findGuildPlugins = async (guild_id: string) => {
 export type GuildPluginData = {
   enabled: boolean
   metadata: any
-  data: GuildPlugin | object
+  data: GuildPlugin | any
 }
 
 export const resolveGuildPlugins = async (
@@ -81,7 +81,7 @@ export const resolveGuildPlugins = async (
       return {
         enabled: matchingPlugin.enabled || false,
         metadata: JSON.parse(JSON.stringify(matchingPlugin.metadata)),
-        data: matchingPlugin,
+        data: guildPlugin,
       }
     } else {
       return {
@@ -92,11 +92,6 @@ export const resolveGuildPlugins = async (
     }
   } catch (error) {
     console.error('❌ ERROR: resolveGuildPlugin', error)
-    return {
-      enabled: false,
-      metadata: {},
-      data: {},
-    }
   }
 }
 
@@ -130,4 +125,30 @@ export const pluginsListNames = () => {
   return Object.entries(pluginsList).reduce((acc, [key]) => {
     return [...acc, { name: key, value: key }]
   }, [])
+}
+
+export const pluginChatGPTSettings = async (
+  interaction: CommandInteraction,
+  api_key: string,
+  org: string,
+) => {
+  try {
+    const { error } = await supabase
+      .from('guilds-plugins')
+      .update({ metadata: { api_key, org } })
+      .eq('name', 'chatGtp')
+      .eq('owner', interaction.guildId)
+
+    if (error) throw error
+
+    await interaction.deferReply({
+      ephemeral: true,
+    })
+
+    return await interaction.editReply({
+      content: `The plugin chat-gpt was successfully configured, you can now run the /ask command`,
+    })
+  } catch (error) {
+    console.log('❌ ERROR: pluginChatGPTSettings(): ', error)
+  }
 }

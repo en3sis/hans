@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { findOneGuild } from '../controllers/bot/guilds.controller'
+import { resolveGuildPlugins } from '../controllers/bot/plugins.controller.'
 import { gpt3Controller } from '../controllers/plugins/chat-gpt3.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
@@ -17,12 +17,23 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     try {
       await interaction.deferReply()
-      const res = await findOneGuild(interaction.guildId)
+      const { enabled, metadata, data } = await resolveGuildPlugins(interaction.guildId!, 'chatGtp')
 
-      if (res.premium) {
+      if (!enabled)
+        return await interaction.editReply('This feature is not enabled for this server.')
+
+      if (!data.premium && metadata.apiKey === null)
+        return await interaction.editReply(
+          'Your API-Key & Organization is not set. Please set it using `/plugins chatGtp` command.',
+        )
+
+      if (data.premium) {
         const text = interaction.options.get('prompt')!.value as string
 
-        const answer = await gpt3Controller(text)
+        const API_KEY = data.premium ? process.env.OPENAI_API_KEY : metadata.apiKey
+        const ORGANIZATION = data.premium ? process.env.OPENAI_ORGANIZATION : metadata.organization
+
+        const answer = await gpt3Controller(text, API_KEY, ORGANIZATION)
         await interaction.editReply({
           embeds: [
             {
@@ -52,9 +63,7 @@ module.exports = {
         return await interaction.editReply('This feature is only available for premium servers.')
       }
     } catch (error) {
-      console.log('inter', interaction)
-
-      console.log('❌ ai(): ', error)
+      console.log('❌ Command: ask(): ', error)
     }
   },
 }

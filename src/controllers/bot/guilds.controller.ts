@@ -32,12 +32,11 @@ export const findOneGuild = async (guildId: string) => {
  */
 export const insertAllGuilds = async (Hans: Client) => {
   try {
-    const guilds: Omit<GuildSettings, 'id'>[] = Hans.guilds.cache.map((guild) => ({
+    const guilds: Omit<GuildSettings, 'id' | 'premium'>[] = Hans.guilds.cache.map((guild) => ({
       name: guild.name,
       avatar: guild.icon,
       created_at: new Date().toISOString(),
       guild_id: guild.id,
-      premium: false,
     }))
 
     const { data, error } = await supabase
