@@ -1,5 +1,4 @@
 import { Client, Message } from 'discord.js'
-import { pluginsController } from '../controllers/plugins'
 
 module.exports = {
   name: 'messageCreate',
@@ -26,7 +25,6 @@ module.exports = {
 
       // Plugins
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-      await pluginsController(Hans, message)
     } catch (error) {
       console.log('❌ messageCreate(): ', error)
     }

@@ -1,4 +1,6 @@
+import { CommandInteraction } from 'discord.js'
 import supabase from '../../libs/supabase'
+import { pluginsList } from '../../models/plugins.model'
 import { GuildPlugin } from './guilds.controller'
 
 export const insertGuildPlugin = async (guild_id: string) => {
@@ -96,4 +98,36 @@ export const resolveGuildPlugins = async (
       data: {},
     }
   }
+}
+
+export const toggleGuildPlugin = async (
+  interaction: CommandInteraction,
+  name: string,
+  toggle: boolean,
+) => {
+  try {
+    const { data, error } = await supabase
+      .from('guilds-plugins')
+      .update({ enabled: toggle })
+      .eq('name', name)
+      .eq('owner', interaction.guildId)
+    // .or(`name.eq.guildMemberAdd, name.eq.guildMemberRemove`)
+
+    if (error) throw error
+
+    await interaction.reply({
+      content: `The plugin ${name} was successfully ${toggle ? 'enabled' : 'disabled'}`,
+      ephemeral: true,
+    })
+
+    return data
+  } catch (error) {
+    console.log('❌ ERROR: toggleGuildPlugin(): ', error)
+  }
+}
+
+export const pluginsListNames = () => {
+  return Object.entries(pluginsList).reduce((acc, [key]) => {
+    return [...acc, { name: key, value: key }]
+  }, [])
 }
