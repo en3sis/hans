@@ -2,7 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import { Collection } from 'discord.js'
 import { BotConfig } from '../controllers/bot/config'
 import { GuildSettings } from '../controllers/bot/guilds.controller'
-import { GuildPluginData } from '../controllers/bot/plugins.controller.'
+import { GuildPluginData } from '../controllers/bot/plugins.controller'
 import { Database } from './database.types'
 
 declare module 'discord.js' {

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { resolveGuildPlugins } from '../controllers/bot/plugins.controller.'
+import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 import { gpt3Controller } from '../controllers/plugins/chat-gpt3.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
@@ -28,12 +28,12 @@ module.exports = {
         )
 
       if (data.premium) {
-        const text = interaction.options.get('prompt')!.value as string
+        const prompt = interaction.options.get('prompt')!.value as string
 
         const API_KEY = data.premium ? process.env.OPENAI_API_KEY : metadata.apiKey
         const ORGANIZATION = data.premium ? process.env.OPENAI_ORGANIZATION : metadata.organization
 
-        const answer = await gpt3Controller(text, API_KEY, ORGANIZATION)
+        const answer = await gpt3Controller(prompt, API_KEY, ORGANIZATION)
         await interaction.editReply({
           embeds: [
             {
@@ -41,7 +41,7 @@ module.exports = {
                 name: `${interaction.user.username} asked:`,
                 icon_url: interaction.user.avatarURL(),
               },
-              description: `${text}`,
+              description: `${prompt}`,
               color: 0x5865f2,
             },
             {

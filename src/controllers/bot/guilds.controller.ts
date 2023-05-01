@@ -2,7 +2,7 @@ import { Client, Guild } from 'discord.js'
 import supabase from '../../libs/supabase'
 import { Database } from '../../types/database.types'
 import { Hans } from './../../index'
-import { insertGuildPlugin, resolveGuildPlugins } from './plugins.controller.'
+import { insertGuildPlugin, resolveGuildPlugins } from './plugins.controller'
 
 export type GuildSettings = Database['public']['Tables']['guilds']['Row']
 export type GuildPlugin = Database['public']['Tables']['guilds-plugins']['Row']
@@ -92,28 +92,6 @@ export const insetOneGuild = async (guild: Guild) => {
     console.error('❌ ERROR: insetOneGuild: ', error)
   }
 }
-
-/**
- * Update a new guild into the database
- * @param guild Guild Object from discord.js
- */
-// export const updateOneGuild = async (guild: Guild, update: Partial<GuildDocI | object>) => {
-//   try {
-//     await mongoClient
-//       .db('guilds')
-//       .collection('global')
-//       .updateOne({ _id: guild.id }, { $set: update })
-//   } catch (error) {
-//     console.error('❌ ERROR: updateOneGuild', error)
-//   }
-// }
-
-/**
- * Resolves if a guild has the events enabled and if a specific event is enabled
- * @param id guild id
- * @param event extends ClientEvents
- * @returns boolean
- */
 
 // Allows to get guild user's settings directly from the client.
 Hans.guildSettings = async (guildId: string) => await findOneGuild(guildId)

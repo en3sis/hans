@@ -1,5 +1,5 @@
 import { Client, Message, TextChannel } from 'discord.js'
-import { resolveGuildPlugins } from '../controllers/bot/plugins.controller.'
+import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 import { NO_INTENT } from '../utils/constants'
 
 module.exports = {

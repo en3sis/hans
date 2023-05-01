@@ -1,5 +1,5 @@
 import { Client, GuildMember, TextChannel } from 'discord.js'
-import { resolveGuildPlugins } from '../controllers/bot/plugins.controller.'
+import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 
 module.exports = {
   name: 'guildMemberRemove',
