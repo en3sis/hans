@@ -7,10 +7,9 @@ export const insertGuildPlugin = async (guild_id: string) => {
   try {
     const plugins = await supabase.from('plugins').select('*')
 
-    const guildPlugins: Omit<GuildPlugin, 'id'>[] = plugins.data.map((plugin) => ({
+    const guildPlugins: Omit<GuildPlugin, 'id' | 'metadata'>[] = plugins.data.map((plugin) => ({
       owner: guild_id,
       enabled: plugin.enabled,
-      metadata: {},
       name: plugin.name,
       created_at: new Date().toISOString(),
     }))
@@ -76,6 +75,7 @@ export const resolveGuildPlugins = async (
     const matchingPlugin = guildPlugin?.['guilds-plugins'].find(
       (ele: GuildPlugin) => ele.name === pluginName,
     )
+    console.log('🚀 ~ file: plugins.controller.ts:78 ~ matchingPlugin:', matchingPlugin)
 
     if (matchingPlugin && matchingPlugin.plugins.enabled && matchingPlugin.enabled) {
       return {

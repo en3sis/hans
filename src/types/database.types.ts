@@ -104,6 +104,7 @@ export interface Database {
       }
       plugins: {
         Row: {
+          category: string | null
           created_at: string | null
           description: string | null
           enabled: boolean | null
@@ -112,6 +113,7 @@ export interface Database {
           premium: boolean | null
         }
         Insert: {
+          category?: string | null
           created_at?: string | null
           description?: string | null
           enabled?: boolean | null
@@ -120,6 +122,7 @@ export interface Database {
           premium?: boolean | null
         }
         Update: {
+          category?: string | null
           created_at?: string | null
           description?: string | null
           enabled?: boolean | null

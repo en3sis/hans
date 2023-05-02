@@ -7,11 +7,14 @@ module.exports = {
   enabled: true,
   async execute(Hans: Client, member: GuildMember) {
     try {
-      const { enabled, metadata } = await resolveGuildPlugins(member.guild.id, 'guildMemberRemove')
+      const { enabled, metadata } = await resolveGuildPlugins(
+        member.guild.id,
+        'serverMembersActivity',
+      )
 
       // Check it the guild has enabled the event
       if (!enabled) return
-      if (!Object.keys(metadata).length)
+      if (!metadata || !Object.keys(metadata).length)
         return console.error(`⚠️ No join/leave channel set for ${member.guild.name}`)
 
       const targetChannel = Hans.channels.cache.get(metadata.channelId) as TextChannel

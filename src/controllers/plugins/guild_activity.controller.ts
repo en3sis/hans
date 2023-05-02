@@ -6,8 +6,9 @@ export const guildActivitySetChannel = async (interaction: CommandInteraction, c
     const { data, error } = await supabase
       .from('guilds-plugins')
       .update({ metadata: { channelId: channel } })
-      .or(`name.eq.guildMemberAdd, name.eq.guildMemberRemove`)
+      .eq('name', `serverMembersActivity`)
       .eq('owner', interaction.guildId)
+    // .or(`name.eq.guildMemberAdd, name.eq.guildMemberRemove`)
 
     if (error) throw error
 
