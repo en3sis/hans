@@ -127,6 +127,9 @@ export const pluginsListNames = () => {
   }, [])
 }
 
+// ====================
+// Chat GPT Plugin
+// ====================
 export const pluginChatGPTSettings = async (
   interaction: CommandInteraction,
   api_key: string,
@@ -150,5 +153,83 @@ export const pluginChatGPTSettings = async (
     })
   } catch (error) {
     console.log('❌ ERROR: pluginChatGPTSettings(): ', error)
+  }
+}
+
+// ====================
+// Threads Plugin
+// ====================
+export type PluginsThreadsMetadata = {
+  channelId: string
+  title?: string | null
+  autoMessage?: string | null
+  enabled?: boolean
+}
+
+export type PluginsThreadsSettings = {
+  interaction: CommandInteraction
+  metadata: PluginsThreadsMetadata
+}
+
+export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsThreadsSettings) => {
+  try {
+    await interaction.deferReply({
+      ephemeral: true,
+    })
+
+    const { data: guildsPlugins, error } = await supabase
+      .from('guilds-plugins')
+      .select('metadata')
+      .eq('name', 'threads')
+      .eq('owner', interaction.guildId)
+      .single()
+
+    if (error) throw error
+
+    let updatedMetadata: {
+      channelId: string
+      title?: string
+      autoMessage?: string
+      enabled?: boolean
+    }[]
+
+    const filteredMetadata = Object.fromEntries(
+      Object.entries(metadata).filter(([_, value]) => value !== null),
+    ) as PluginsThreadsMetadata
+
+    if (guildsPlugins?.metadata) {
+      const metadataArray = guildsPlugins.metadata as PluginsThreadsMetadata[]
+
+      const index = metadataArray.findIndex((item) => item.channelId === metadata.channelId)
+
+      if (index !== -1) {
+        metadataArray[index] = { ...metadataArray[index], ...filteredMetadata }
+
+        updatedMetadata = metadataArray
+      } else {
+        updatedMetadata = [...metadataArray, filteredMetadata]
+      }
+    } else {
+      updatedMetadata = [filteredMetadata]
+    }
+
+    // Update the metadata in the database
+    const { error: updateError } = await supabase
+      .from('guilds-plugins')
+      .update({ metadata: updatedMetadata })
+      .eq('name', 'threads')
+      .eq('owner', interaction.guildId)
+
+    if (updateError) throw updateError
+
+    return await interaction.editReply({
+      content: `The plugin threads was successfully configured`,
+    })
+  } catch (error) {
+    console.log('❌ ERROR: pluginThreadsSettings(): ', error)
+
+    return await interaction.editReply({
+      content: `There was an error configuring the plugin for the current channel`,
+    })
   }
 }

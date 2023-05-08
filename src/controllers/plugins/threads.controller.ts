@@ -1,16 +1,29 @@
 import { Message, NewsChannel, StartThreadOptions, TextChannel, ThreadChannel } from 'discord.js'
+import { DEFAULT_COLOR } from '../../utils/colors'
 import { isStaff } from '../../utils/permissions'
+import { GuildPluginData, PluginsThreadsMetadata } from '../bot/plugins.controller'
 
-export const threadAutoCreate = async (message: Message, config: any) => {
+// TODO: Requires refactor, fix the usage of any
+export const threadAutoCreate = async (
+  message: Message,
+  config: GuildPluginData & { metadata: PluginsThreadsMetadata },
+) => {
   try {
-    if (!config.threadChannelId) return
+    if (!config.metadata) return
+    if (message.hasThread) return
+
+    const { title, autoMessage, channelId, enabled } = config?.metadata.find(
+      (m: PluginsThreadsMetadata) => m.channelId === message.channelId,
+    )
+
+    if (channelId !== message.channelId || !enabled) return
 
     const authorUser = message.author
     const authorMember = message.member
     const channel = message.channel
 
     if (!(channel instanceof TextChannel) && !(channel instanceof NewsChannel)) return
-    if (message.hasThread) return
+    // If the message is already in a thread, skip
 
     const authorName =
       authorMember === null || authorMember.nickname === null
@@ -18,18 +31,25 @@ export const threadAutoCreate = async (message: Message, config: any) => {
         : authorMember.nickname
 
     const settings: StartThreadOptions = {
-      name: `${config?.threadTitle || 'New thread'} | ${authorName}`,
+      name: `${title || 'New thread'} | ${authorName}`,
       autoArchiveDuration: 1440,
       rateLimitPerUser: 0,
-      reason: `${config?.threadTitle || 'New thread'} | ${authorName}`,
+      reason: `${title || 'New thread'} | ${authorName}`,
     }
 
     const thread = await message.startThread(settings)
 
+    // Send a message to the thread after 3 seconds if configured to do so.
     setTimeout(async () => {
-      if (!config.botMessageInThread) return
+      if (!autoMessage) return
       await thread.send({
-        content: config.botMessageInThread,
+        embeds: [
+          {
+            title: 'Thread Auto Message',
+            description: autoMessage,
+            color: DEFAULT_COLOR,
+          },
+        ],
       })
     }, 3000)
   } catch (error) {
@@ -37,7 +57,7 @@ export const threadAutoCreate = async (message: Message, config: any) => {
   }
 }
 
-/**
+/** // TODO: Requires refactor
  * Check if the message author is the owner of the thread or a staff member, if not, removes the message
  * @param message Message
  */
@@ -54,55 +74,5 @@ export const disallowCommentsInPublicThreads = async (message: Message) => {
       .then((msg: Message) => setTimeout(() => msg.delete(), 5000))
   } catch (error) {
     console.log('ERROR: disallowCommentsInPublicThreads: ', error)
-  }
-}
-
-// Exports a function that will add a new thread to the database in guilds db, threadChannels document
-export const addThread = async (
-  guildId: string,
-  channelId: string,
-  customTitle: string,
-  botResponse: string,
-) => {
-  try {
-    // TODO: Fix this
-    // await updateOne({
-    //   dataBase: 'guilds',
-    //   collection: 'global',
-    //   query: { _id: guildId },
-    //   data: {
-    //     $push: {
-    //       'plugins.threadChannels': {
-    //         threadTitle: customTitle,
-    //         botMessageInThread: botResponse,
-    //         threadChannelId: channelId,
-    //       },
-    //     },
-    //   },
-    // })
-  } catch (error) {
-    console.log('ERROR: addThread(): ', error)
-  }
-}
-
-// Removes the sub-document from plugins, threadChannels array
-export const removeThread = async (guildId: string, channelId: string) => {
-  try {
-    // TODO: Fix this
-    // const response = await updateOne({
-    //   dataBase: 'guilds',
-    //   collection: 'global',
-    //   query: { _id: guildId },
-    //   data: {
-    //     $pull: {
-    //       'plugins.threadChannels': {
-    //         threadChannelId: channelId,
-    //       },
-    //     },
-    //   },
-    // })
-    // return response
-  } catch (error) {
-    console.log('ERROR: removeThread(): ', error)
   }
 }

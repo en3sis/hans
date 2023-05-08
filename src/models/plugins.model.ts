@@ -15,32 +15,20 @@ const genericStructure: GenericPluginParts = {
 export const pluginsList: Record<string, GenericPluginParts> = {
   serverMembersActivity: {
     ...genericStructure,
-    description: 'Notifies when a new member joins/leaves the server.',
+    description: 'Notifies to a specific channel when a new member joins/leaves the server.',
     category: 'server',
   },
-  // guildMemberRemove: {
-  //   description: 'Notifies when a member leaves the server.',
-  //   ...genericStructure,
-  // },
-  messageDelete: {
+  serverMessagesLogs: {
     ...genericStructure,
-    description: 'Notifies when a message is deleted in a channel.',
+    description: 'Logs messages those are deleted or edited into a specific channel.',
     category: 'moderation',
   },
-  messageUpdate: {
+  removeLinks: {
     ...genericStructure,
-    description: 'Notifies when a message is updated in a channel.',
+    description:
+      'Removes any links posted in a channel, with the option to allow specific roles or links to be posted.',
     category: 'moderation',
-  },
-  messageReactionAdd: {
-    ...genericStructure,
-    description: 'Notifies when a reaction is added to a message.',
-    category: 'engagement',
-  },
-  messageReactionRemove: {
-    ...genericStructure,
-    description: 'Notifies when a reaction is removed from a message.',
-    category: 'engagement',
+    enabled: false,
   },
   chatGtp: {
     ...genericStructure,
@@ -48,15 +36,20 @@ export const pluginsList: Record<string, GenericPluginParts> = {
     premium: true,
     category: 'productivity',
   },
-  removeLinks: {
-    ...genericStructure,
-    description:
-      'Removes any links posted in a channel, with the option to allow specific roles or links to be posted.',
-    category: 'moderation',
-  },
+
   threads: {
     ...genericStructure,
     description: 'Allows for the automatic creation of threads in a specific channel.',
     category: 'server',
   },
+  // messageReactionAdd: {
+  //   ...genericStructure,
+  //   description: 'Notifies when a reaction is added to a message.',
+  //   category: 'engagement',
+  // },
+  // messageReactionRemove: {
+  //   ...genericStructure,
+  //   description: 'Notifies when a reaction is removed from a message.',
+  //   category: 'engagement',
+  // },
 }
