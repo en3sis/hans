@@ -22,7 +22,7 @@ module.exports = {
       if (!enabled)
         return await interaction.editReply('This feature is not enabled for this server.')
 
-      if (!data.premium && metadata.apiKey === null)
+      if (!data.premium && metadata?.apiKey === null)
         return await interaction.editReply(
           'Your API-Key & Organization is not set. Please set it using `/plugins chatGtp` command.',
         )
