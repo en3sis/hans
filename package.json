@@ -6,12 +6,13 @@
   "scripts": {
     "start": "node build/utils/deploy-commands.js && node build/index.js",
     "dev": "ISDEV=true nodemon hans",
-    "build": "rm -rf ./build && tsc --project ./",
+    "build": "tsc --project ./",
+    "build_dev": "rm -rf ./build && tsc --project ./",
     "lint": "eslint . --fix",
     "format": "npx prettier --write '**/*.ts'",
     "prepare": "npx husky install",
     "slash": "yarn build && node build/utils/deploy-commands.js",
-    "slashDev": "export ISDEV=true && yarn build && node build/utils/deploy-commands.js",
+    "slashDev": "export ISDEV=true && yarn build_dev && node build/utils/deploy-commands.js",
     "test": "ts-mocha -p ./tsconfig.json ./tests/**/*.spec.ts",
     "test:dev": "ts-mocha  ./tests/**/*.spec.ts -w --watch-files '**/*.ts'"
   },
