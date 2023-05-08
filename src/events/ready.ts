@@ -16,9 +16,9 @@ module.exports = {
           .DISCORD_CLIENT_ID!}&permissions=0&scope=bot%20applications.commands`,
       )
       // If no configuration is found, insert one
-      await insertAllGuilds(Hans)
       await insertConfiguration()
       await insertPlugins()
+      await insertAllGuilds(Hans)
 
       // Fetches for the configuration.
       Hans.settings = await getBotConfiguration()
