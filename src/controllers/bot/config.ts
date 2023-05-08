@@ -24,7 +24,7 @@ export const insertConfiguration = async () => {
           id: 1,
           name: 'Hans',
           notify_channel_id: '1014228732728328202',
-          perma_invite: 'https://discord.gg/2tK7PhkZ',
+          perma_invite: 'https://discord.com/invite/sMmbbSefwH',
           website: '',
         },
         { onConflict: 'id' },

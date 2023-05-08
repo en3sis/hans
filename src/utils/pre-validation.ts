@@ -18,9 +18,8 @@ export class ProjectValidator {
     return (
       process.env.DISCORD_TOKEN &&
       process.env.DISCORD_CLIENT_ID &&
-      process.env.MONGODB_CONNECTION &&
-      process.env.SUPABASE_URL
-      // process.env.SUPABASE_ANON_KEY
+      process.env.SUPABASE_URL &&
+      process.env.SUPABASE_SERVICE_ROL
     )
   }
 }
