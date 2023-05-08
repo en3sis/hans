@@ -93,6 +93,22 @@ export const insetOneGuild = async (guild: Guild) => {
   }
 }
 
+/**
+ * Removes a guild
+ * @param guild Guild Object from discord.js
+ */
+export const removeOneGuild = async (guild: Guild) => {
+  try {
+    const { data, error } = await supabase.from('guilds').delete().eq('guild_id', guild.id).single()
+
+    if (error) throw error
+
+    return data
+  } catch (error) {
+    console.error('❌ ERROR: insetOneGuild: ', error)
+  }
+}
+
 // Allows to get guild user's settings directly from the client.
 Hans.guildSettings = async (guildId: string) => await findOneGuild(guildId)
 Hans.guildPluginSettings = async (guildId: string, plugin_name: string) =>

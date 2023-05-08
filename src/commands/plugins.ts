@@ -69,7 +69,7 @@ module.exports = {
         .addStringOption((option) =>
           option
             .setName('thread_title')
-            .setDescription('The title of the aumatic thread, optional'),
+            .setDescription('The title of the automatic thread, optional'),
         )
         .addStringOption((option) =>
           option

@@ -53,7 +53,7 @@ export const threadAutoCreate = async (
       })
     }, 3000)
   } catch (error) {
-    console.log('ERROR: threadAutoCreate(): ', error)
+    console.log('💢 ERROR: threadAutoCreate(): ', error)
   }
 }
 
@@ -73,6 +73,6 @@ export const disallowCommentsInPublicThreads = async (message: Message) => {
       .send('🪬 Only Owner & Staff can comment in public threads in this channel.')
       .then((msg: Message) => setTimeout(() => msg.delete(), 5000))
   } catch (error) {
-    console.log('ERROR: disallowCommentsInPublicThreads: ', error)
+    console.log('💢 ERROR: disallowCommentsInPublicThreads: ', error)
   }
 }

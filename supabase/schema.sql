@@ -84,3 +84,11 @@ alter table "public"."configs" enable row level security;
 alter table "public"."guilds" enable row level security;
 alter table "public"."guilds-plugins" enable row level security;
 alter table "public"."plugins" enable row level security;
+
+-- Enables cascade on delete for guilds-plugins when a guild is deleted
+alter table public."guilds-plugins"
+drop constraint "guilds-plugins_owner_fkey",
+add constraint "guilds-plugins_owner_fkey"
+   FOREIGN KEY (owner)
+   REFERENCES guilds(guild_id)
+   ON DELETE CASCADE;
