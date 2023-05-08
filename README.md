@@ -1,7 +1,7 @@
 <div align="center">
 	<br />
 	<p>
-		<a href="https://discord.com/invite/sMmbbSefwH"><img src="https://cdn.discordapp.com/attachments/626034007087513601/1105111092184752158/hans-banner.png" width="546" alt="discord.js" /></a>
+		<a href="https://discord.com/invite/sMmbbSefwH"><img src="https://res.cloudinary.com/vac/image/upload/v1683578541/Hans/hans-banner-pattern.png" width="546" alt="discord.js" /></a>
 	</p>
 
 </div>
