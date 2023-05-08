@@ -11,3 +11,5 @@ export const sentimentUrgencyTable = (score: number): [string, ColorResolvable] 
     return ['warning', 0xfca5a5]
   }
 }
+
+export const DEFAULT_COLOR = 0x73ec8e

@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import {
-  enableSentimentAnalysis,
+  // enableSentimentAnalysis,
   purgeMessages,
-  toggleSentimentAnalysis,
 } from '../controllers/plugins/moderation.controller'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
@@ -25,34 +24,34 @@ https: module.exports = {
               option.setRequired(true).setName('n').setDescription('Amount of messages, max 100'),
             ),
         ),
-    )
-    .addSubcommandGroup((group) =>
-      group
-        .setName('sentiment')
-        .setDescription('Plugin: Sentiment Analysis')
-        .addSubcommand((subcommand) =>
-          subcommand
-            .setName('subscribe')
-            .setDescription('Subscribe to sentiment analysis notifications')
-            .addChannelOption((option) =>
-              option
-                .setRequired(true)
-                .setName('channel')
-                .setDescription('Channel for Hans to report'),
-            ),
-        )
-        .addSubcommand((subcommand) =>
-          subcommand
-            .setName('toggle')
-            .setDescription('Enables/Disables the plugin.')
-            .addBooleanOption((option) =>
-              option
-                .setRequired(true)
-                .setName('status')
-                .setDescription('True for enable, False to disable'),
-            ),
-        ),
     ),
+  // .addSubcommandGroup((group) =>
+  //   group
+  //     .setName('sentiment')
+  //     .setDescription('Plugin: Sentiment Analysis')
+  //     .addSubcommand((subcommand) =>
+  //       subcommand
+  //         .setName('subscribe')
+  //         .setDescription('Subscribe to sentiment analysis notifications')
+  //         .addChannelOption((option) =>
+  //           option
+  //             .setRequired(true)
+  //             .setName('channel')
+  //             .setDescription('Channel for Hans to report'),
+  //         ),
+  //     )
+  //     .addSubcommand((subcommand) =>
+  //       subcommand
+  //         .setName('toggle')
+  //         .setDescription('Enables/Disables the plugin.')
+  //         .addBooleanOption((option) =>
+  //           option
+  //             .setRequired(true)
+  //             .setName('status')
+  //             .setDescription('True for enable, False to disable'),
+  //         ),
+  //     ),
+  // ),
   async execute(interaction: CommandInteraction) {
     try {
       if (!interaction.memberPermissions.has(['Administrator']))
@@ -64,9 +63,9 @@ https: module.exports = {
 
       if (interaction.options.getSubcommandGroup() === 'sentiment') {
         if (interaction.options.getSubcommand() === 'toggle') {
-          await toggleSentimentAnalysis(interaction)
+          // await toggleSentimentAnalysis(interaction)
         } else {
-          await enableSentimentAnalysis(interaction)
+          // await enableSentimentAnalysis(interaction)
         }
       } else if (interaction.options.getSubcommandGroup() === 'messages') {
         await purgeMessages(interaction)

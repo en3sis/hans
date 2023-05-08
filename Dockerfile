@@ -2,8 +2,15 @@
 FROM node:16.13.0-alpine AS deps
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm instal
+ARG M1=false
+
+# Install python3, g++ and make for building native dependencies if you're running on MacOS with M1 chip, run the command as  docker build --build-arg M1=true -t hans:test .
+RUN if [ "$M1" = "true" ] ; then \
+  apk add --no-cache python3 g++ make \
+; fi
+
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM node:16.13.0-alpine AS builder
@@ -11,8 +18,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN npm install
-RUN npm run build
+RUN yarn build
 
 # Production image, copy all the files and run next
 FROM node:16.13.0-alpine AS runner
@@ -26,8 +32,8 @@ RUN adduser --system --uid 1001 NON_ROOT
 COPY --from=builder --chown=NON_ROOT:nodejs /app/build ./build
 COPY --from=builder --chown=NON_ROOT:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=NON_ROOT:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=NON_ROOT:nodejs /app/package-lock.json ./package-lock.json
+COPY --from=deps /app/yarn.lock ./
 
 USER NON_ROOT
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]

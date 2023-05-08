@@ -1,6 +1,6 @@
 import formatDistance from 'date-fns/formatDistance'
 import { Client, GuildMember, TextChannel } from 'discord.js'
-import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
+import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 
 module.exports = {
   name: 'guildMemberAdd',
@@ -8,24 +8,23 @@ module.exports = {
   enabled: true,
   async execute(Hans: Client, member: GuildMember) {
     try {
-      const { enabled, ..._guildSettings } = await resolveGuildEvents(
+      const { enabled, metadata } = await resolveGuildPlugins(
         member.guild.id,
-        'guildMemberAdd',
+        'serverMembersActivity',
       )
 
       // Check it the guild has enabled the event
       if (!enabled) return
-      if (!_guildSettings.plugins.guildMembersActivity.logChannelId) {
-        return console.error(`⚠️  No join/leave channel set for ${member.guild.name}`)
-      }
+      // Check if metadata is not an empty object
+      if (!metadata || !Object.keys(metadata).length)
+        // Info: this is just a warning, useful for debugging, won't show to guild.
+        return console.error(`⚠️ No join/leave channel set for ${member.guild.name}`)
 
-      const targetChannel = Hans.channels.cache.get(
-        _guildSettings.plugins.guildMembersActivity.logChannelId,
-      ) as TextChannel
+      const targetChannel = Hans.channels.cache.get(metadata.channelId) as TextChannel
 
       if (!targetChannel) return
 
-      const msg = `<@${member.user.id}> has has joined the server`
+      const msg = `<@${member.user.id}> has has joined the server. Give him/her a warm welcome!`
 
       return await targetChannel.send({
         embeds: [

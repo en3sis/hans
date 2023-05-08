@@ -1,16 +1,16 @@
 import { Client, Guild } from 'discord.js'
-import { insetOneGuild } from '../controllers/bot/guilds.controller'
+import { removeOneGuild } from '../controllers/bot/guilds.controller'
 
 module.exports = {
-  name: 'guildCreate',
+  name: 'guildRemove',
   once: false,
   enabled: true,
   async execute(Hans: Client, guild: Guild) {
     try {
       // When he joins a guild, insert it into the database
-      await insetOneGuild(guild)
+      await removeOneGuild(guild)
     } catch (error) {
-      console.log('❌ guildCreate() : ', error)
+      console.log('❌ guildRemove() : ', error)
     }
   },
 }

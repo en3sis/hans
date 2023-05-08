@@ -1,5 +1,5 @@
 import { Client, Message } from 'discord.js'
-import { pluginsController } from '../controllers/plugins'
+import { threadAutoCreate } from '../controllers/plugins/threads.controller'
 
 module.exports = {
   name: 'messageCreate',
@@ -26,7 +26,7 @@ module.exports = {
 
       // Plugins
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-      await pluginsController(Hans, message)
+      await threadAutoCreate(message, await Hans.guildPluginSettings(message.guildId, 'threads'))
     } catch (error) {
       console.log('❌ messageCreate(): ', error)
     }
