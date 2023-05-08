@@ -23,7 +23,7 @@ export const insertConfiguration = async () => {
           discord_client_id: `${process.env.DISCORD_CLIENT_ID}`,
           id: 1,
           name: 'Hans',
-          notify_channel_id: '1014228732728328202',
+          notify_channel_id: '905157473671975002',
           perma_invite: 'https://discord.com/invite/sMmbbSefwH',
           website: '',
         },

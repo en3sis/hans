@@ -75,7 +75,6 @@ export const resolveGuildPlugins = async (
     const matchingPlugin = guildPlugin?.['guilds-plugins'].find(
       (ele: GuildPlugin) => ele.name === pluginName,
     )
-    console.log('🚀 ~ file: plugins.controller.ts:78 ~ matchingPlugin:', matchingPlugin)
 
     if (matchingPlugin && matchingPlugin.plugins.enabled && matchingPlugin.enabled) {
       return {
