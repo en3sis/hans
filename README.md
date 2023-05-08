@@ -76,6 +76,7 @@ We have multiple environments for deploying your bot.
 You can either use the pre-built Docker image from DockerHub at `en3sis/hans:latest` or build your own locally using the command `docker build -t en3sis/hans .`
 
 To run the container, use the command `docker run --env-file .env en3sis/hans` while making sure that the `.env` file is in the same directory as the command and contains all the necessary environment variables for the bot to function properly.
+You can also run it with `docker-compose` using the command `docker-compose up -d --build bot`.
 
 ### Locally
 

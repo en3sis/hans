@@ -1,0 +1,23 @@
+version: '3'
+services:
+  bot:
+    build: .
+    image: hans:latest
+    restart: always
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+
+  bot-dev:
+    build:
+      context: .
+      args:
+        M1: true
+    image: hans:dev
+    env_file:
+      - .env
+    restart: always
+
+    environment:
+      NODE_ENV: production
