@@ -4,7 +4,7 @@ services:
     build:
       context: .
       args:
-        M1: false
+        M1: 'false'
     image: hans:latest
     restart: always
     env_file:
@@ -16,7 +16,7 @@ services:
     build:
       context: .
       args:
-        M1: true
+        M1: 'true'
     image: hans:dev
     env_file:
       - .env
