@@ -16,7 +16,7 @@ Discord Bot build with [Discord.JS](https://discord.js.org/#/), [TypeScript](htt
 
 ### Invite hans to your server
 
-You can invite the bot [here 🔗](https://discord.com/api/oauth2/authorize?client_id=403523619222847488&permissions=0&scope=bot%20applications.commands). It's using the latest `hans:nightly` image with the latest features.
+Bring Hans to your Discord server and start using his available features right away by inviting it to your server [here 🔗](https://discord.com/api/oauth2/authorize?client_id=403523619222847488&permissions=0&scope=bot%20applications.commands). It's using the latest `hans:nightly` image with the latest features.
 
 The list of commands can be found [here 🔗](https://github.com/en3sis/hans/wiki/Commands) and,
 the list of functionalities can be found [here 🔗](https://github.com/en3sis/hans/wiki/Functionality)
