@@ -10,14 +10,8 @@ module.exports = {
 
     const command = Hans.commands.get(interaction.commandName)
 
-    if (Hans.settings.disabledCommands.includes(command.data.name))
-      return interaction.reply({
-        content: `❌ The command \`${command.data.name}\` is globally disabled.`,
-        ephemeral: true,
-      })
-
     if (process.env.ISDEV) {
-      // DEBUG
+      // Enables the developer to see details in the console.
       console.log('🔍 Command Details: ', command)
       console.log(
         '🤖 Hans registered commands: ',

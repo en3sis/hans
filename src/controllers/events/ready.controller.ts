@@ -1,50 +1,19 @@
 import { Client, TextChannel } from 'discord.js'
-import { githubAPI } from '../../lib/axios'
-import { getFromCache, setToCache } from '../../lib/node-cache'
-import { IBot } from '../../types'
-import { insertConfiguration } from '../bot/hans-config.controller'
-import { find } from '../mongodb/mongo-crud'
+import { githubAPI } from '../../libs/axios'
 
-// Creates a function that queries mongodb for the bot configuration, if founded, adds it to the cache
-export const getBotConfiguration = async (): Promise<IBot> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      // Checks is the bot configuration is in the cache
-      const configuration = getFromCache('config')
-      if (configuration) return configuration
-
-      const config = await find({
-        dataBase: 'hans',
-        collection: 'config',
-        query: { name: 'Hans' },
-      })
-
-      if (config) {
-        setToCache('config', config)
-        resolve(config as unknown as IBot)
-      } else {
-        await insertConfiguration()
-      }
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
-// Create a function that notify when the Discord.js Bot is online, send a message to a given channel
 export const notifyPulse = async (Hans: Client) => {
-  // Disables pulse notification in development
+  // INFO Disables pulse notification in development
   if (process.env.ISDEV!) return
 
   try {
     const used = process.memoryUsage().heapUsed / 1024 / 1024
 
     const lastCommit = await githubAPI('repos/en3sis/hans/commits')
-    const config: IBot = getFromCache('config')
+    const config = Hans.settings
 
-    if (!config.botStartAlertChannel) return
+    if (!config.notify_channel_id) return
 
-    const channel = Hans.channels.cache.get(config.botStartAlertChannel) as TextChannel
+    const channel = Hans.channels.cache.get(config.notify_channel_id) as TextChannel
 
     const author = {
       name: `${lastCommit[0].commit.author.name}`,
@@ -52,7 +21,6 @@ export const notifyPulse = async (Hans: Client) => {
       iconURL: `${lastCommit[0].author.avatar_url}`,
     }
 
-    // Send a text to the channel notifying that the bot is online
     await channel.send({
       embeds: [
         {

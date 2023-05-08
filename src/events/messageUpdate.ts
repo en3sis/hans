@@ -1,5 +1,5 @@
 import { Client, Message, TextChannel } from 'discord.js'
-import { resolveGuildEvents } from '../controllers/bot/guilds.controller'
+import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 import { NO_INTENT } from '../utils/constants'
 
 module.exports = {
@@ -8,15 +8,10 @@ module.exports = {
   enabled: true,
   async execute(Hans: Client, oldMessage: Message, newMessage: Message) {
     try {
-      const { enabled, ..._guildSettings } = await resolveGuildEvents(
-        oldMessage.guildId,
-        'messageUpdate',
-      )
+      const { enabled, metadata } = await resolveGuildPlugins(oldMessage.guildId, 'messageUpdate')
 
       if (!enabled) return
-      const channel = Hans.channels.cache.get(
-        _guildSettings.plugins.moderation.messagesAlterations?.logChannelId,
-      ) as TextChannel
+      const channel = Hans.channels.cache.get(metadata.logChannelId) as TextChannel
 
       if (oldMessage.content === newMessage.content || !channel) return
 

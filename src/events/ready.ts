@@ -1,6 +1,7 @@
 import { Client } from 'discord.js'
-import { insertConfiguration } from '../controllers/bot/hans-config.controller'
-import { getBotConfiguration, notifyPulse } from '../controllers/events/ready.controller'
+import { getBotConfiguration, insertConfiguration, insertPlugins } from '../controllers/bot/config'
+import { insertAllGuilds } from '../controllers/bot/guilds.controller'
+import { notifyPulse } from '../controllers/events/ready.controller'
 import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
 
 module.exports = {
@@ -15,11 +16,12 @@ module.exports = {
           .DISCORD_CLIENT_ID!}&permissions=0&scope=bot%20applications.commands`,
       )
       // If no configuration is found, insert one
+      await insertAllGuilds(Hans)
       await insertConfiguration()
+      await insertPlugins()
 
-      // Fetches MongoDB for the configuration document.
-      const settings = await getBotConfiguration()
-      Hans.settings = settings
+      // Fetches for the configuration.
+      Hans.settings = await getBotConfiguration()
 
       // Notify in the configuration.botStartAlertChannel that the bot is ready.
       await notifyPulse(Hans)
@@ -30,8 +32,8 @@ module.exports = {
       Hans.user.setPresence({
         activities: [
           {
-            type: settings.activities?.type || 3,
-            name: settings.activities?.name || 'you',
+            type: Hans.settings.activity_type || 3,
+            name: Hans.settings.activity_name || 'you',
           },
         ],
       })
