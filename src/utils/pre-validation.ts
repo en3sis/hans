@@ -11,7 +11,9 @@ export class ProjectValidator {
 
   async runAllChecks() {
     if (!this.essentialEnvVars)
-      throw new Error('❗️ Environment variables are missing, please check based on your env.')
+      throw new Error(
+        '❗️ ERROR: some env variables are missing, please check based on your .env file.',
+      )
   }
 
   get essentialEnvVars() {
@@ -19,7 +21,9 @@ export class ProjectValidator {
       process.env.DISCORD_TOKEN &&
       process.env.DISCORD_CLIENT_ID &&
       process.env.SUPABASE_URL &&
-      process.env.SUPABASE_SERVICE_ROL
+      process.env.SUPABASE_SERVICE_ROL &&
+      process.env.CRYPTO_KEY &&
+      process.env.CRYPTO_IV
     )
   }
 }
