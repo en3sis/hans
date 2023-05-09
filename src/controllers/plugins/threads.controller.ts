@@ -3,7 +3,6 @@ import { DEFAULT_COLOR } from '../../utils/colors'
 import { isStaff } from '../../utils/permissions'
 import { GuildPluginData, PluginsThreadsMetadata } from '../bot/plugins.controller'
 
-// TODO: Requires refactor, fix the usage of any
 export const threadAutoCreate = async (
   message: Message,
   config: GuildPluginData & { metadata: PluginsThreadsMetadata },
@@ -12,9 +11,14 @@ export const threadAutoCreate = async (
     if (!config.metadata) return
     if (message.hasThread) return
 
-    const { title, autoMessage, channelId, enabled } = config?.metadata.find(
+    const pluginData = config?.metadata.find(
       (m: PluginsThreadsMetadata) => m.channelId === message.channelId,
     )
+
+    // If the plugin is not configured for this channel, skip
+    if (!pluginData || !pluginData.channelId) return
+
+    const { title, autoMessage, channelId, enabled } = pluginData
 
     if (channelId !== message.channelId || !enabled) return
 
@@ -23,7 +27,6 @@ export const threadAutoCreate = async (
     const channel = message.channel
 
     if (!(channel instanceof TextChannel) && !(channel instanceof NewsChannel)) return
-    // If the message is already in a thread, skip
 
     const authorName =
       authorMember === null || authorMember.nickname === null
@@ -39,7 +42,7 @@ export const threadAutoCreate = async (
 
     const thread = await message.startThread(settings)
 
-    // Send a message to the thread after 3 seconds if configured to do so.
+    // Send a message to the thread after 2 seconds if configured to do so.
     setTimeout(async () => {
       if (!autoMessage) return
       await thread.send({
@@ -51,7 +54,7 @@ export const threadAutoCreate = async (
           },
         ],
       })
-    }, 3000)
+    }, 2000)
   } catch (error) {
     console.log('💢 ERROR: threadAutoCreate(): ', error)
   }
