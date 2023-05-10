@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
 import supabase from './libs/supabase'
+import { reportErrorToMonitoring } from './utils/monitoring'
 import { ProjectValidator } from './utils/pre-validation'
 
 /** =============================================================================
@@ -81,3 +82,12 @@ for (const file of eventFiles) {
 Hans.login(process.env.DISCORD_TOKEN!)
 Hans.on('error', (err) => console.log('❌ ERROR: initHans()', err))
 Hans.on('debug', (msg) => process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))
+Hans.on('unhandledRejection', async (error) => {
+  const _embed = {
+    title: `unhandledRejection`,
+    description: `${error.message}`,
+  }
+
+  await reportErrorToMonitoring({ embeds: _embed })
+  console.error('Unhandled promise rejection:', error)
+})

@@ -33,7 +33,8 @@ module.exports = {
       const createsEmbed = getUserInformation(member)
       return await interaction.reply({ embeds: [createsEmbed] })
     } catch (error) {
-      console.error('❌ ERROR: Command -> activities ', error)
+      console.error('❌ Command: about: ', error)
+      throw new Error(error)
     }
   },
 }

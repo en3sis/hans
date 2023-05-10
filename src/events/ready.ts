@@ -1,8 +1,13 @@
 import { Client } from 'discord.js'
-import { getBotConfiguration, insertConfiguration, insertPlugins } from '../controllers/bot/config'
+import {
+  getBotConfiguration,
+  insertConfiguration,
+  insertPlugins,
+} from '../controllers/bot/config.controller'
 import { insertAllGuilds } from '../controllers/bot/guilds.controller'
 import { notifyPulse } from '../controllers/events/ready.controller'
 import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
+import { reportErrorToMonitoring } from '../utils/monitoring'
 
 module.exports = {
   name: 'ready',
@@ -39,6 +44,12 @@ module.exports = {
       })
     } catch (error) {
       console.log('❌ ERROR: ready(): ', error)
+      const _embed = {
+        title: `Event: ready`,
+        description: `${error.message}`,
+      }
+
+      await reportErrorToMonitoring({ embeds: _embed })
     }
   },
 }

@@ -85,3 +85,5 @@ alter table "public"."guilds-plugins" add constraint "guilds-plugins_owner_fkey"
 alter table "public"."guilds-plugins" validate constraint "guilds-plugins_owner_fkey";
 
 alter table "public"."plugins" add constraint "plugins_name_key" UNIQUE using index "plugins_name_key";
+
+

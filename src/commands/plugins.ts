@@ -133,11 +133,8 @@ module.exports = {
         })
       }
     } catch (error) {
-      console.log(error)
-      return interaction.reply({
-        content: 'There was an error while executing this command!',
-        ephemeral: true,
-      })
+      console.error('❌ Command: plugins: ', error)
+      throw new Error(error)
     }
   },
 }

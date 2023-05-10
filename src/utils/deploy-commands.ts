@@ -5,7 +5,7 @@ import { Routes } from 'discord-api-types/v9'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-import { getBotConfiguration, insertConfiguration } from '../controllers/bot/config'
+import { getBotConfiguration, insertConfiguration } from '../controllers/bot/config.controller'
 
 dotenv.config({ path: process.cwd() + '/.env' })
 

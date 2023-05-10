@@ -19,13 +19,13 @@ export const insertConfiguration = async () => {
           bot_guild_id: `${process.env.BOT_GUILD_ID}`,
           bot_id: `${process.env.DISCORD_CLIENT_ID}`,
           created_at: new Date().toISOString(),
-          disable_commands: [],
           discord_client_id: `${process.env.DISCORD_CLIENT_ID}`,
           id: 1,
           name: 'Hans',
           notify_channel_id: '905157473671975002',
+          monitoring_channel_id: '1105791856207462438', // Sends errors to the monitoring channel, useful to debug in production
           perma_invite: 'https://discord.com/invite/sMmbbSefwH',
-          website: '',
+          website: 'https://github.com/en3sis/hans',
         },
         { onConflict: 'id' },
       )

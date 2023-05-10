@@ -66,7 +66,8 @@ module.exports = {
         return await interaction.editReply('This feature is only available for premium servers.')
       }
     } catch (error) {
-      console.log('❌ Command: ask(): ', error)
+      console.error('❌ Command: ask: ', error)
+      throw new Error(error)
     }
   },
 }

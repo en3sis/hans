@@ -28,7 +28,6 @@ interface IOpenAIRequestSettings {
   organization: string
 }
 
-// TODO: Keep history for 1 round per user per conversation
 const history = [] as ChatCompletionRequestMessage[]
 /**
  * OpenAI API request

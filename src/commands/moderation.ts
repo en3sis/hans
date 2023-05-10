@@ -71,7 +71,8 @@ https: module.exports = {
         await purgeMessages(interaction)
       }
     } catch (error) {
-      console.log('❌ ERROR: recipe(): ', error)
+      console.error('❌ Command: moderation: ', error)
+      throw new Error(error)
     }
   },
 }

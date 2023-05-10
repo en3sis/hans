@@ -10,16 +10,21 @@ module.exports = {
       string.setName('text').setDescription('Your sentence to be mocked').setRequired(true),
     ),
   async execute(interaction: CommandInteraction) {
-    const text = interaction.options.get('text')!.value as string
+    try {
+      const text = interaction.options.get('text')!.value as string
 
-    await interaction.channel.send(
-      text
-        .split('')
-        .map((letter, i) => (i % 2 == 0 ? letter.toUpperCase() : letter.toLowerCase()))
-        .join(''),
-    )
-    await interaction.channel.send('<:mock:1016362569088376924>')
+      await interaction.channel.send(
+        text
+          .split('')
+          .map((letter, i) => (i % 2 == 0 ? letter.toUpperCase() : letter.toLowerCase()))
+          .join(''),
+      )
+      await interaction.channel.send('<:mock:1016362569088376924>')
 
-    await interaction.reply({ content: 'Done :P', ephemeral: true })
+      await interaction.reply({ content: 'Done :P', ephemeral: true })
+    } catch (error) {
+      console.error('❌ Command: mock: ', error)
+      throw new Error(error)
+    }
   },
 }
