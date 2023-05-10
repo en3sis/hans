@@ -13,8 +13,8 @@
     "prepare": "npx husky install",
     "slash": "yarn build && node build/utils/deploy-commands.js",
     "slashDev": "export ISDEV=true && yarn build_dev && node build/utils/deploy-commands.js",
-    "test": "ts-mocha -p ./tsconfig.json ./tests/**/*.spec.ts",
-    "test:dev": "ts-mocha  ./tests/**/*.spec.ts -w --watch-files '**/*.ts'"
+    "test": "ts-mocha -p ./tsconfig.json ./tests/**/*.spec.ts -r dotenv/config",
+    "test:dev": "ts-mocha  ./tests/**/*.spec.ts -w --watch-files '**/*.ts' -r dotenv/config"
   },
   "author": "en3sis",
   "repository": {

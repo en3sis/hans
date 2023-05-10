@@ -2,6 +2,8 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 import { gpt3Controller } from '../controllers/plugins/chat-gpt3.controller'
+import { DEFAULT_COLOR } from '../utils/colors'
+import { decrypt } from '../utils/crypto'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -22,16 +24,17 @@ module.exports = {
       if (!enabled)
         return await interaction.editReply('This feature is not enabled for this server.')
 
-      if (!data.premium && metadata?.apiKey === null)
+      if (!data.premium && metadata?.api_key === null)
         return await interaction.editReply(
           'Your API-Key & Organization is not set. Please set it using `/plugins chatGtp` command.',
         )
 
-      if (data.premium) {
+      if (data.premium || metadata?.api_key) {
         const prompt = interaction.options.get('prompt')!.value as string
 
-        const API_KEY = data.premium ? process.env.OPENAI_API_KEY : metadata.apiKey
-        const ORGANIZATION = data.premium ? process.env.OPENAI_ORGANIZATION : metadata.organization
+        const API_KEY = data.premium ? process.env.OPENAI_API_KEY : decrypt(metadata.api_key)
+
+        const ORGANIZATION = data.premium ? process.env.OPENAI_ORGANIZATION : decrypt(metadata.org)
 
         const answer = await gpt3Controller(prompt, API_KEY, ORGANIZATION)
         await interaction.editReply({
@@ -55,7 +58,7 @@ module.exports = {
                   6,
                 )}`,
               },
-              color: 0x73ec8e,
+              color: DEFAULT_COLOR,
             },
           ],
         })
@@ -63,7 +66,8 @@ module.exports = {
         return await interaction.editReply('This feature is only available for premium servers.')
       }
     } catch (error) {
-      console.log('❌ Command: ask(): ', error)
+      console.error('❌ Command: ask: ', error)
+      throw new Error(error)
     }
   },
 }

@@ -1,4 +1,5 @@
 import { Client, Interaction } from 'discord.js'
+import { reportErrorToMonitoring } from '../utils/monitoring'
 
 module.exports = {
   name: 'interactionCreate',
@@ -24,7 +25,17 @@ module.exports = {
     try {
       await command.execute(interaction)
     } catch (error) {
-      console.error(error)
+      console.error({
+        message: `❌ ERROR: interactionCreate(): ${error.message}`,
+      })
+
+      const _embed = {
+        title: `Command: ${command.data.name}`,
+        description: `${error.message}`,
+      }
+
+      await reportErrorToMonitoring({ embeds: _embed })
+
       await interaction.reply({
         content: 'There was an error while executing this command!',
         ephemeral: true,

@@ -12,7 +12,8 @@ module.exports = {
       const inviteEmbed = inviteBot(interaction.client)
       await interaction.reply({ ...inviteEmbed, fetchReply: true })
     } catch (error) {
-      console.log('❌ invite(): ', error)
+      console.error('❌ Command: invite: ', error)
+      throw new Error(error)
     }
   },
 }

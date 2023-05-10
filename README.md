@@ -16,7 +16,7 @@ Hans is built with a modular architecture that makes it easy to add and remove f
 
 Built with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), and lots of ❤️
 
-## Invite hans to your server
+## Invite to server
 
 Bring Hans to your Discord server and start using his available features right away by inviting it to your server [here 🔗](https://discord.com/api/oauth2/authorize?client_id=403523619222847488&permissions=0&scope=bot%20applications.commands). It's using the latest `hans:nightly` image with the latest features.
 

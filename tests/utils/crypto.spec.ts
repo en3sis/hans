@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { base64, base64Decode } from './../../src/utils/crypto'
+import { base64, base64Decode, decrypt, encrypt } from './../../src/utils/crypto'
 
 describe('Utils: Crypto', () => {
   context('base64()', () => {
@@ -21,6 +21,17 @@ describe('Utils: Crypto', () => {
     it('should decode an object', () => {
       const bytes = base64Decode('eyJ0ZXN0IjoidGVzdCJ9')
       expect(bytes).to.eql('{"test":"test"}')
+    })
+  })
+
+  context('Crypto', () => {
+    const plaintext = 'Hello_World!'
+
+    it('Encryption and decryption should work correctly', () => {
+      const encrypted = encrypt(plaintext)
+      const decrypted = decrypt(encrypted)
+
+      expect(decrypted).eql(plaintext)
     })
   })
 })

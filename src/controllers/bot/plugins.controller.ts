@@ -1,6 +1,7 @@
 import { CommandInteraction } from 'discord.js'
 import supabase from '../../libs/supabase'
 import { pluginsList } from '../../models/plugins.model'
+import { encrypt } from '../../utils/crypto'
 import { GuildPlugin } from './guilds.controller'
 
 export const insertGuildPlugin = async (guild_id: string) => {
@@ -137,7 +138,7 @@ export const pluginChatGPTSettings = async (
   try {
     const { error } = await supabase
       .from('guilds-plugins')
-      .update({ metadata: { api_key, org } })
+      .update({ metadata: { api_key: encrypt(api_key), org: encrypt(org) } })
       .eq('name', 'chatGtp')
       .eq('owner', interaction.guildId)
 

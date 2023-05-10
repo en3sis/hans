@@ -16,9 +16,7 @@ module.exports = {
       // Check it the guild has enabled the event
       if (!enabled) return
       // Check if metadata is not an empty object
-      if (!metadata || !Object.keys(metadata).length)
-        // Info: this is just a warning, useful for debugging, won't show to guild.
-        return console.error(`⚠️ No join/leave channel set for ${member.guild.name}`)
+      if (!metadata || !Object.keys(metadata).length) return
 
       const targetChannel = Hans.channels.cache.get(metadata.channelId) as TextChannel
 

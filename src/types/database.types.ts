@@ -11,9 +11,9 @@ export interface Database {
           bot_guild_id: string | null
           bot_id: string
           created_at: string | null
-          disable_commands: string[] | null
           discord_client_id: string | null
           id: number
+          monitoring_channel_id: string | null
           name: string | null
           notify_channel_id: string | null
           perma_invite: string | null
@@ -26,9 +26,9 @@ export interface Database {
           bot_guild_id?: string | null
           bot_id: string
           created_at?: string | null
-          disable_commands?: string[] | null
           discord_client_id?: string | null
           id: number
+          monitoring_channel_id?: string | null
           name?: string | null
           notify_channel_id?: string | null
           perma_invite?: string | null
@@ -41,9 +41,9 @@ export interface Database {
           bot_guild_id?: string | null
           bot_id?: string
           created_at?: string | null
-          disable_commands?: string[] | null
           discord_client_id?: string | null
           id?: number
+          monitoring_channel_id?: string | null
           name?: string | null
           notify_channel_id?: string | null
           perma_invite?: string | null

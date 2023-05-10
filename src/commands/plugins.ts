@@ -38,12 +38,19 @@ module.exports = {
         .setName('chatgpt')
         .setDescription('Sets your own ChatGPT API-KEY & Organization')
         .addStringOption((option) =>
-          option.setName('api_key').setDescription('Your ChatGPT API-KEY').setRequired(true),
+          option
+            .setName('api_key')
+            .setDescription(
+              'Your ChatGPT API-KEY. It will be encrypted with a aes-256-cbc algorithm',
+            )
+            .setRequired(true),
         )
         .addStringOption((option) =>
           option
             .setName('organization_id')
-            .setDescription('Your ChatGPT Organization ID')
+            .setDescription(
+              'Your ChatGPT Organization ID. It will be encrypted with a aes-256-cbc algorithm',
+            )
             .setRequired(true),
         ),
     )
@@ -126,11 +133,8 @@ module.exports = {
         })
       }
     } catch (error) {
-      console.log(error)
-      return interaction.reply({
-        content: 'There was an error while executing this command!',
-        ephemeral: true,
-      })
+      console.error('❌ Command: plugins: ', error)
+      throw new Error(error)
     }
   },
 }
