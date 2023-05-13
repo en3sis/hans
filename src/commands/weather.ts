@@ -16,6 +16,9 @@ module.exports = {
         interaction.options.get('city')!.value as string,
       )
 
+      if (!location || !current)
+        return await interaction.reply('Something went wrong, please try again later.')
+
       await interaction.reply({
         embeds: [
           {

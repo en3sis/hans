@@ -37,6 +37,10 @@ module.exports = {
         const ORGANIZATION = data.premium ? process.env.OPENAI_ORGANIZATION : decrypt(metadata.org)
 
         const answer = await gpt3Controller(prompt, API_KEY, ORGANIZATION)
+
+        if (!answer?.response)
+          return await interaction.editReply('Something went wrong, please try again later.')
+
         await interaction.editReply({
           embeds: [
             {
@@ -52,11 +56,12 @@ module.exports = {
                 name: `${interaction.client.user.username} answered: `,
                 icon_url: interaction.client.user.avatarURL(),
               },
-              description: `${answer.response}`,
+              description: `${answer?.response}`,
               footer: {
-                text: `Tokens: ${answer.token} | Price: $${((answer.token / 1000) * 0.002).toFixed(
-                  6,
-                )}`,
+                text: `Tokens: ${answer?.token} | Price: $${(
+                  (answer?.token / 1000) *
+                  0.002
+                ).toFixed(6)}`,
               },
               color: DEFAULT_COLOR,
             },
