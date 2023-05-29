@@ -85,3 +85,22 @@ alter table "public"."guilds-plugins" add constraint "guilds-plugins_owner_fkey"
 alter table "public"."guilds-plugins" validate constraint "guilds-plugins_owner_fkey";
 
 alter table "public"."plugins" add constraint "plugins_name_key" UNIQUE using index "plugins_name_key";
+
+
+-- Functions
+
+-- Resets the usage of all plugins to 100
+CREATE OR REPLACE FUNCTION resetPluginUsage()
+RETURNS void AS
+$$
+BEGIN
+  UPDATE public."guilds_plugins"
+  SET metadata = jsonb_set(metadata, '{usage}', '100'::jsonb)
+  WHERE TRUE;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Triggers
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+SELECT cron.schedule('0 0 * * *', 'SELECT resetPluginUsage()');

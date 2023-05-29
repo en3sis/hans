@@ -13,3 +13,5 @@ export const sentimentUrgencyTable = (score: number): [string, ColorResolvable] 
 }
 
 export const DEFAULT_COLOR = 0x73ec8e
+export const ERROR_COLOR = 0xd81241
+export const SUCCESS_COLOR = 0x12d83d

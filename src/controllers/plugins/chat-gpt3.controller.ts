@@ -1,18 +1,30 @@
+import { CommandInteraction } from 'discord.js'
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai'
+import supabase from '../../libs/supabase'
+import { GenericObjectT } from '../../types/objects'
+import { DEFAULT_COLOR } from '../../utils/colors'
+import { CHATGPT_COMMANDS_USAGE_DAILY } from '../../utils/constants'
+import { decrypt } from '../../utils/crypto'
 import { ROLE_MENTION_REGEX } from '../../utils/regex'
+import { GuildPlugin } from '../bot/guilds.controller'
 
 export const gpt3Controller = async (prompt: string, apiKey: string, organization: string) => {
-  const { response, token } = await sendPrompt({
-    input: `${prompt}`,
-    version: '003',
-    max_tokens: 150,
-    apiKey,
-    organization,
-  })
+  try {
+    const { response, token } = await sendPrompt({
+      input: `${prompt}`,
+      version: '003',
+      max_tokens: 150,
+      apiKey,
+      organization,
+    })
 
-  return {
-    response: response.replace('AI:', ''),
-    token,
+    return {
+      response: response.replace('AI:', ''),
+      token,
+    }
+  } catch (error) {
+    console.log('❌ gpt3Controller(): ', error)
+    return error
   }
 }
 
@@ -99,5 +111,96 @@ export const sendPrompt = async ({
     return response
   } catch (error) {
     console.log('❌ OpenAiAPI(): ', error)
+    return error
+  }
+}
+
+export const chatGptCommandHandler = async (
+  interaction: CommandInteraction,
+  guild: GuildPlugin & { premium: boolean },
+  guildPlugin: GenericObjectT | any,
+  usage?: number,
+) => {
+  try {
+    const prompt = interaction.options.get('prompt')!.value as string
+
+    const API_KEY =
+      guild.premium || usage > 0 ? process.env.OPENAI_API_KEY : decrypt(guildPlugin.api_key)
+
+    const ORGANIZATION =
+      guild.premium || usage > 0 ? process.env.OPENAI_ORGANIZATION_ID : decrypt(guildPlugin.org)
+
+    const answer = await gpt3Controller(prompt, API_KEY, ORGANIZATION)
+
+    if (!answer?.response || answer?.response === '' || answer?.response === undefined)
+      return await interaction.editReply('💢 Something went wrong, please try again later.')
+
+    await interaction.editReply({
+      embeds: [
+        {
+          author: {
+            name: `${interaction.user.username} asked:`,
+            icon_url: interaction.user.avatarURL(),
+          },
+          description: `${prompt}`,
+          color: 0x5865f2,
+        },
+        {
+          author: {
+            name: `${interaction.client.user.username} answered: `,
+            icon_url: interaction.client.user.avatarURL(),
+          },
+          description: `${answer?.response}`,
+          footer: {
+            text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.002).toFixed(
+              6,
+            )} ${!guild.premium && `| ${usage} usages left for today`}`,
+          },
+          color: DEFAULT_COLOR,
+        },
+      ],
+    })
+  } catch (error) {
+    console.error('❌ chatGptCommandHandler(): ', error)
+    return error
+  }
+}
+
+export const chatGptUsage = async (
+  guildPlugin: any,
+  guild_id: string,
+): Promise<GuildPlugin | any> => {
+  try {
+    const { data: currentSettings } = await supabase
+      .from('guilds-plugins')
+      .select('*')
+      .eq('name', 'chatGtp')
+      .eq('owner', guild_id)
+      .single()
+
+    const _metadata = JSON.parse(JSON.stringify(currentSettings?.metadata)) || {}
+
+    if (guildPlugin === null) {
+      const { data } = await supabase
+        .from('guilds-plugins')
+        .update({ metadata: { ..._metadata, usage: CHATGPT_COMMANDS_USAGE_DAILY - 1 } })
+        .eq('owner', guild_id)
+        .eq('name', 'chatGtp')
+        .select()
+
+      return data
+    } else {
+      const { data } = await supabase
+        .from('guilds-plugins')
+        .update({ metadata: { ..._metadata, usage: guildPlugin.usage - 1 } })
+        .eq('owner', guild_id)
+        .eq('name', 'chatGtp')
+        .select()
+
+      return data
+    }
+  } catch (error) {
+    console.error('❌ chatGptUsage(): ', error)
+    return error
   }
 }

@@ -1,4 +1,5 @@
 import { Client, Interaction } from 'discord.js'
+import { ERROR_COLOR } from '../utils/colors'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 
 module.exports = {
@@ -30,8 +31,9 @@ module.exports = {
       })
 
       const _embed = {
-        title: `Command: ${command.data.name}`,
+        title: `💢 Command: ${command.data.name}`,
         description: `${error.message}`,
+        color: ERROR_COLOR,
       }
 
       await reportErrorToMonitoring({ embeds: _embed })
