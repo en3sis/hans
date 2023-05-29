@@ -154,7 +154,7 @@ export const chatGptCommandHandler = async (
           footer: {
             text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.002).toFixed(
               6,
-            )} ${!guild.premium && `${usage} commands left`}`,
+            )} ${!guild.premium && `| ${usage} usages left for today`}`,
           },
           color: DEFAULT_COLOR,
         },
@@ -183,7 +183,7 @@ export const chatGptUsage = async (
     if (guildPlugin === null) {
       const { data } = await supabase
         .from('guilds-plugins')
-        .update({ metadata: { ..._metadata, usage: CHATGPT_COMMANDS_USAGE_DAILY } })
+        .update({ metadata: { ..._metadata, usage: CHATGPT_COMMANDS_USAGE_DAILY - 1 } })
         .eq('owner', guild_id)
         .eq('name', 'chatGtp')
         .select()

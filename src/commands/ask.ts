@@ -35,7 +35,7 @@ module.exports = {
         }
 
         if (guildPlugin === null || guildPlugin?.usage === undefined) {
-          await chatGptCommandHandler(interaction, guild, guildPlugin, 100)
+          await chatGptCommandHandler(interaction, guild, guildPlugin, 99)
           return await chatGptUsage(guildPlugin, interaction.guildId!)
         }
 
