@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
-import { gpt3Controller } from '../controllers/plugins/chat-gpt3.controller'
-import { DEFAULT_COLOR } from '../utils/colors'
-import { decrypt } from '../utils/crypto'
+import { chatGptCommandHandler, chatGptUsage } from '../controllers/plugins/chat-gpt3.controller'
+import { getTimeRemainingUntilMidnight } from '../utils/dates'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -19,56 +18,38 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     try {
       await interaction.deferReply()
-      const { enabled, metadata, data } = await resolveGuildPlugins(interaction.guildId!, 'chatGtp')
+      const {
+        enabled,
+        metadata: guildPlugin,
+        data: guild,
+      } = await resolveGuildPlugins(interaction.guildId!, 'chatGtp')
 
       if (!enabled)
-        return await interaction.editReply('This feature is not enabled for this server.')
+        return await interaction.editReply('This plugin is not enabled for this server.')
 
-      if (!data.premium && metadata?.api_key === null)
-        return await interaction.editReply(
-          'Your API-Key & Organization is not set. Please set it using `/plugins chatGtp` command.',
-        )
+      // Handles regular guilds
+      if (!guild.premium) {
+        // If the guild set its API Key, uses it
+        if (guildPlugin?.api_key && guildPlugin?.org) {
+          return await chatGptCommandHandler(interaction, guild, guildPlugin)
+        }
 
-      if (data.premium || metadata?.api_key) {
-        const prompt = interaction.options.get('prompt')!.value as string
+        if (guildPlugin === null || guildPlugin?.usage === undefined) {
+          await chatGptCommandHandler(interaction, guild, guildPlugin, 100)
+          return await chatGptUsage(guildPlugin, interaction.guildId!)
+        }
 
-        const API_KEY = data.premium ? process.env.OPENAI_API_KEY : decrypt(metadata.api_key)
-
-        const ORGANIZATION = data.premium ? process.env.OPENAI_ORGANIZATION : decrypt(metadata.org)
-
-        const answer = await gpt3Controller(prompt, API_KEY, ORGANIZATION)
-
-        if (!answer?.response)
-          return await interaction.editReply('Something went wrong, please try again later.')
-
-        await interaction.editReply({
-          embeds: [
-            {
-              author: {
-                name: `${interaction.user.username} asked:`,
-                icon_url: interaction.user.avatarURL(),
-              },
-              description: `${prompt}`,
-              color: 0x5865f2,
-            },
-            {
-              author: {
-                name: `${interaction.client.user.username} answered: `,
-                icon_url: interaction.client.user.avatarURL(),
-              },
-              description: `${answer?.response}`,
-              footer: {
-                text: `Tokens: ${answer?.token} | Price: $${(
-                  (answer?.token / 1000) *
-                  0.002
-                ).toFixed(6)}`,
-              },
-              color: DEFAULT_COLOR,
-            },
-          ],
-        })
+        if (guildPlugin?.usage !== 0) {
+          await chatGptCommandHandler(interaction, guild, guildPlugin, guildPlugin?.usage)
+          return await chatGptUsage(guildPlugin, interaction.guildId!)
+        } else {
+          return await interaction.editReply(
+            `You have reached the limit of the free API, it will restart ⏳ ${getTimeRemainingUntilMidnight()}. You can add your own API Key using \`/plugins chatGtp\` command for unlimited usage in your server.`,
+          )
+        }
       } else {
-        return await interaction.editReply('This feature is only available for premium servers.')
+        // Handles premium guilds
+        await chatGptCommandHandler(interaction, guild, guildPlugin)
       }
     } catch (error) {
       console.error('❌ Command: ask: ', error)

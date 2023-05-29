@@ -136,9 +136,24 @@ export const pluginChatGPTSettings = async (
   org: string,
 ) => {
   try {
+    const { data: currentSettings } = await supabase
+      .from('guilds-plugins')
+      .select('*')
+      .eq('name', 'chatGtp')
+      .eq('owner', interaction.guildId)
+      .single()
+
+    const _metadata = JSON.parse(JSON.stringify(currentSettings?.metadata)) || {}
+
     const { error } = await supabase
       .from('guilds-plugins')
-      .update({ metadata: { api_key: encrypt(api_key), org: encrypt(org) } })
+      .update({
+        metadata: {
+          ..._metadata,
+          api_key: encrypt(api_key),
+          org: encrypt(org),
+        },
+      })
       .eq('name', 'chatGtp')
       .eq('owner', interaction.guildId)
 
