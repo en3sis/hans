@@ -11,16 +11,3 @@ services:
       - .env
     environment:
       NODE_ENV: production
-
-  bot-dev:
-    build:
-      context: .
-      args:
-        M1: 'true'
-    image: hans:dev
-    env_file:
-      - .env
-    restart: always
-
-    environment:
-      NODE_ENV: production
