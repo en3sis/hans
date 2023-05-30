@@ -154,7 +154,7 @@ export const chatGptCommandHandler = async (
           footer: {
             text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.002).toFixed(
               6,
-            )} ${!guild.premium && `| ${usage} usages left for today`}`,
+            )} ${!guild.premium ?? `| ${usage} usages left for today`}`,
           },
           color: DEFAULT_COLOR,
         },
