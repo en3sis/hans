@@ -1,7 +1,7 @@
 import { Database } from '../types/database.types'
 
 export type Plugins = Database['public']['Tables']['plugins']['Row']
-export type GuildPlugins = Database['public']['Tables']['guilds-plugins']['Row']
+export type GuildPlugins = Database['public']['Tables']['guilds_plugins']['Row']
 
 export type GenericPluginParts = Omit<Plugins, 'id' | 'name'>
 const genericStructure: GenericPluginParts = {

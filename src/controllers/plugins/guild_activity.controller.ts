@@ -4,7 +4,7 @@ import supabase from '../../libs/supabase'
 export const guildActivitySetChannel = async (interaction: CommandInteraction, channel: string) => {
   try {
     const { data, error } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .update({ metadata: { channelId: channel } })
       .eq('name', `serverMembersActivity`)
       .eq('owner', interaction.guildId)

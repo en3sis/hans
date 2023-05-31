@@ -17,7 +17,7 @@ export const insertGuildPlugin = async (guild_id: string) => {
 
     // check if a row with the same plugin name and guild_id exists
     const { data: existingGuildPlugins } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .select('*')
       .in(
         'name',
@@ -34,7 +34,7 @@ export const insertGuildPlugin = async (guild_id: string) => {
     })
 
     if (newGuildPlugins.length > 0) {
-      await supabase.from('guilds-plugins').upsert(newGuildPlugins)
+      await supabase.from('guilds_plugins').upsert(newGuildPlugins)
     }
   } catch (error) {
     console.error('❌ ERROR: insertGuildPlugin', error)
@@ -45,7 +45,7 @@ export const findGuildPlugins = async (guild_id: string) => {
   try {
     const { data, error } = await supabase
       .from('guilds')
-      .select('*, guilds-plugins(*, plugins(enabled, description, premium))')
+      .select('*, guilds_plugins(*, plugins(enabled, description, premium))')
       .eq('guild_id', guild_id)
 
     if (error) throw error
@@ -69,11 +69,14 @@ export const resolveGuildPlugins = async (
   try {
     const { data: guildPlugin } = await supabase
       .from('guilds')
-      .select('*, guilds-plugins(*, plugins(enabled, description, premium))')
+      .select('*, guilds_plugins(*, plugins(enabled, description, premium))')
       .eq('guild_id', guild_id)
       .single()
 
-    const matchingPlugin = guildPlugin?.['guilds-plugins'].find(
+    // INFO: Not sure why this fails below, `guilds_plugins` is an array but the array methods wont show.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const matchingPlugin = guildPlugin.guilds_plugins.find(
       (ele: GuildPlugin) => ele.name === pluginName,
     )
 
@@ -102,7 +105,7 @@ export const toggleGuildPlugin = async (
 ) => {
   try {
     const { data, error } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .update({ enabled: toggle })
       .eq('name', name)
       .eq('owner', interaction.guildId)
@@ -137,7 +140,7 @@ export const pluginChatGPTSettings = async (
 ) => {
   try {
     const { data: currentSettings } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .select('*')
       .eq('name', 'chatGtp')
       .eq('owner', interaction.guildId)
@@ -146,7 +149,7 @@ export const pluginChatGPTSettings = async (
     const _metadata = JSON.parse(JSON.stringify(currentSettings?.metadata)) || {}
 
     const { error } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .update({
         metadata: {
           ..._metadata,
@@ -193,7 +196,7 @@ export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsTh
     })
 
     const { data: guildsPlugins, error } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .select('metadata')
       .eq('name', 'threads')
       .eq('owner', interaction.guildId)
@@ -230,7 +233,7 @@ export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsTh
 
     // Update the metadata in the database
     const { error: updateError } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .update({ metadata: updatedMetadata })
       .eq('name', 'threads')
       .eq('owner', interaction.guildId)

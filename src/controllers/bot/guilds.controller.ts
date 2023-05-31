@@ -5,7 +5,7 @@ import { Hans } from './../../index'
 import { insertGuildPlugin, resolveGuildPlugins } from './plugins.controller'
 
 export type GuildSettings = Database['public']['Tables']['guilds']['Row']
-export type GuildPlugin = Database['public']['Tables']['guilds-plugins']['Row']
+export type GuildPlugin = Database['public']['Tables']['guilds_plugins']['Row']
 
 /**  Fetches guild in the DB, if found, sets it as a cache for CACHE_TTL and returns it.
  * @param guildId string with the Guild ID

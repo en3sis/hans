@@ -76,7 +76,7 @@ export interface Database {
           premium?: boolean | null
         }
       }
-      'guilds-plugins': {
+      guilds_plugins: {
         Row: {
           created_at: string | null
           enabled: boolean | null
@@ -139,6 +139,9 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
       [_ in never]: never
     }
   }
