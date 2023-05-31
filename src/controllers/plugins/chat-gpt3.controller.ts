@@ -154,7 +154,7 @@ export const chatGptCommandHandler = async (
           footer: {
             text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.002).toFixed(
               6,
-            )} ${!guild.premium ?? `| ${usage} usages left for today`}`,
+            )} ${!guild.premium ? `| ${usage} usages left for today` : ''}`,
           },
           color: DEFAULT_COLOR,
         },
@@ -172,7 +172,7 @@ export const chatGptUsage = async (
 ): Promise<GuildPlugin | any> => {
   try {
     const { data: currentSettings } = await supabase
-      .from('guilds-plugins')
+      .from('guilds_plugins')
       .select('*')
       .eq('name', 'chatGtp')
       .eq('owner', guild_id)
@@ -182,7 +182,7 @@ export const chatGptUsage = async (
 
     if (guildPlugin === null) {
       const { data } = await supabase
-        .from('guilds-plugins')
+        .from('guilds_plugins')
         .update({ metadata: { ..._metadata, usage: CHATGPT_COMMANDS_USAGE_DAILY - 1 } })
         .eq('owner', guild_id)
         .eq('name', 'chatGtp')
@@ -191,7 +191,7 @@ export const chatGptUsage = async (
       return data
     } else {
       const { data } = await supabase
-        .from('guilds-plugins')
+        .from('guilds_plugins')
         .update({ metadata: { ..._metadata, usage: guildPlugin.usage - 1 } })
         .eq('owner', guild_id)
         .eq('name', 'chatGtp')
