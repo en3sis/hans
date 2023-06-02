@@ -36,7 +36,18 @@ export const pluginsList: Record<string, GenericPluginParts> = {
     premium: true,
     category: 'productivity',
   },
-
+  summarize: {
+    ...genericStructure,
+    description: 'Summarizes a text using the facebook/bart-large-cnn model.',
+    premium: false,
+    category: 'productivity',
+  },
+  textClassification: {
+    ...genericStructure,
+    description: 'Classifies a text, informs moderation if the sentiment is negative.',
+    premium: false,
+    enabled: false,
+  },
   threads: {
     ...genericStructure,
     description: 'Allows for the automatic creation of threads in a specific channel.',
