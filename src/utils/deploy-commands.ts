@@ -57,7 +57,6 @@ const fetchCommands = async ({
     try {
       // Slash commands definitions
       const commands: SlashCommandBuilder[] = []
-      console.log('🚀 ~ file: deploy-commands.ts:60 ~ returnnewPromise ~ commands:', commands)
 
       // Fetch command files
       const commandsFiles = fs

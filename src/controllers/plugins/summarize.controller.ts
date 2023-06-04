@@ -38,7 +38,7 @@ export const summarizeController = async (interaction: CommandInteraction) => {
       inputs: text,
     })
 
-    await interaction.editReply({
+    return await interaction.editReply({
       content: summary_text,
     })
   } catch (error) {
