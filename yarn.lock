@@ -128,6 +128,11 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.40.0.tgz#3ba73359e11f5a7bd3e407f70b3528abfae69cec"
   integrity sha512-ElyB54bJIhXQYVKjDSvCkPO1iU1tSAeVQJbllWJq1XQSmmA4dgFk8CbiBGpiOPxleE48vDogxCtmMYku4HSVLA==
 
+"@huggingface/inference@^2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-2.5.0.tgz#8e14ee6696e91aecb132c90d3b07be8373e70338"
+  integrity sha512-X3NSdrWAKNTLAsEKabH48Wc+Osys+S7ilRcH1bf9trSDmJlzPVXDseXMRBHCFPCYd5AAAIakhENO4zCqstVg8g==
+
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.8.tgz"

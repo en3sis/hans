@@ -62,6 +62,12 @@ export type GuildPluginData = {
   data: GuildPlugin | any
 }
 
+/**
+ *
+ * @param guild_id
+ * @param pluginName
+ * @returns {enabled: false, metadata: {}, data: {}
+ */
 export const resolveGuildPlugins = async (
   guild_id: string,
   pluginName: string,
