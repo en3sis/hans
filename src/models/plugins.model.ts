@@ -38,7 +38,7 @@ export const pluginsList: Record<string, GenericPluginParts> = {
   },
   summarize: {
     ...genericStructure,
-    description: 'Summarizes a text using the facebook/bart-large-cnn model.',
+    description: 'Summarizes a text or discord message using the facebook/bart-large-cnn model.',
     premium: false,
     category: 'productivity',
   },
