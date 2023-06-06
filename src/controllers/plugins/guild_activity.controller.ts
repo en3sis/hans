@@ -12,9 +12,8 @@ export const guildActivitySetChannel = async (interaction: CommandInteraction, c
 
     if (error) throw error
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `Enabled guild activity notifications in <#${channel}>`,
-      ephemeral: true,
     })
 
     return data

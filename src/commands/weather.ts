@@ -5,6 +5,7 @@ import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
+  ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('weather')
     .setDescription('Displays weather information from a location')
@@ -18,9 +19,9 @@ module.exports = {
       )
 
       if (!location || !current)
-        return await interaction.reply('Something went wrong, please try again later.')
+        return await interaction.editReply('Something went wrong, please try again later.')
 
-      await interaction.reply({
+      await interaction.editReply({
         embeds: [
           {
             title: `Weather in ${location.name}, ${location.country} `,

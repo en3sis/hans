@@ -9,6 +9,7 @@ import { logger } from '../utils/debugging'
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 //github.com/discordjs/discord.js/blob/main/packages/builders/docs/examples/Slash%20Command%20Builders.md
 https: module.exports = {
+  ephemeral: true,
   data: new SlashCommandBuilder()
     .setName('moderation')
     .setDescription('Moderation utility tools')
@@ -56,9 +57,8 @@ https: module.exports = {
   async execute(interaction: CommandInteraction) {
     try {
       if (!interaction.memberPermissions.has(['Administrator']))
-        return interaction.reply({
+        return interaction.editReply({
           content: 'You do not have permission to use this command',
-          ephemeral: true,
         })
       if (!interaction.isChatInputCommand()) return
 

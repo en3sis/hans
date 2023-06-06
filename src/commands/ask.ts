@@ -7,6 +7,7 @@ import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
+  ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('ask')
     .setDescription('Uses Hans AI to generate responses to your prompts')

@@ -12,6 +12,7 @@ import { logger } from '../utils/debugging'
 const list = pluginsListNames()
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
+  ephemeral: true,
   data: new SlashCommandBuilder()
     .setName('plugins')
     .setDescription('Server plugins configuration')
@@ -101,9 +102,8 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     try {
       if (!interaction.memberPermissions.has(['Administrator']))
-        return interaction.reply({
+        return interaction.editReply({
           content: 'You do not have permission to use this command',
-          ephemeral: true,
         })
 
       if (!interaction.isChatInputCommand()) return

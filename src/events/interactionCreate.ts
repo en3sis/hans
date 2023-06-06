@@ -9,9 +9,12 @@ module.exports = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(Hans: Client, interaction: Interaction) {
     if (!interaction.isCommand()) return
-    await interaction.deferReply()
 
     const command = Hans.commands.get(interaction.commandName)
+
+    await interaction.deferReply({
+      ephemeral: command?.ephemeral ?? false,
+    })
 
     if (!!process.env.ISDEV) {
       // Enables the developer to see details in the console.
