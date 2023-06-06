@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
+import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -23,8 +24,7 @@ module.exports = {
 
       await interaction.reply({ content: 'Done :P', ephemeral: true })
     } catch (error) {
-      console.error('❌ Command: mock: ', error)
-      throw new Error(error)
+      logger('❌ Command: mock: ', error)
     }
   },
 }

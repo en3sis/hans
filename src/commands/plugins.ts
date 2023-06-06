@@ -7,6 +7,7 @@ import {
   toggleGuildPlugin,
 } from '../controllers/bot/plugins.controller'
 import { guildActivitySetChannel } from '../controllers/plugins/guild_activity.controller'
+import { logger } from '../utils/debugging'
 
 const list = pluginsListNames()
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
@@ -133,8 +134,7 @@ module.exports = {
         })
       }
     } catch (error) {
-      console.error('❌ Command: plugins: ', error)
-      throw new Error(error)
+      logger('❌ Command: plugins: ', error)
     }
   },
 }

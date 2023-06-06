@@ -3,6 +3,7 @@ import { CommandInteraction } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 import { chatGptCommandHandler, chatGptUsage } from '../controllers/plugins/chat-gpt3.controller'
 import { getTimeRemainingUntilMidnight } from '../utils/dates'
+import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -17,7 +18,6 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
-      await interaction.deferReply()
       const {
         enabled,
         metadata: guildPlugin,
@@ -52,8 +52,7 @@ module.exports = {
         await chatGptCommandHandler(interaction, guild, guildPlugin)
       }
     } catch (error) {
-      console.error('❌ Command: ask: ', error)
-      throw new Error(error)
+      logger('❌ Command: ask: ', error)
     }
   },
 }

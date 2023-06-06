@@ -44,6 +44,7 @@ module.exports = {
       })
     } catch (error) {
       console.log('❌ ERROR: ready(): ', error)
+
       const _embed = {
         title: `Event: ready`,
         description: `${error.message}`,

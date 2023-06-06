@@ -8,7 +8,8 @@ export const summarizeController = async (interaction: CommandInteraction) => {
   try {
     if (!process.env.HUGGINGFACE_API_KEY) {
       await interaction.editReply('Command could not be executed at this moment.')
-      throw new Error('💢 HUGGINGFACE_API_KEY is missing from the `.env` file.')
+
+      throw Error('💢 HUGGINGFACE_API_KEY is missing from the `.env` file.')
     }
 
     const guildPlugin = await resolveGuildPlugins(interaction.guildId!, 'summarize')
@@ -20,20 +21,19 @@ export const summarizeController = async (interaction: CommandInteraction) => {
 
     if (text.match(MESSAGE_ID_REGEX)) {
       const channel = Hans.channels.cache.get(interaction.channelId!) as TextChannel
-      text = channel.messages.cache.get(text)?.content as string
+      const message = await channel.messages.fetch(text)
+      text = message.content
 
-      if (!text) {
+      if (!text)
         await interaction.editReply(
           `Message not found on this channel or ${Hans.user.username} has no permission to read it.`,
         )
-        return
-      }
     }
 
     const { summary_text } = await inference.summarization({
-      model: 'facebook/bart-large-cnn',
+      model: 'google/pegasus-cnn_dailymail',
       parameters: {
-        max_length: 100,
+        min_length: 10,
       },
       inputs: text,
     })
@@ -42,7 +42,6 @@ export const summarizeController = async (interaction: CommandInteraction) => {
       content: summary_text,
     })
   } catch (error) {
-    console.error('❌ summarizeController(): ', error)
-    throw new Error(error)
+    throw Error(error.message)
   }
 }

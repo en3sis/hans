@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getFromCache, setToCache } from '../../libs/node-cache'
 
-export const WeatherController = async (city: string) => {
+export const weatherController = async (city: string) => {
   try {
     const dataInCache = getFromCache(city)
     if (dataInCache) return dataInCache
@@ -11,8 +11,9 @@ export const WeatherController = async (city: string) => {
     )
 
     setToCache(city, data, 60 * 5)
+
     return data
   } catch (error) {
-    console.log('💢 ERROR: WeatherController(): ', error)
+    console.log('💢 ERROR: weatherController(): ', error)
   }
 }

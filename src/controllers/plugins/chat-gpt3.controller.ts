@@ -24,7 +24,7 @@ export const gpt3Controller = async (prompt: string, apiKey: string, organizatio
     }
   } catch (error) {
     console.log('❌ gpt3Controller(): ', error)
-    return error
+    throw Error(error)
   }
 }
 
@@ -110,8 +110,8 @@ export const sendPrompt = async ({
 
     return response
   } catch (error) {
-    console.log('❌ OpenAiAPI(): ', error)
-    return error
+    console.log('❌ sendPrompt(): ', error)
+    throw Error(error)
   }
 }
 
@@ -122,14 +122,13 @@ export const chatGptCommandHandler = async (
   usage?: number,
 ) => {
   try {
-    const prompt = interaction.options.get('prompt')!.value as string
-
     const API_KEY =
       guild.premium || usage > 0 ? process.env.OPENAI_API_KEY : decrypt(guildPlugin.api_key)
 
     const ORGANIZATION =
       guild.premium || usage > 0 ? process.env.OPENAI_ORGANIZATION_ID : decrypt(guildPlugin.org)
 
+    const prompt = interaction.options.get('prompt')!.value as string
     const answer = await gpt3Controller(prompt, API_KEY, ORGANIZATION)
 
     if (!answer?.response || answer?.response === '' || answer?.response === undefined)
@@ -162,7 +161,7 @@ export const chatGptCommandHandler = async (
     })
   } catch (error) {
     console.error('❌ chatGptCommandHandler(): ', error)
-    return error
+    throw Error(error)
   }
 }
 
@@ -201,6 +200,6 @@ export const chatGptUsage = async (
     }
   } catch (error) {
     console.error('❌ chatGptUsage(): ', error)
-    return error
+    throw Error(error)
   }
 }

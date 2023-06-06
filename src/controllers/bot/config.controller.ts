@@ -9,30 +9,36 @@ export type BotConfig = Database['public']['Tables']['configs']['Row']
  */
 export const insertConfiguration = async () => {
   try {
+    const activityName = !!process.env.ISDEV
+      ? {
+          activity_type: 3,
+          activity_name: 'you',
+        }
+      : {}
+
     const { data, error } = await supabase
       .from('configs')
       .upsert(
         {
-          activity_name: !process.env.ISDEV ? 'you' : 'VSC',
-          activity_type: 3,
           bot_dev_folder: '/bots-playground',
           bot_guild_id: `${process.env.BOT_GUILD_ID}`,
           bot_id: `${process.env.DISCORD_CLIENT_ID}`,
           created_at: new Date().toISOString(),
           discord_client_id: `${process.env.DISCORD_CLIENT_ID}`,
           id: 1,
-          name: 'Hans',
-          notify_channel_id: '905157473671975002',
           monitoring_channel_id: '1105791856207462438', // Sends errors to the monitoring channel, useful to debug in production
+          name: 'Hans',
+          notify_channel_id: '905157473671975002', // Send notifications when the bot is online to this channel.
           perma_invite: 'https://discord.com/invite/sMmbbSefwH',
           website: 'https://github.com/en3sis/hans',
+          ...activityName,
         },
         { onConflict: 'id' },
       )
       .single()
 
     if (error) {
-      throw new Error(error.message)
+      throw Error(error.message)
     }
 
     console.log(`📥 Initial configuration inserted/updated`)
@@ -84,7 +90,7 @@ export const insertPlugins = async () => {
         )
 
         if (error) {
-          throw new Error(error.message)
+          throw Error(error.message)
         }
       }
       // else create a new plugin row
@@ -102,14 +108,14 @@ export const insertPlugins = async () => {
         )
 
         if (error) {
-          throw new Error(error.message)
+          throw Error(error.message)
         }
       }
     })
 
     await Promise.all(upsertPromises)
 
-    console.log(`💠 Initial plugins list inserted/updated`)
+    console.log(`💠 Initial ${upsertPromises.length} plugins list inserted/updated`)
   } catch (error) {
     console.log('❌ ERROR: insertPlugins(): ', error)
   }

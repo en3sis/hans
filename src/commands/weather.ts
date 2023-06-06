@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { WeatherController } from '../controllers/commands/weather.controller'
+import { weatherController } from '../controllers/commands/weather.controller'
+import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
-      const { location, current } = await WeatherController(
+      const { location, current } = await weatherController(
         interaction.options.get('city')!.value as string,
       )
 
@@ -67,8 +68,7 @@ module.exports = {
         ],
       })
     } catch (error) {
-      console.error('❌ Command: weather: ', error)
-      throw new Error(error)
+      logger('❌ Command: weather: ', error)
     }
   },
 }

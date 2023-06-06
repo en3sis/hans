@@ -4,6 +4,7 @@ import {
   // enableSentimentAnalysis,
   purgeMessages,
 } from '../controllers/plugins/moderation.controller'
+import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 //github.com/discordjs/discord.js/blob/main/packages/builders/docs/examples/Slash%20Command%20Builders.md
@@ -71,8 +72,7 @@ https: module.exports = {
         await purgeMessages(interaction)
       }
     } catch (error) {
-      console.error('❌ Command: moderation: ', error)
-      throw new Error(error)
+      logger('❌ Command: moderation: ', error)
     }
   },
 }

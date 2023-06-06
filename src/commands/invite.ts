@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { inviteBot } from '../controllers/bot/index.controller'
+import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -12,8 +13,7 @@ module.exports = {
       const inviteEmbed = inviteBot(interaction.client)
       await interaction.reply({ ...inviteEmbed, fetchReply: true })
     } catch (error) {
-      console.error('❌ Command: invite: ', error)
-      throw new Error(error)
+      logger('❌ Command: invite: ', error)
     }
   },
 }
