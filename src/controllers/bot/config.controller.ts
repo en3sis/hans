@@ -1,3 +1,5 @@
+import { ActivityType } from 'discord.js'
+import { Hans } from '../..'
 import supabase from '../../libs/supabase'
 import { pluginsList } from '../../models/plugins.model'
 import { Database } from '../../types/database.types'
@@ -9,13 +11,6 @@ export type BotConfig = Database['public']['Tables']['configs']['Row']
  */
 export const insertConfiguration = async () => {
   try {
-    const activityName = !!process.env.ISDEV
-      ? {
-          activity_type: 3,
-          activity_name: 'you',
-        }
-      : {}
-
     const { data, error } = await supabase
       .from('configs')
       .upsert(
@@ -31,7 +26,6 @@ export const insertConfiguration = async () => {
           notify_channel_id: '905157473671975002', // Send notifications when the bot is online to this channel.
           perma_invite: 'https://discord.com/invite/sMmbbSefwH',
           website: 'https://github.com/en3sis/hans',
-          ...activityName,
         },
         { onConflict: 'id' },
       )
@@ -119,4 +113,15 @@ export const insertPlugins = async () => {
   } catch (error) {
     console.log('❌ ERROR: insertPlugins(): ', error)
   }
+}
+
+export const setPresence = async (type: ActivityType, text: string): Promise<void> => {
+  Hans.user.setPresence({
+    activities: [
+      {
+        type: type || Number(3),
+        name: text || 'you',
+      },
+    ],
+  })
 }

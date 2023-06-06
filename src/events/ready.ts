@@ -3,10 +3,12 @@ import {
   getBotConfiguration,
   insertConfiguration,
   insertPlugins,
+  setPresence,
 } from '../controllers/bot/config.controller'
 import { insertAllGuilds } from '../controllers/bot/guilds.controller'
 import { notifyPulse } from '../controllers/events/ready.controller'
 import { CronJobsTasks } from '../controllers/tasks/cron-jobs'
+import { configsRealtime } from '../realtime/presence.realtime'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 
 module.exports = {
@@ -34,14 +36,10 @@ module.exports = {
       // Init all cron jobs tasks
       await CronJobsTasks(Hans)
 
-      Hans.user.setPresence({
-        activities: [
-          {
-            type: Hans.settings.activity_type || 3,
-            name: Hans.settings.activity_name || 'you',
-          },
-        ],
-      })
+      // Set the bot presence to the default one.
+      await setPresence(Hans.settings?.activity_type ?? 3, Hans.settings?.activity_name ?? 'you')
+
+      configsRealtime()
     } catch (error) {
       console.log('❌ ERROR: ready(): ', error)
 
