@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { summarizeController } from '../controllers/plugins/summarize.controller'
+import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -12,12 +13,9 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
-      await interaction.deferReply()
-
       await summarizeController(interaction)
     } catch (error) {
-      console.error('❌ tools.ts: ', error)
-      throw new Error(error)
+      logger('❌ Command: summarize: ', error)
     }
   },
 }

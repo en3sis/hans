@@ -9,10 +9,11 @@ module.exports = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(Hans: Client, interaction: Interaction) {
     if (!interaction.isCommand()) return
+    await interaction.deferReply()
 
     const command = Hans.commands.get(interaction.commandName)
 
-    if (process.env.ISDEV) {
+    if (!!process.env.ISDEV) {
       // Enables the developer to see details in the console.
       console.log('🔍 Command Details: ', command)
       console.log(
@@ -36,12 +37,17 @@ module.exports = {
         color: ERROR_COLOR,
       }
 
-      await reportErrorToMonitoring({ embeds: _embed })
-
-      await interaction.reply({
-        content: 'There was an error while executing this command!',
-        ephemeral: true,
+      await interaction.editReply({
+        embeds: [
+          {
+            title: `💢 Command: ${command.data.name}`,
+            description: `There was an error while trying to execute ${interaction.commandName}. The issue has been reported to the developer team.`,
+            color: ERROR_COLOR,
+          },
+        ],
       })
+
+      await reportErrorToMonitoring({ embeds: _embed })
     }
   },
 }

@@ -34,9 +34,9 @@ const registryCommands = async (guild: { folderName: string; id: string | null }
 
       if (response) {
         resolve(
-          `✅ Successfully registered commands for ${folderName}, response: ${JSON.stringify(
-            response,
-          )}`,
+          `✅ Successfully registered commands for ${folderName}, response: ${
+            !!process.env.ISDEV ? JSON.stringify(response) : ''
+          }`,
         )
       } else {
         reject(`❌ Failed to register commands for ${folderName}`)

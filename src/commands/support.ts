@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { Hans } from '..'
+import { logger } from '../utils/debugging'
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
   data: new SlashCommandBuilder()
@@ -31,8 +32,7 @@ module.exports = {
         ],
       })
     } catch (error) {
-      console.log('❌ Command: support: ', error)
-      throw new Error(error)
+      logger('❌ Command: support: ', error)
     }
   },
 }

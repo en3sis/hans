@@ -48,11 +48,10 @@ const setCommandsNames = () => {
       })
     })
 
-    if (process.env.ISDEV)
-      console.info(
-        '🗓  All commands registered:',
-        Hans.commands.map((ele) => ele.data.name).join(', '),
-      )
+    console.info(
+      '🧾  Reading commands files for:',
+      Hans.commands.map((ele) => ele.data.name).join(', '),
+    )
   } catch (error) {
     console.error('❌ ERROR: setCommandsNames(): ', error)
   }
@@ -80,14 +79,14 @@ for (const file of eventFiles) {
 }
 
 Hans.login(process.env.DISCORD_TOKEN!)
-Hans.on('error', (err) => console.log('❌ ERROR: initHans()', err))
-Hans.on('debug', (msg) => process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))
+Hans.on('error', (err) => !!process.env.ISDEV && console.log('❌ ERROR: initHans()', err))
+Hans.on('debug', (msg) => !!process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))
 Hans.on('unhandledRejection', async (error) => {
   const _embed = {
     title: `unhandledRejection`,
     description: `${error.message}`,
   }
 
-  await reportErrorToMonitoring({ embeds: _embed })
+  !!process.env.ISDEV && (await reportErrorToMonitoring({ embeds: _embed }))
   console.error('Unhandled promise rejection:', error)
 })

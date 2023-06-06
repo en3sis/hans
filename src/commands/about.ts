@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction, GuildMember } from 'discord.js'
 import { getUserInformation } from '../controllers/engagement/user-info.controller'
+import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -33,8 +34,7 @@ module.exports = {
       const createsEmbed = getUserInformation(member)
       return await interaction.reply({ embeds: [createsEmbed] })
     } catch (error) {
-      console.error('❌ Command: about: ', error)
-      throw new Error(error)
+      logger('❌ Command: about: ', error)
     }
   },
 }
