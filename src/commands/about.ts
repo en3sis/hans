@@ -5,6 +5,7 @@ import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
+  ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('about')
     .setDescription('Display information about a given user')
@@ -16,9 +17,8 @@ module.exports = {
       const user = interaction.options.get('user')?.value as string
 
       if (!user)
-        interaction.reply({
+        interaction.editReply({
           content: 'Please provide a user',
-          ephemeral: true,
         })
 
       let _member: string
@@ -32,7 +32,7 @@ module.exports = {
       const member: GuildMember = interaction.guild.members.cache.get(_member)
 
       const createsEmbed = getUserInformation(member)
-      return await interaction.reply({ embeds: [createsEmbed] })
+      return await interaction.editReply({ embeds: [createsEmbed] })
     } catch (error) {
       logger('❌ Command: about: ', error)
     }

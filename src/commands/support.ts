@@ -4,12 +4,13 @@ import { Hans } from '..'
 import { logger } from '../utils/debugging'
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
+  ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('support')
     .setDescription('Display Bot support information'),
   async execute(interaction: CommandInteraction) {
     try {
-      await interaction.reply({
+      await interaction.editReply({
         embeds: [
           {
             title: '📨 Hans support',

@@ -22,7 +22,7 @@ module.exports = {
       )
       await interaction.channel.send('<:mock:1016362569088376924>')
 
-      await interaction.reply({ content: 'Done :P', ephemeral: true })
+      await interaction.editReply({ content: 'Done :P' })
     } catch (error) {
       logger('❌ Command: mock: ', error)
     }
