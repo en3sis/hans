@@ -1,8 +1,8 @@
 name: Docker Build - Nightly
 
 on:
-  #schedule:
-   # - cron: '0 2 * * *' # run at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * *' # run at 2 AM UTC
   workflow_dispatch:
 
 jobs:
