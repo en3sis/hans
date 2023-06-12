@@ -79,8 +79,11 @@ for (const file of eventFiles) {
 }
 
 Hans.login(process.env.DISCORD_TOKEN!)
+
 Hans.on('error', (err) => !!process.env.ISDEV && console.log('❌ ERROR: initHans()', err))
+
 Hans.on('debug', (msg) => !!process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))
+
 Hans.on('unhandledRejection', async (error) => {
   const _embed = {
     title: `unhandledRejection`,

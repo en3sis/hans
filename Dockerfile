@@ -4,7 +4,7 @@ WORKDIR /app
 
 ARG M1=false
 
-# Install python3, g++ and make for building native dependencies if you're running on MacOS with M1 chip, run the command as  docker build --build-arg M1=true -t hans:test .
+# Install python3, g++ and make for building native dependencies if you're running on MacOS with M1 chip, run the command as docker build --build-arg M1=true -t hans:test .
 RUN if [ "$M1" = "true" ] ; then \
   apk add --no-cache python3 g++ make \
 ; fi
