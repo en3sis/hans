@@ -6,7 +6,7 @@ import {
   pluginsListNames,
   toggleGuildPlugin,
 } from '../controllers/bot/plugins.controller'
-import { guildActivitySetChannel } from '../controllers/plugins/guild_activity.controller'
+import { guildActivitySetChannel } from '../controllers/plugins/guild-activity.controller'
 import { logger } from '../utils/debugging'
 
 const list = pluginsListNames()

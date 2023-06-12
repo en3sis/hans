@@ -42,6 +42,12 @@ export const pluginsList: Record<string, GenericPluginParts> = {
     premium: false,
     category: 'productivity',
   },
+  twitch: {
+    ...genericStructure,
+    description: 'Shows information about a twitch streamer.',
+    premium: false,
+    category: 'entertainment',
+  },
   textClassification: {
     ...genericStructure,
     description: 'Classifies a text, informs moderation if the sentiment is negative.',

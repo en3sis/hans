@@ -18,6 +18,6 @@ export const guildActivitySetChannel = async (interaction: CommandInteraction, c
 
     return data
   } catch (error) {
-    console.log('❌ ERROR: guildActivitySetChannel(): ', error)
+    console.error('❌ ERROR: guildActivitySetChannel(): ', error)
   }
 }
