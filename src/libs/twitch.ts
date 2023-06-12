@@ -7,6 +7,11 @@ export type TwitchAccessToken = {
   expiresAt: number
 }
 
+interface UserNotFound {
+  username: string
+  message: string
+}
+
 interface TwitchUser {
   username: string
   avatar: string
@@ -23,7 +28,7 @@ interface TwitchStream {
   thumbnail: string
 }
 
-type TwitchResponse = TwitchUser | TwitchStream
+type TwitchResponse = TwitchUser | TwitchStream | UserNotFound
 
 export const getAccessToken = async (): Promise<TwitchAccessToken> => {
   try {
@@ -85,7 +90,10 @@ export const getStreamerInfo = async (username: string): Promise<TwitchResponse>
     })
 
     if (response.data.data.length === 0) {
-      throw new Error('Streamer not found.')
+      return {
+        username,
+        message: 'User not found.',
+      }
     }
 
     const userId = response.data.data[0].id

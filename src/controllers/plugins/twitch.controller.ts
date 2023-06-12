@@ -4,6 +4,18 @@ import { DEFAULT_COLOR } from '../../utils/colors'
 export const twitchController = async (username: string) => {
   const streamerInfo = await getStreamerInfo(username)
 
+  if ('message' in streamerInfo) {
+    return {
+      embeds: [
+        {
+          color: DEFAULT_COLOR,
+          title: streamerInfo.username,
+          description: streamerInfo.message,
+        },
+      ],
+    }
+  }
+
   if ('startedAt' in streamerInfo) {
     return {
       embeds: [
