@@ -61,11 +61,9 @@ export const isTokenExpired = () => {
 
 export const getStreamerInfo = async (username: string): Promise<TwitchResponse> => {
   let accessTokenData = getFromCache('twitchAccessToken') as TwitchAccessToken
-  console.log('🚀 ~ file: twitch.ts:63 ~ getStreamerInfo ~ accessTokenData:', accessTokenData)
 
   if (!accessTokenData || isTokenExpired()) {
     const res = await getAccessToken()
-    console.log('🚀 ~ file: twitch.ts:67 ~ getStreamerInfo ~ res:', res)
 
     setToCache('twitchAccessToken', res)
 
