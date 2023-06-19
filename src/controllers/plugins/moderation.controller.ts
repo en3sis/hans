@@ -2,6 +2,55 @@ import { CommandInteraction, Message, TextChannel } from 'discord.js'
 import { sentimentAnalysis } from '../../libs/sentiment'
 import { sentimentUrgencyTable } from '../../utils/colors'
 
+export const purgeMessages = async (interaction: CommandInteraction) => {
+  try {
+    const amount = interaction.options.get('n').value as number
+
+    if (!interaction.memberPermissions.has(['Administrator']))
+      return interaction.reply({
+        content: 'You do not have permission to use this command',
+        ephemeral: true,
+      })
+
+    if (amount > 100) {
+      return interaction.reply({
+        content: 'You can only delete up to 100 messages at once.',
+        ephemeral: true,
+      })
+    }
+
+    const fetched = await interaction.channel.messages.fetch({
+      limit: amount,
+    })
+
+    await interaction.channel.bulkDelete(fetched).catch((err) => {
+      throw Error(err.message)
+    })
+
+    await interaction.editReply({ content: `🗑 Deleted ${amount} messages.` })
+  } catch (error) {
+    throw Error(error.message)
+  }
+}
+
+export const removeLinks = async (
+  message: Message,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  allowedLinks: string[],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  allowedRoles: string[],
+) => {
+  if (message.member.permissions.has(['Administrator', 'DeafenMembers'])) return
+
+  const expression =
+    /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
+  const regex = new RegExp(expression)
+
+  if (message.content.match(regex) !== null) {
+    await message.delete()
+  }
+}
+
 /**
  * @param message Message
  * @param notificationChannel DiscordJS TextChannel
@@ -59,59 +108,5 @@ export const sentimentAnalysisFn = async (
         },
       ],
     })
-  }
-}
-
-export const removeLinks = async (
-  message: Message,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  allowedLinks: string[],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  allowedRoles: string[],
-) => {
-  if (message.member.permissions.has(['Administrator', 'DeafenMembers'])) return
-
-  const expression =
-    /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
-  const regex = new RegExp(expression)
-
-  if (message.content.match(regex) !== null) {
-    await message.delete()
-  }
-}
-
-export const purgeMessages = async (interaction: CommandInteraction) => {
-  try {
-    const amount = interaction.options.get('n').value as number
-
-    if (!interaction.memberPermissions.has(['Administrator']))
-      return interaction.reply({
-        content: 'You do not have permission to use this command',
-        ephemeral: true,
-      })
-
-    if (amount > 100) {
-      return interaction.reply({
-        content: 'You can only delete up to 100 messages at once.',
-        ephemeral: true,
-      })
-    }
-
-    const fetched = await interaction.channel.messages.fetch({
-      limit: amount,
-    })
-
-    await interaction.channel.bulkDelete(fetched).catch((err) => {
-      console.error(err)
-
-      return interaction.reply({
-        content: `💢 ${err}`,
-        ephemeral: true,
-      })
-    })
-
-    await interaction.reply({ content: `🗑 Deleted ${amount} messages.`, ephemeral: true })
-  } catch (error) {
-    interaction.reply(`Couldn't delete messages because of: ${error}`)
   }
 }
