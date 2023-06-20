@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai'
+import { Configuration, OpenAIApi } from 'openai'
 import supabase from '../../libs/supabase'
 import { GenericObjectT } from '../../types/objects'
 import { DEFAULT_COLOR } from '../../utils/colors'
@@ -24,7 +24,7 @@ export const gpt3Controller = async (prompt: string, apiKey: string, organizatio
     }
   } catch (error) {
     console.log('❌ gpt3Controller(): ', error)
-    throw Error(error)
+    throw Error(error.message)
   }
 }
 
@@ -40,19 +40,16 @@ interface IOpenAIRequestSettings {
   organization: string
 }
 
-const history = [] as ChatCompletionRequestMessage[]
 /**
  * OpenAI API request
  * @param IOpenAIRequestSettings
  * @returns Promise<string>
  */
 export const sendPrompt = async ({
-  model,
-  version = '001',
   input,
-  max_tokens = 100,
+  max_tokens = 500,
   temperature = 0.3,
-  presence_penalty = 0,
+  presence_penalty = 0.5,
   frequency_penalty = 0.5,
   apiKey,
   organization,
@@ -65,53 +62,31 @@ export const sendPrompt = async ({
       }),
     )
 
-    let response: {
-      response: string
-      token: number
-    }
+    const completion = await OPEN_AI_CLIENT.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      n: 1,
+      temperature: temperature,
+      max_tokens: max_tokens,
+      top_p: 0.3,
+      presence_penalty,
+      frequency_penalty,
+      messages: [
+        {
+          role: 'system',
+          content: `You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible, sometimes you can be sarcastic. Current date: ${new Date().toLocaleDateString()}`,
+        },
+        { role: 'user', content: input },
+      ],
+    })
 
-    if (model) {
-      const completion = await OPEN_AI_CLIENT.createCompletion({
-        model: model ? `text-${model}-${version}` : 'gpt-3.5-turbo',
-        prompt: `${input.split(', ').join('\n')}`,
-        temperature: temperature,
-        max_tokens: max_tokens,
-        top_p: 0.3,
-        presence_penalty,
-        frequency_penalty,
-      })
-
-      response = {
-        response: completion.data.choices[0].text,
-        token: completion.data.usage.total_tokens,
-      }
-    } else {
-      const completion = await OPEN_AI_CLIENT.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        n: 1,
-        messages: [
-          {
-            role: 'system',
-            content: `You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible, sometimes you can be sarcastic. Current date: ${new Date().toLocaleDateString()}`,
-          },
-          ...history,
-          { role: 'user', content: input.split(', ').join('\n') },
-        ],
-      })
-
-      history.slice(0, 1)
-      history.push({ role: 'assistant', content: input.split(', ').join('\n') })
-
-      response = {
-        response: completion.data.choices[0].message.content.replace(ROLE_MENTION_REGEX, '$1'),
-        token: completion.data.usage.total_tokens,
-      }
+    const response = {
+      response: completion.data.choices[0].message.content.replace(ROLE_MENTION_REGEX, '$1'),
+      token: completion.data.usage.total_tokens,
     }
 
     return response
   } catch (error) {
-    console.log('❌ sendPrompt(): ', error)
-    throw Error(error)
+    throw Error(error.message)
   }
 }
 
@@ -153,7 +128,7 @@ export const chatGptCommandHandler = async (
           footer: {
             text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.002).toFixed(
               6,
-            )} ${!guild.premium ? `| ${usage} usages left for today` : ''}`,
+            )} ${!guild.premium ? `| ${usage - 1} usages left for today` : ''}`,
           },
           color: DEFAULT_COLOR,
         },
@@ -161,7 +136,7 @@ export const chatGptCommandHandler = async (
     })
   } catch (error) {
     console.error('❌ chatGptCommandHandler(): ', error)
-    throw Error(error)
+    throw Error(error.message)
   }
 }
 
@@ -200,6 +175,6 @@ export const chatGptUsage = async (
     }
   } catch (error) {
     console.error('❌ chatGptUsage(): ', error)
-    throw Error(error)
+    throw Error(error.message)
   }
 }

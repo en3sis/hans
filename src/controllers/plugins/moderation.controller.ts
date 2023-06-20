@@ -23,8 +23,8 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
       limit: amount,
     })
 
-    await interaction.channel.bulkDelete(fetched).catch((err) => {
-      throw Error(err.message)
+    await interaction.channel.bulkDelete(fetched).catch(async (err) => {
+      await interaction.editReply({ content: err.message })
     })
 
     await interaction.editReply({ content: `🗑 Deleted ${amount} messages.` })

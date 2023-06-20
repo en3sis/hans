@@ -45,7 +45,7 @@ module.exports = {
           return await chatGptUsage(guildPlugin, interaction.guildId!)
         } else {
           return await interaction.editReply(
-            `You have reached the limit of the free API, it will restart ⏳ ${getTimeRemainingUntilMidnight()}. You can add your own API Key using \`/plugins chatGtp\` command for unlimited usage in your server.`,
+            `You have reached the daily limit of using the command. It will restart ⏳ ${getTimeRemainingUntilMidnight()}. An personal API key can be securely added using \`/plugins chatGtp\` command for unlimited usage in this server.`,
           )
         }
       } else {

@@ -104,7 +104,9 @@ alter table
 alter table
     "public"."guilds_plugins"
 add
-    constraint "guilds_plugins_owner_fkey" FOREIGN KEY (owner) REFERENCES guilds(guild_id) ON DELETE CASCADE not valid;
+    constraint "guilds_plugins_owner_fkey" FOREIGN KEY (owner) REFERENCES guilds(guild_id) ON
+DELETE
+    CASCADE not valid;
 
 alter table
     "public"."guilds_plugins" validate constraint "guilds_plugins_owner_fkey";
@@ -116,17 +118,17 @@ add
 
 -- Functions
 CREATE
-OR REPLACE FUNCTION reset_chat_gpt_plugin() RETURNS void AS $ $ BEGIN
-UPDATE
-    guilds_plugins
-SET
-    metadata = jsonb_set(metadata, '{usage}', '100' :: jsonb)
-WHERE
-    name = 'chatGtp';
+OR REPLACE FUNCTION reset_chat_gpt_plugin() RETURNS void AS $$ BEGIN
+    UPDATE
+        guilds_plugins
+    SET
+        metadata = jsonb_set(metadata, '{usage}', '100' :: jsonb)
+    WHERE
+        name = 'chatGtp';
 
 END;
 
-$ $ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 -- Crons
 SELECT
