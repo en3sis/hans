@@ -57,6 +57,7 @@ export const threadAutoCreate = async (
     }, 2000)
   } catch (error) {
     console.log('💢 ERROR: threadAutoCreate(): ', error)
+    throw Error(error.message)
   }
 }
 
