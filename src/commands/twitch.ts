@@ -4,6 +4,7 @@ import { twitchController } from '../controllers/plugins/twitch.controller'
 import { logger } from '../utils/debugging'
 
 module.exports = {
+  ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('twitch')
     .setDescription('Fetches public Twitch profile information & status')
