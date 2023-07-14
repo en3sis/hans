@@ -7,15 +7,13 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
     const amount = interaction.options.get('n').value as number
 
     if (!interaction.memberPermissions.has(['Administrator']))
-      return interaction.reply({
+      return interaction.editReply({
         content: 'You do not have permission to use this command',
-        ephemeral: true,
       })
 
     if (amount > 100) {
-      return interaction.reply({
+      return interaction.editReply({
         content: 'You can only delete up to 100 messages at once.',
-        ephemeral: true,
       })
     }
 

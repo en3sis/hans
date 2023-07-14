@@ -119,9 +119,8 @@ export const toggleGuildPlugin = async (
 
     if (error) throw error
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `The plugin ${name} was successfully ${toggle ? 'enabled' : 'disabled'}`,
-      ephemeral: true,
     })
 
     return data
@@ -197,10 +196,6 @@ export type PluginsThreadsSettings = {
 
 export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsThreadsSettings) => {
   try {
-    await interaction.deferReply({
-      ephemeral: true,
-    })
-
     const { data: guildsPlugins, error } = await supabase
       .from('guilds_plugins')
       .select('metadata')
