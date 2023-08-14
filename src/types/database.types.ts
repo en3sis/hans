@@ -131,18 +131,41 @@ export interface Database {
           premium?: boolean | null
         }
       }
+      users_settings: {
+        Row: {
+          created_at: string | null
+          id: number
+          metadata: Json | null
+          type: Database['public']['Enums']['user_settings_type'] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          metadata?: Json | null
+          type?: Database['public']['Enums']['user_settings_type'] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          metadata?: Json | null
+          type?: Database['public']['Enums']['user_settings_type'] | null
+          user_id?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reset_chat_gpt_plugin: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
+      user_settings_type: 'timezone'
     }
   }
 }

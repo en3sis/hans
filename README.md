@@ -36,6 +36,8 @@ Before running any command, run `npm install` & `cp .env.template .env`, fill al
 
 There's a `supabase/schema.sql` file with the necessary tables and columns needed for the bot to work. You can use it to create the tables in your Supabase instance.
 
+More information related to working with Supabase local development can be found [📹 here 🔗](https://www.youtube.com/watch?v=N0Wb85m3YMI)
+
 ## 👩🏼‍💻 Development
 
 ### `npm run dev`

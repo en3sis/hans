@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction, GuildMember } from 'discord.js'
 import { getUserInformation } from '../controllers/engagement/user-info.controller'
 import { logger } from '../utils/debugging'
+import { extractUser } from '../utils/users'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
@@ -21,13 +22,7 @@ module.exports = {
           content: 'Please provide a user',
         })
 
-      let _member: string
-
-      if (/<@!?\d+>/g.test(user)) {
-        _member = user.split(`<@!`)[1].replace('>', '')
-      } else {
-        _member = user
-      }
+      const _member = extractUser(user)
 
       const member: GuildMember = interaction.guild.members.cache.get(_member)
 

@@ -63,7 +63,6 @@ export type GuildPluginData = {
 }
 
 /**
- *
  * @param guild_id
  * @param pluginName
  * @returns {enabled: false, metadata: {}, data: {}
@@ -86,7 +85,7 @@ export const resolveGuildPlugins = async (
       (ele: GuildPlugin) => ele.name === pluginName,
     )
 
-    if (matchingPlugin && matchingPlugin.plugins.enabled && matchingPlugin.enabled) {
+    if (matchingPlugin && matchingPlugin.plugins[0].enabled && matchingPlugin.enabled) {
       return {
         enabled: matchingPlugin.enabled || false,
         metadata: JSON.parse(JSON.stringify(matchingPlugin.metadata)),
