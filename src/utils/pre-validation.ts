@@ -11,9 +11,7 @@ export class ProjectValidator {
 
   async runAllChecks() {
     if (!this.essentialEnvVars)
-      throw Error(
-        '❗️ ERROR: some env variables are missing, please check based on your .env file.',
-      )
+      throw Error('❗️ ERROR: some env variables are missing, please check based on your .env file.')
   }
 
   get essentialEnvVars() {
