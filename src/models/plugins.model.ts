@@ -2,8 +2,8 @@ import { Database } from '../types/database.types'
 
 export type Plugins = Database['public']['Tables']['plugins']['Row']
 export type GuildPlugins = Database['public']['Tables']['guilds_plugins']['Row']
-
 export type GenericPluginParts = Omit<Plugins, 'id' | 'name'>
+
 const genericStructure: GenericPluginParts = {
   created_at: new Date().toISOString(),
   premium: false,
@@ -12,6 +12,7 @@ const genericStructure: GenericPluginParts = {
   description: '',
 }
 
+/** Defines the list of plugins available for the bot */
 export const pluginsList: Record<string, GenericPluginParts> = {
   serverMembersActivity: {
     ...genericStructure,
@@ -69,4 +70,34 @@ export const pluginsList: Record<string, GenericPluginParts> = {
   //   description: 'Notifies when a reaction is removed from a message.',
   //   category: 'engagement',
   // },
+}
+
+/** Defines the initial state of a guild plugin */
+export const initialGuildPluginState = () => {
+  return {
+    serverMembersActivity: {
+      default_enabled: false,
+    },
+    serverMessagesLogs: {
+      default_enabled: false,
+    },
+    removeLinks: {
+      default_enabled: false,
+    },
+    chatGtp: {
+      default_enabled: true,
+    },
+    summarize: {
+      default_enabled: false,
+    },
+    twitch: {
+      default_enabled: true,
+    },
+    textClassification: {
+      default_enabled: false,
+    },
+    threads: {
+      default_enabled: true,
+    },
+  }
 }
