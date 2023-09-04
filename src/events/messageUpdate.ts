@@ -5,9 +5,11 @@ import { NO_INTENT } from '../utils/constants'
 module.exports = {
   name: 'messageUpdate',
   once: false,
-  enabled: true,
+  enabled: false,
   async execute(Hans: Client, oldMessage: Message, newMessage: Message) {
     try {
+      if (newMessage.author.bot && oldMessage.author.bot) return
+
       const { enabled, metadata } = await resolveGuildPlugins(oldMessage.guildId, 'messageUpdate')
 
       if (!enabled) return
