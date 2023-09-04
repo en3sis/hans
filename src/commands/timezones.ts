@@ -19,8 +19,8 @@ module.exports = {
     )
     .addSubcommand((command) =>
       command
-        .setName('difference')
-        .setDescription('Shows the differences between your timezone and another user')
+        .setName('diff')
+        .setDescription('Shows the differences between your timezone and another @user')
         .addUserOption((option) =>
           option.setName('user').setDescription('@username').setRequired(true),
         ),

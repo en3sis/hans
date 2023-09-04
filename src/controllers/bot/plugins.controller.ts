@@ -72,30 +72,31 @@ export const resolveGuildPlugins = async (
   pluginName: string,
 ): Promise<GuildPluginData> => {
   try {
-    const { data: guildPlugin } = await supabase
+    const { data: guildPluginResult } = await supabase
       .from('guilds')
-      .select('*, guilds_plugins(*, plugins(enabled, description, premium))')
+      .select('*, guilds_plugins(*, plugins(enabled, description, premium, name))')
       .eq('guild_id', guild_id)
       .single()
 
-    // INFO: Not sure why this fails below, `guilds_plugins` is an array but the array methods wont show.
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const matchingPlugin = guildPlugin.guilds_plugins.find(
+    if (!guildPluginResult) return
+
+    const guildPlugin = guildPluginResult?.guilds_plugins.find(
       (ele: GuildPlugin) => ele.name === pluginName,
     )
 
-    if (matchingPlugin && matchingPlugin.plugins[0].enabled && matchingPlugin.enabled) {
+    const botPlugin: Record<string, any> = guildPlugin?.plugins
+
+    if (guildPlugin && guildPlugin.enabled && botPlugin.enabled) {
       return {
-        enabled: matchingPlugin.enabled || false,
-        metadata: JSON.parse(JSON.stringify(matchingPlugin.metadata)),
+        enabled: guildPlugin?.enabled || false,
+        metadata: JSON.parse(JSON.stringify(guildPlugin?.metadata)),
         data: guildPlugin,
       }
     } else {
       return {
         enabled: false,
-        metadata: {},
-        data: {},
+        metadata: undefined,
+        data: undefined,
       }
     }
   } catch (error) {

@@ -59,7 +59,7 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
           },
         ],
       })
-    } else if (command === 'compare') {
+    } else if (command === 'diff') {
       // Get the target & author user
       const targetUser = interaction.options.getUser('user', true)
       const authorUser = interaction.user
