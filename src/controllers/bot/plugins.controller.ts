@@ -10,7 +10,7 @@ export const insertGuildPlugin = async (guild_id: string) => {
 
     const guildPlugins: Omit<GuildPlugin, 'id' | 'metadata'>[] = plugins.data.map((plugin) => ({
       owner: guild_id,
-      enabled: initialGuildPluginState[plugin.name] ?? plugin.enabled,
+      enabled: initialGuildPluginState[plugin.name]?.default_enabled ?? plugin.enabled,
       name: plugin.name,
       created_at: new Date().toISOString(),
     }))
