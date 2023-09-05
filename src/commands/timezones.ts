@@ -4,7 +4,7 @@ import { timezonesController } from '../controllers/plugins/timezones.controller
 import { logger } from '../utils/debugging'
 
 module.exports = {
-  ephemeral: true,
+  ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('timezone')
     .setDescription('Set your timezone & get the time of another user')
