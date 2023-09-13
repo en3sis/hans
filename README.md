@@ -22,23 +22,30 @@ Bring Hans to your Discord server and start using his available features right a
 
 The list of commands & plugins can be found [here 🔗](https://github.com/en3sis/hans/wiki/Commands-&-Plugins)
 
-### Developing Hans
+## Developing Hans
 
 > 🪬 **NOTE**: Please consider opening an issue and PR for bugs, suggestions or new features.
 
 ---
 
-## 🔅 Prepare environment
+### 🔅 Prepare environment
 
-Before running any command, run `npm install` & `cp .env.template .env`, fill all the env variables needed. To create your application, visit [Discord's Developer Portal](https://discord.com/developers/docs/intro)
+Before running any command, run `npm install && cp .env.template .env`, fill all the env variables needed. To create your application, visit [Discord's Developer Portal](https://discord.com/developers/docs/intro)
 
 > 🪬 **IMPORTANT**: A Supabase instance is needed for the bot to work. A free cluster should be more than enough (even for small bots & communities) for development.
 
-There's a `supabase/schema.sql` file with the necessary tables and columns needed for the bot to work. You can use it to create the tables in your Supabase instance.
+### Supabase Local Development.
+
+Supabase is used for storing the bot's configs, guilds, and users.
+
+You can work with supabase local, just follow the instructions [here 🔗](https://supabase.io/docs/guides/local-development).
+Once you run `supabase start` the local supabase will be populate with the latest schema (have a look at the `supabase/seed.template.sql` file for more configuration)
 
 More information related to working with Supabase local development can be found [📹 here 🔗](https://www.youtube.com/watch?v=N0Wb85m3YMI)
 
 ## 👩🏼‍💻 Development
+
+Once the `Prepare environment` section is done, you can start developing your bot.
 
 ### `npm run dev`
 
