@@ -23,7 +23,7 @@ const invalidTimeZones = [
   'Invalid_Timezone/Invalid_Timezone22',
 ]
 
-describe('TIME_ZONES_REGEX', () => {
+describe('Utils: Timezone', () => {
   it('should match valid time zones', () => {
     validTimeZones.forEach((timeZone) => {
       expect(TIME_ZONES_REGEX.test(timeZone) && TIMEZONES_LIST.includes(timeZone)).eq(true)
