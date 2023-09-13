@@ -17,6 +17,7 @@ module.exports = {
           option.setName('zone').setDescription('Your timezone(TZ Identifier)').setRequired(true),
         ),
     )
+    .addSubcommand((command) => command.setName('unset').setDescription('Unset your timezone'))
     .addSubcommand((command) =>
       command
         .setName('diff')
