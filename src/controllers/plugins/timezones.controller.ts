@@ -92,7 +92,9 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
           embeds: [
             {
               title: '🕑 Timezone difference',
-              description: `**${targetUser.username}** is currently **${timeDifference} ${
+              description: `**${
+                targetUser.displayName ?? targetUser.username
+              }** is currently **${timeDifference} ${
                 targetTimezoneIsInFuture ? 'ahead' : 'behind'
               }** with his local time being **${extractHours(
                 getTimeZones.targetLocalTime,
@@ -104,7 +106,7 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
                   inline: true,
                 },
                 {
-                  name: `${targetUser.username}'s timezone`,
+                  name: `${targetUser.displayName ?? targetUser.username}'s timezone`,
                   value: `${targetUserTimezone} (${extractHours(getTimeZones.targetLocalTime)})`,
                   inline: true,
                 },

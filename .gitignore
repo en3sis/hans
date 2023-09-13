@@ -13,5 +13,6 @@
 !/src/commands/bots-playground/command.template.ts
 /node_modules/
 /src/config.ts
+/supabase/seed.sql
 build/
 package-lock.json
