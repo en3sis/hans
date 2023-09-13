@@ -8,6 +8,7 @@ import { TIME_ZONES_REGEX } from '../../utils/regex'
 export const timezonesController = async (interaction: ChatInputCommandInteraction) => {
   try {
     const command = interaction.options.getSubcommand()
+
     if (command === 'set') {
       const timezone = interaction.options.getString('zone', true).trim()
 
@@ -59,6 +60,15 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
           },
         ],
       })
+    } else if (command === 'unset') {
+      // Deletes the user's timezone configuration from the database
+      await supabase
+        .from('users_settings')
+        .delete()
+        .eq('user_id', interaction.user.id)
+        .eq('type', 'timezone')
+
+      await interaction.editReply({ content: 'Your timezone has been unset.' })
     } else if (command === 'diff') {
       // Get the target & author user
       const targetUser = interaction.options.getUser('user', true)
@@ -92,7 +102,9 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
           embeds: [
             {
               title: '🕑 Timezone difference',
-              description: `**${targetUser.username}** is currently **${timeDifference} ${
+              description: `**${
+                targetUser.displayName ?? targetUser.username
+              }** is currently **${timeDifference} ${
                 targetTimezoneIsInFuture ? 'ahead' : 'behind'
               }** with his local time being **${extractHours(
                 getTimeZones.targetLocalTime,
@@ -104,7 +116,7 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
                   inline: true,
                 },
                 {
-                  name: `${targetUser.username}'s timezone`,
+                  name: `${targetUser.displayName ?? targetUser.username}'s timezone`,
                   value: `${targetUserTimezone} (${extractHours(getTimeZones.targetLocalTime)})`,
                   inline: true,
                 },
