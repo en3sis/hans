@@ -1,11 +1,17 @@
 {
   "name": "hans",
-  "version": "1.1.0",
+  "version": "v2.0.4",
   "description": "An open-source Discord bot built with Discord.JS & TypeScript",
+  "author": "en3sis",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/en3sis/hans"
+  },
+  "license": "MIT",
   "main": "src/index.ts",
   "scripts": {
     "start": "node build/utils/deploy-commands.js && node build/index.js",
-    "dev": "ISDEV=true nodemon hans",
+    "dev": "docker-compose -f docker-compose.dev.yaml up -d &&ISDEV=true nodemon hans",
     "build": "tsc --project ./",
     "types:local": "supabase gen types typescript --local --schema public > src/types/database.types.ts",
     "build_dev": "rm -rf ./build && tsc --project ./",
@@ -14,21 +20,13 @@
     "prepare": "npx husky install",
     "slash": "yarn build && node build/utils/deploy-commands.js",
     "slashDev": "export ISDEV=true && yarn build_dev && node build/utils/deploy-commands.js",
-    "test": "ts-mocha -p ./tsconfig.json ./tests/**/*.spec.ts -r dotenv/config",
-    "test:dev": "ts-mocha  ./tests/**/*.spec.ts -w --watch-files '**/*.ts' -r dotenv/config"
+    "test": "jest --setupFiles dotenv/config"
   },
-  "author": "en3sis",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/en3sis/hans"
-  },
-  "license": "MIT",
   "devDependencies": {
     "@discordjs/rest": "^2.0.1",
-    "@types/chai": "^4.3.5",
-    "@types/expect": "^24.3.0",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.4",
     "@types/lodash": "^4.14.184",
-    "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.9",
     "@types/node-cron": "^3.0.4",
     "@types/sentiment": "^5.0.1",
@@ -38,9 +36,9 @@
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
     "husky": "^8.0.1",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
-    "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
@@ -49,18 +47,18 @@
     "@huggingface/inference": "^2.5.0",
     "@supabase/supabase-js": "^2.33.1",
     "axios": "^1.5.0",
-    "chai": "^4.3.8",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "discord.js": "^14.13.0",
     "dotenv": "^16.0.2",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "openai": "^3.2.1",
+    "redis": "^4.6.8",
     "sentiment": "^5.0.2",
     "socket.io-client": "^4.5.1",
-    "supabase": "^1.88.0"
+    "supabase": "^1.88.0",
+    "ts-jest": "^29.1.1"
   }
 }

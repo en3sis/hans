@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { TIMEZONES_LIST } from './../../src/data/timezones'
 import { TIME_ZONES_REGEX } from './../../src/utils/regex'
 
@@ -26,13 +25,13 @@ const invalidTimeZones = [
 describe('Utils: Timezone', () => {
   it('should match valid time zones', () => {
     validTimeZones.forEach((timeZone) => {
-      expect(TIME_ZONES_REGEX.test(timeZone) && TIMEZONES_LIST.includes(timeZone)).eq(true)
+      expect(TIME_ZONES_REGEX.test(timeZone) && TIMEZONES_LIST.includes(timeZone)).toBe(true)
     })
   })
 
   it('should not match invalid time zones', () => {
     invalidTimeZones.forEach((timeZone) => {
-      expect(TIME_ZONES_REGEX.test(timeZone) && TIMEZONES_LIST.includes(timeZone)).eq(false)
+      expect(TIME_ZONES_REGEX.test(timeZone) && TIMEZONES_LIST.includes(timeZone)).toBe(false)
     })
   })
 })
