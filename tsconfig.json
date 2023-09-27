@@ -16,7 +16,7 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": [],
+    "types": ["jest"],
     "paths": {
       // "@/libs/*": ["libs/*"]
       // "@/types/*": ["src/types/*"],

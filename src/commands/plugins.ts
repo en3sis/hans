@@ -10,6 +10,7 @@ import { guildActivitySetChannel } from '../controllers/plugins/guild-activity.c
 import { logger } from '../utils/debugging'
 
 const list = pluginsListNames()
+
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
 module.exports = {
   ephemeral: true,

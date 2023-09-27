@@ -1,9 +1,19 @@
 import { CommandInteraction } from 'discord.js'
 import supabase from '../../libs/supabase'
 import { initialGuildPluginState, pluginsList } from '../../models/plugins.model'
+import {
+  GuildPluginData,
+  PluginsThreadsMetadata,
+  PluginsThreadsSettings,
+} from '../../types/plugins'
 import { encrypt } from '../../utils/crypto'
 import { GuildPlugin } from './guilds.controller'
 
+/**
+ * Inserts a new row in the guilds_plugins table for each plugin in the plugins table.
+ * @param {string} guild_id - The ID of the guild to insert the plugins for.
+ * @returns {Promise<void>} - A Promise that resolves when the plugins have been inserted.
+ */
 export const insertGuildPlugin = async (guild_id: string) => {
   try {
     const plugins = await supabase.from('plugins').select('*')
@@ -41,6 +51,11 @@ export const insertGuildPlugin = async (guild_id: string) => {
   }
 }
 
+/**
+ * Finds all guild plugins for a given guild.
+ * @param {string} guild_id - The ID of the guild to find the plugins for.
+ * @returns {Promise<any>} - A Promise that resolves with the guild plugins data.
+ */
 export const findGuildPlugins = async (guild_id: string) => {
   try {
     const { data, error } = await supabase
@@ -56,16 +71,11 @@ export const findGuildPlugins = async (guild_id: string) => {
   }
 }
 
-export type GuildPluginData = {
-  enabled: boolean
-  metadata: any
-  data: GuildPlugin | any
-}
-
 /**
- * @param guild_id
- * @param pluginName
- * @returns {enabled: false, metadata: {}, data: {}
+ * Resolves a guild plugin for a given guild and plugin name.
+ * @param {string} guild_id - The ID of the guild to resolve the plugin for.
+ * @param {string} pluginName - The name of the plugin to resolve.
+ * @returns {Promise<GuildPluginData>} - A Promise that resolves with the resolved guild plugin data.
  */
 export const resolveGuildPlugins = async (
   guild_id: string,
@@ -104,40 +114,45 @@ export const resolveGuildPlugins = async (
   }
 }
 
+/**
+ * Toggles the enabled state of a guild plugin.
+ * @param {CommandInteraction} interaction - The interaction object that triggered the toggle.
+ * @param {string} name - The name of the plugin to toggle.
+ * @param {boolean} toggle - The new enabled state of the plugin.
+ * @returns {Promise<void>} - A Promise that resolves with the updated plugin data.
+ */
 export const toggleGuildPlugin = async (
   interaction: CommandInteraction,
   name: string,
   toggle: boolean,
-) => {
+): Promise<void> => {
   try {
-    const { data, error } = await supabase
+    await supabase
       .from('guilds_plugins')
       .update({ enabled: toggle })
       .eq('name', name)
       .eq('owner', interaction.guildId)
     // .or(`name.eq.guildMemberAdd, name.eq.guildMemberRemove`)
 
-    if (error) throw error
-
     await interaction.editReply({
       content: `The plugin ${name} was successfully ${toggle ? 'enabled' : 'disabled'}`,
     })
-
-    return data
   } catch (error) {
     console.log('❌ ERROR: toggleGuildPlugin(): ', error)
   }
 }
 
+/**
+ * Returns an array of plugin names and values for use in a select menu.
+ * @returns {Array<{name: string, value: string}>} - An array of plugin names and values.
+ */
 export const pluginsListNames = () => {
   return Object.entries(pluginsList).reduce((acc, [key]) => {
     return [...acc, { name: key, value: key }]
   }, [])
 }
 
-// ====================
-// Chat GPT Plugin
-// ====================
+// =+=+=+ Chat GPT Plugin =+=+=+
 export const pluginChatGPTSettings = async (
   interaction: CommandInteraction,
   api_key: string,
@@ -179,20 +194,12 @@ export const pluginChatGPTSettings = async (
   }
 }
 
-// ====================
-// Threads Plugin
-// ====================
-export type PluginsThreadsMetadata = {
-  channelId: string
-  title?: string | null
-  autoMessage?: string | null
-  enabled?: boolean
-}
+// =+=+=+ Threads Plugin =+=+=+
 
-export type PluginsThreadsSettings = {
-  interaction: CommandInteraction
-  metadata: PluginsThreadsMetadata
-}
+/**
+ * Updates the metadata for the "threads" plugin in the database for the current guild.
+ * @param {PluginsThreadsSettings} options - The options object containing the interaction and metadata.
+ */
 
 export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsThreadsSettings) => {
   try {

@@ -1,7 +1,7 @@
 import { Message, NewsChannel, StartThreadOptions, TextChannel, ThreadChannel } from 'discord.js'
+import { GuildPluginData, PluginsThreadsMetadata } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { isStaff } from '../../utils/permissions'
-import { GuildPluginData, PluginsThreadsMetadata } from '../bot/plugins.controller'
 
 export const threadAutoCreate = async (
   message: Message,
