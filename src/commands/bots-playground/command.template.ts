@@ -10,7 +10,8 @@ module.exports = {
     .setDefaultMemberPermissions('0')
     .addStringOption((string) =>
       string.setName('user').setDescription('@username or ID').setRequired(true),
-    ),
+    )
+    .setDefaultMemberPermissions(null),
   async execute(interaction: CommandInteraction) {
     return interaction.reply({
       embeds: [
