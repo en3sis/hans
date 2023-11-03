@@ -10,7 +10,7 @@ module.exports = {
     .setDescription(
       'Provides quick Add to calendar links for Google & Outlook for the events you are subscribed to',
     )
-    .setDefaultMemberPermissions('0'),
+    .setDefaultMemberPermissions(null),
   async execute(interaction: CommandInteraction) {
     await getUserEvents(interaction)
   },

@@ -8,7 +8,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('timezone')
     .setDescription('Set your timezone & get the time of another user')
-    .setDefaultMemberPermissions('0')
+    .setDefaultMemberPermissions(null)
     .addSubcommand((command) =>
       command
         .setName('set')
