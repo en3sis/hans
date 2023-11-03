@@ -60,6 +60,12 @@ export const pluginsList: Record<string, GenericPluginParts> = {
     description: 'Allows for the automatic creation of threads in a specific channel.',
     category: 'server',
   },
+  events: {
+    ...genericStructure,
+    description:
+      'Provides quick Add to calendar links for Google & Outlook for the events you are subscribed to',
+    category: 'productivity',
+  },
   // messageReactionAdd: {
   //   ...genericStructure,
   //   description: 'Notifies when a reaction is added to a message.',
@@ -97,6 +103,9 @@ export const initialGuildPluginState = () => {
       default_enabled: false,
     },
     threads: {
+      default_enabled: true,
+    },
+    events: {
       default_enabled: true,
     },
   }
