@@ -6,11 +6,27 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
   try {
     const author = interaction.user
 
-    const guildEvents = await Hans.guilds.cache.get(interaction.guildId)?.scheduledEvents.fetch()
+    const guildEvents = Hans.guilds.cache
+      .get(interaction.guildId)
+      .scheduledEvents.cache.map((event) => event)
+
+    if (!guildEvents.length)
+      return interaction.editReply({
+        embeds: [
+          {
+            title: '🗓️ Event Calendar Links',
+            description: `
+          ${author.displayName}, you have no events scheduled.
+          `,
+            color: Colors.Aqua,
+          },
+        ],
+      })
 
     const event = await Promise.all(
       guildEvents.map(async (event) => {
-        if (!event && !event.isActive) return
+        // INFO: If event is not active and has no subscribers, don't show it
+        if (!event && !event.isActive && event.userCount <= 0) return
 
         return await event.fetchSubscribers().then((subscribers) => {
           return {
@@ -59,6 +75,6 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
       ],
     })
   } catch (error) {
-    console.error('❌ ERROR: guildActivitySetChannel(): ', error)
+    console.error('❌ ERROR: getUserEvents(): ', error)
   }
 }
