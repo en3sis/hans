@@ -10,6 +10,8 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
 
     const event = await Promise.all(
       guildEvents.map(async (event) => {
+        if (!event && !event.isActive) return
+
         return await event.fetchSubscribers().then((subscribers) => {
           return {
             ...event,
@@ -21,21 +23,19 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
 
     const subscribedEvents = event.filter((e) => e.subscribers.includes(author.id))
 
-    const googleLinks = []
-    const outlookLinks = []
+    const links: {
+      name: string
+      value: string[]
+    }[] = []
 
-    subscribedEvents.forEach((event) => {
-      const e = guildEvents.find((e) => e.id === event.id)
-      const g = generateCalendarLinks(e, 'google')
-      googleLinks.push({
-        name: e.name,
-        value: g,
-      })
+    subscribedEvents.forEach((_event) => {
+      const event = guildEvents.find((e) => e.id === _event.id)
+      const googleLink = generateCalendarLinks(event, 'google')
+      const outlookLink = generateCalendarLinks(event, 'outlook')
 
-      const o = generateCalendarLinks(e, 'outlook')
-      outlookLinks.push({
-        name: e.name,
-        value: o,
+      links.push({
+        name: event.name,
+        value: [googleLink, outlookLink],
       })
     })
 
@@ -46,11 +46,13 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
           description: `
           ${author.displayName}, your following events are scheduled:
 
-          **Google Calendar Links**:
-          ${googleLinks.map((link) => `[${link.name}](${link.value})`).join('\n')}
-
-          **Outlook Calendar Links**:
-          ${outlookLinks.map((link) => `[${link.name}](${link.value})`).join('\n')}
+          ${links
+            .map((link, i) => {
+              return `${i + 1}: **${link.name} ** ∫ [Google](${link.value[0]}) ⊙ [Outlook](${
+                link.value[1]
+              })`
+            })
+            .join('\n')}
           `,
           color: Colors.Aqua,
         },
