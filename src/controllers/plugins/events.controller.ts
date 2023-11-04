@@ -23,19 +23,18 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
         ],
       })
 
-    const event = await Promise.all(
-      guildEvents.map(async (event) => {
-        // INFO: If event is not active and has no subscribers, don't show it
-        if (!event && !event.isActive && event.userCount <= 0) return
+    const eventPromises = guildEvents.map(async (event) => {
+      // INFO: If event is not active and has no subscribers, don't show it
+      if (!event || !event.isActive || event.userCount <= 0) return null
 
-        return await event.fetchSubscribers().then((subscribers) => {
-          return {
-            ...event,
-            subscribers: subscribers.map((subscriber) => subscriber.user.id),
-          }
-        })
-      }),
-    )
+      const subscribers = await event.fetchSubscribers()
+      return {
+        ...event,
+        subscribers: subscribers.map((subscriber) => subscriber.user.id),
+      }
+    })
+
+    const event = await Promise.all(eventPromises)
 
     const subscribedEvents = event.filter((e) => e.subscribers.includes(author.id))
 
