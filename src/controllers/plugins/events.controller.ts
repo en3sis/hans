@@ -1,3 +1,4 @@
+import { formatDistance } from 'date-fns'
 import { Colors, CommandInteraction } from 'discord.js'
 import { Hans } from '../..'
 import { generateCalendarLinks } from '../../utils/calendar-links'
@@ -24,10 +25,9 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
       })
 
     const eventPromises = guildEvents.map(async (event) => {
-      // INFO: If event is not active and has no subscribers, don't show it
       if (!event || !event.isActive || event.userCount <= 0) return null
 
-      // Set a 300ms timeout for rate limits
+      // INFO: Set a 300ms timeout to reduce the change of hitting the rate-limit
       await new Promise((resolve) => setTimeout(resolve, 300))
       const subscribers = await event.fetchSubscribers()
       return {
@@ -38,10 +38,13 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
 
     const event = await Promise.all(eventPromises)
 
-    const subscribedEvents = event.filter((e) => e.subscribers.includes(author.id))
+    const subscribedEvents = event
+      .filter((e) => e.subscribers.includes(author.id))
+      .sort((a, b) => a.scheduledStartTimestamp - b.scheduledStartTimestamp)
 
     const links: {
       name: string
+      startingIn: string
       value: string[]
     }[] = []
 
@@ -52,6 +55,7 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
 
       links.push({
         name: event.name,
+        startingIn: formatDistance(event.scheduledStartTimestamp, new Date()),
         value: [googleLink, outlookLink],
       })
     })
@@ -59,15 +63,15 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
     return interaction.editReply({
       embeds: [
         {
-          title: '🗓️ Event Calendar Links',
+          title: '🗓️ You upcoming Events',
           description: `
           ${author.displayName}, your following events are scheduled:
 
           ${links
             .map((link, i) => {
-              return `${i + 1}: **${link.name} ** ∫ [Google](${link.value[0]}) ⊙ [Outlook](${
-                link.value[1]
-              })`
+              return `${i + 1}: **${link.name} ** starting in ${link.startingIn} ∫ [Google](${
+                link.value[0]
+              }) ⊙ [Outlook](${link.value[1]})`
             })
             .join('\n')}
           `,
