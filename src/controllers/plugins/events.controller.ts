@@ -6,9 +6,9 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
   try {
     const author = interaction.user
 
-    const guildEvents = Hans.guilds.cache
-      .get(interaction.guildId)
-      .scheduledEvents.cache.map((event) => event)
+    const guildEvents = (
+      await Hans.guilds.cache.get(interaction.guildId).scheduledEvents.fetch()
+    ).map((e) => e)
 
     if (!guildEvents.length)
       return interaction.editReply({
@@ -27,6 +27,8 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
       // INFO: If event is not active and has no subscribers, don't show it
       if (!event || !event.isActive || event.userCount <= 0) return null
 
+      // Set a 300ms timeout for rate limits
+      await new Promise((resolve) => setTimeout(resolve, 300))
       const subscribers = await event.fetchSubscribers()
       return {
         ...event,
