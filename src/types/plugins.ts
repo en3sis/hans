@@ -13,8 +13,17 @@ export type PluginsThreadsSettings = {
   metadata: PluginsThreadsMetadata
 }
 
-export type GuildPluginData = {
+export interface GuildPluginData {
   enabled: boolean
   metadata: any
   data: GuildPlugin | any
+}
+
+// Define metadata of Plugins
+export interface GuildPluginChatGTPMetadata extends GuildPluginData {
+  metadata: {
+    api_key: string
+    org: string
+    usage: number
+  }
 }
