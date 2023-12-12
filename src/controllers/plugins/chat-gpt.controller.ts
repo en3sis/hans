@@ -1,36 +1,15 @@
 import { CommandInteraction } from 'discord.js'
 import { Configuration, OpenAIApi } from 'openai'
 import supabase from '../../libs/supabase'
-import { GenericObjectT } from '../../types/objects'
+import { GuildPluginChatGTPMetadata } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { CHATGPT_COMMANDS_USAGE_DAILY } from '../../utils/constants'
 import { decrypt } from '../../utils/crypto'
 import { ROLE_MENTION_REGEX } from '../../utils/regex'
 import { GuildPlugin } from '../bot/guilds.controller'
 
-export const gpt3Controller = async (prompt: string, apiKey: string, organization: string) => {
-  try {
-    const { response, token } = await sendPrompt({
-      input: `${prompt}`,
-      version: '003',
-      max_tokens: 150,
-      apiKey,
-      organization,
-    })
-
-    return {
-      response: response.replace('AI:', ''),
-      token,
-    }
-  } catch (error) {
-    console.log('❌ gpt3Controller(): ', error)
-    throw Error(error.message)
-  }
-}
-
 interface IOpenAIRequestSettings {
-  model?: 'ada' | 'davinci'
-  version?: '003' | '001'
+  model?: string
   input: string
   max_tokens?: number
   temperature?: number
@@ -40,6 +19,26 @@ interface IOpenAIRequestSettings {
   organization: string
 }
 
+type PluginMetadata = GuildPluginChatGTPMetadata['metadata']
+
+export const chatGTPController = async (prompt: string, apiKey: string, organization: string) => {
+  try {
+    const { response, token } = await sendPrompt({
+      input: prompt,
+      apiKey,
+      organization,
+    })
+
+    return {
+      response: response.replace('AI:', ''),
+      token,
+    }
+  } catch (error) {
+    console.log('❌ chatGTPController(): ', error)
+    throw Error(error.message)
+  }
+}
+
 /**
  * OpenAI API request
  * @param IOpenAIRequestSettings
@@ -47,8 +46,9 @@ interface IOpenAIRequestSettings {
  */
 export const sendPrompt = async ({
   input,
-  max_tokens = 500,
-  temperature = 0.3,
+  model = 'gpt-3.5-turbo',
+  max_tokens = 300,
+  temperature = 0.7,
   presence_penalty = 0.5,
   frequency_penalty = 0.5,
   apiKey,
@@ -62,8 +62,11 @@ export const sendPrompt = async ({
       }),
     )
 
+    // INFO: 10% chance of being sarcastic, spice things up a bit.
+    const sarcasm = Math.random() < 0.1 ? 'My answer is extremely sarcastic and clever' : ''
+
     const completion = await OPEN_AI_CLIENT.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      model,
       n: 1,
       temperature: temperature,
       max_tokens: max_tokens,
@@ -73,9 +76,12 @@ export const sendPrompt = async ({
       messages: [
         {
           role: 'system',
-          content: `You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible, sometimes you can be sarcastic. Current date: ${new Date().toLocaleDateString()}`,
+          content: `I'm Hans, your all-knowing assistant. ${sarcasm}.  Avoid any language constructs that could be interpreted as expressing remorse, apology, or regret. Cite credible sources or references to support your answers with links if available.Current date: ${new Date().toLocaleDateString()}`,
         },
-        { role: 'user', content: input },
+        {
+          role: 'user',
+          content: input,
+        },
       ],
     })
 
@@ -93,7 +99,7 @@ export const sendPrompt = async ({
 export const chatGptCommandHandler = async (
   interaction: CommandInteraction,
   guild: GuildPlugin & { premium: boolean },
-  guildPlugin: GenericObjectT | any,
+  guildPlugin: PluginMetadata,
   usage?: number,
 ) => {
   try {
@@ -104,7 +110,7 @@ export const chatGptCommandHandler = async (
       guild.premium || usage > 0 ? process.env.OPENAI_ORGANIZATION_ID : decrypt(guildPlugin.org)
 
     const prompt = interaction.options.get('prompt')!.value as string
-    const answer = await gpt3Controller(prompt, API_KEY, ORGANIZATION)
+    const answer = await chatGTPController(prompt, API_KEY, ORGANIZATION)
 
     if (!answer?.response || answer?.response === '' || answer?.response === undefined)
       return await interaction.editReply('💢 Something went wrong, please try again later.')
@@ -141,9 +147,9 @@ export const chatGptCommandHandler = async (
 }
 
 export const chatGptUsage = async (
-  guildPlugin: any,
+  guildPlugin: PluginMetadata,
   guild_id: string,
-): Promise<GuildPlugin | any> => {
+): Promise<GuildPlugin> => {
   try {
     const { data: currentSettings } = await supabase
       .from('guilds_plugins')
@@ -154,25 +160,17 @@ export const chatGptUsage = async (
 
     const _metadata = JSON.parse(JSON.stringify(currentSettings?.metadata)) || {}
 
-    if (guildPlugin === null) {
-      const { data } = await supabase
-        .from('guilds_plugins')
-        .update({ metadata: { ..._metadata, usage: CHATGPT_COMMANDS_USAGE_DAILY - 1 } })
-        .eq('owner', guild_id)
-        .eq('name', 'chatGtp')
-        .select()
+    const usage = guildPlugin === null ? CHATGPT_COMMANDS_USAGE_DAILY - 1 : guildPlugin.usage - 1
 
-      return data
-    } else {
-      const { data } = await supabase
-        .from('guilds_plugins')
-        .update({ metadata: { ..._metadata, usage: guildPlugin.usage - 1 } })
-        .eq('owner', guild_id)
-        .eq('name', 'chatGtp')
-        .select()
+    const { data } = await supabase
+      .from('guilds_plugins')
+      .update({ metadata: { ..._metadata, usage } })
+      .eq('owner', guild_id)
+      .eq('name', 'chatGtp')
+      .select()
+      .single()
 
-      return data
-    }
+    return data
   } catch (error) {
     console.error('❌ chatGptUsage(): ', error)
     throw Error(error.message)

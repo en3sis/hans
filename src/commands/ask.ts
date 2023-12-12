@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
-import { chatGptCommandHandler, chatGptUsage } from '../controllers/plugins/chat-gpt3.controller'
+import { chatGptCommandHandler, chatGptUsage } from '../controllers/plugins/chat-gpt.controller'
+import { GuildPluginChatGTPMetadata } from '../types/plugins'
 import { getTimeRemainingUntilMidnight } from '../utils/dates'
 import { logger } from '../utils/debugging'
 
@@ -21,28 +22,33 @@ module.exports = {
     try {
       const {
         enabled,
-        metadata: guildPlugin,
-        data: guild,
-      } = await resolveGuildPlugins(interaction.guildId!, 'chatGtp')
+        metadata: guildPluginData,
+        data: guildData,
+      } = (await resolveGuildPlugins(interaction.guildId!, 'chatGtp')) as GuildPluginChatGTPMetadata
 
       if (!enabled)
         return await interaction.editReply('This plugin is not enabled for this server.')
 
       // Handles regular guilds
-      if (!guild.premium) {
+      if (!guildData.premium) {
         // If the guild set its API Key, uses it
-        if (guildPlugin?.api_key && guildPlugin?.org) {
-          return await chatGptCommandHandler(interaction, guild, guildPlugin)
+        if (guildPluginData?.api_key && guildPluginData?.org) {
+          return await chatGptCommandHandler(interaction, guildData, guildPluginData)
         }
 
-        if (guildPlugin === null || guildPlugin?.usage === undefined) {
-          await chatGptCommandHandler(interaction, guild, guildPlugin, 99)
-          return await chatGptUsage(guildPlugin, interaction.guildId!)
+        if (guildPluginData === null || guildPluginData?.usage === undefined) {
+          await chatGptCommandHandler(interaction, guildData, guildPluginData, 99)
+          return await chatGptUsage(guildPluginData, interaction.guildId!)
         }
 
-        if (guildPlugin?.usage !== 0) {
-          await chatGptCommandHandler(interaction, guild, guildPlugin, guildPlugin?.usage)
-          return await chatGptUsage(guildPlugin, interaction.guildId!)
+        if (guildPluginData?.usage !== 0) {
+          await chatGptCommandHandler(
+            interaction,
+            guildData,
+            guildPluginData,
+            guildPluginData?.usage,
+          )
+          return await chatGptUsage(guildPluginData, interaction.guildId!)
         } else {
           return await interaction.editReply(
             `You have reached the daily limit of using the command. It will restart ⏳ ${getTimeRemainingUntilMidnight()}. An personal API key can be securely added using \`/plugins chatGtp\` command for unlimited usage in this server.`,
@@ -50,7 +56,7 @@ module.exports = {
         }
       } else {
         // Handles premium guilds
-        await chatGptCommandHandler(interaction, guild, guildPlugin)
+        await chatGptCommandHandler(interaction, guildData, guildPluginData)
       }
     } catch (error) {
       logger('❌ Command: ask: ', error)
