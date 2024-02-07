@@ -2,7 +2,7 @@ import { setPresence } from '../controllers/bot/config.controller'
 import supabase from '../libs/supabase'
 
 export const configsRealtime = () => {
-  return supabase
+  supabase
     .channel('table-db-changes')
     .on(
       'postgres_changes',

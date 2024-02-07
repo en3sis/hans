@@ -55,7 +55,7 @@
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "openai": "^3.2.1",
-    "redis": "^4.6.8",
+    "redis": "^4.6.11",
     "sentiment": "^5.0.2",
     "socket.io-client": "^4.5.1",
     "supabase": "^1.88.0",

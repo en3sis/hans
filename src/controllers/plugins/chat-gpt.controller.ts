@@ -76,7 +76,7 @@ export const sendPrompt = async ({
       messages: [
         {
           role: 'system',
-          content: `I'm Hans, your all-knowing assistant. ${sarcasm}.  Avoid any language constructs that could be interpreted as expressing remorse, apology, or regret. Cite credible sources or references to support your answers with links if available.Current date: ${new Date().toLocaleDateString()}`,
+          content: `I'm Hans, your all-knowing assistant. ${sarcasm}.  Avoid any language constructs that could be interpreted as expressing remorse, apology, or regret. Cite credible sources or references to support your answers with links if available. Current date: ${new Date().toLocaleDateString()}`,
         },
         {
           role: 'user',

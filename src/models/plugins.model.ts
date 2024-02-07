@@ -2,7 +2,9 @@ import { Database } from '../types/database.types'
 
 export type Plugins = Database['public']['Tables']['plugins']['Row']
 export type GuildPlugins = Database['public']['Tables']['guilds_plugins']['Row']
-export type GenericPluginParts = Omit<Plugins, 'id' | 'name'>
+export type GenericPluginParts = Omit<Plugins, 'id' | 'name'> & {
+  metadata?: unknown
+}
 
 const genericStructure: GenericPluginParts = {
   created_at: new Date().toISOString(),
@@ -35,6 +37,14 @@ export const pluginsList: Record<string, GenericPluginParts> = {
     ...genericStructure,
     description: 'Enables a conversation with ChatGPT, an AI chatbot.',
     premium: true,
+    metadata: {
+      model: '',
+      max_tokens: 300,
+      temperature: 0.7,
+      presence_penalty: 0.5,
+      frequency_penalty: 0.5,
+      content: '',
+    },
     category: 'productivity',
   },
   summarize: {
