@@ -7,6 +7,7 @@ import {
   toggleGuildPlugin,
 } from '../controllers/bot/plugins.controller'
 import { guildActivitySetChannel } from '../controllers/plugins/guild-activity.controller'
+import { verifyGuildPluginSettings } from '../controllers/plugins/verify.controller'
 import { logger } from '../utils/debugging'
 
 const list = pluginsListNames()
@@ -58,15 +59,15 @@ module.exports = {
         ),
     )
     .addSubcommand((command) =>
-      command.setName('verify').setDescription('Enables the verification system for the server'),
-    )
-    .addSubcommand((command) =>
-      command.addRoleOption((option) =>
-        option
-          .setName('role')
-          .setDescription('The role to be given to the verified user')
-          .setRequired(true),
-      ),
+      command
+        .setName('verify')
+        .setDescription('Enables the verification system for the server')
+        .addRoleOption((option) =>
+          option
+            .setName('role')
+            .setDescription('The role to be given to the verified user')
+            .setRequired(true),
+        ),
     )
     .addSubcommand((command) =>
       command
@@ -144,6 +145,8 @@ module.exports = {
             enabled: (interaction.options.getBoolean('toggle') as boolean) ?? true,
           },
         })
+      } else if (interaction.options.getSubcommand() === 'verify') {
+        await verifyGuildPluginSettings(interaction)
       }
     } catch (error) {
       logger('❌ Command: plugins: ', error)
