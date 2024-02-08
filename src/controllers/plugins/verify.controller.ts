@@ -64,7 +64,9 @@ export const verifyModal = async (interaction: Interaction) => {
           new TextInputBuilder()
             .setCustomId('input1')
             .setLabel(`Which emotion does this emoji ${userCaptchaChallenge.emoji} represent?`)
-            .setPlaceholder('Type the name of the emotion.')
+            .setPlaceholder(
+              `Type the name of the emotion, ex: ${emojiMap.map((e) => e.name).join(', ')}`,
+            )
             .setStyle(TextInputStyle.Short),
         ),
       )
