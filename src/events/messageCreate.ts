@@ -17,16 +17,16 @@ module.exports = {
       // Not logged in
       if (message.client.user === null) return
 
+      // Plugins
+      // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
+      await threadAutoCreate(message, await Hans.guildPluginSettings(message.guildId, 'threads'))
+
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       // ==-=-=-=-=-=-=-=-=             DEVELOPMENT                    =-=-=-=-=-=-=-= +
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       // Uncomment for development and do your tests/debug there, !!!DON'T COMMIT!!!
       // TODO: Requires refactor, find a way to dynamically load the file if in development
       // _messageCreate(Hans, message, command, args)
-
-      // Plugins
-      // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-      await threadAutoCreate(message, await Hans.guildPluginSettings(message.guildId, 'threads'))
     } catch (error) {
       console.log('❌ messageCreate(): ', error)
     }

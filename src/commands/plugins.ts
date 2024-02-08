@@ -58,6 +58,17 @@ module.exports = {
         ),
     )
     .addSubcommand((command) =>
+      command.setName('verify').setDescription('Enables the verification system for the server'),
+    )
+    .addSubcommand((command) =>
+      command.addRoleOption((option) =>
+        option
+          .setName('role')
+          .setDescription('The role to be given to the verified user')
+          .setRequired(true),
+      ),
+    )
+    .addSubcommand((command) =>
       command
         .setName('threads')
         .setDescription(
