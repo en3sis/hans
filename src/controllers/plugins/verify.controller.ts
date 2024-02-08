@@ -12,7 +12,7 @@ import {
   TextInputStyle,
 } from 'discord.js'
 import { Hans } from '../..'
-import { getFromCache, setToCache } from '../../libs/node-cache'
+import { deleteFromCache, getFromCache, setToCache } from '../../libs/node-cache'
 import { updateMetadataGuildPlugin } from '../bot/plugins.controller'
 
 export const verifyGuildPluginSettings = async (interaction: ChatInputCommandInteraction) => {
@@ -51,8 +51,9 @@ export const verifyModal = async (interaction: Interaction) => {
   if (interaction.isButton()) {
     if (interaction.customId !== 'open_verify_modal') return
 
-    const randomEmoji = emojiMap[Math.floor(Math.random() * emojiMap.length)]
-    setToCache('randomEmoji', randomEmoji)
+    const userCaptchaChallenge = emojiMap[Math.floor(Math.random() * emojiMap.length)]
+    deleteFromCache(`userCaptchaChallenge#${interaction.user.id}`)
+    setToCache(`userCaptchaChallenge#${interaction.user.id}`, userCaptchaChallenge, 1)
 
     // Define a modal
     const modal = new ModalBuilder()
@@ -62,7 +63,7 @@ export const verifyModal = async (interaction: Interaction) => {
         new ActionRowBuilder<TextInputBuilder>().addComponents(
           new TextInputBuilder()
             .setCustomId('input1')
-            .setLabel(`Which emotion does this emoji ${randomEmoji.emoji} represent?`)
+            .setLabel(`Which emotion does this emoji ${userCaptchaChallenge.emoji} represent?`)
             .setPlaceholder('Type the name of the emotion.')
             .setStyle(TextInputStyle.Short),
         ),
@@ -77,9 +78,12 @@ export const verifyModalSubmit = async (interaction: Interaction) => {
   if (interaction.type === InteractionType.ModalSubmit) {
     if (interaction.customId !== 'verify_modal') return
     const input = interaction.fields.getTextInputValue('input1').toLocaleLowerCase()
-    const randomEmoji = getFromCache('randomEmoji') as { emoji: string; name: string }
+    const userCaptchaChallenge = getFromCache(`userCaptchaChallenge#${interaction.user.id}`) as {
+      emoji: string
+      name: string
+    }
 
-    if (input !== randomEmoji.name) {
+    if (input !== userCaptchaChallenge.name) {
       await interaction.reply({
         content: `❌ Failed to verify that you are human. Please try again.`,
         ephemeral: true,

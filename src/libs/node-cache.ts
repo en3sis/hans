@@ -19,3 +19,8 @@ export const getFromCache = (key: string): string | object | null => {
   const value = CACHE.get(key)
   return value ? JSON.parse(value as string) : null
 }
+
+// Creates a function for deleting an item from the cache
+export const deleteFromCache = (key: string) => {
+  CACHE.del(key)
+}
