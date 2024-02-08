@@ -14,7 +14,7 @@ import { GuildPlugin } from './guilds.controller'
  * @param {string} guild_id - The ID of the guild to insert the plugins for.
  * @returns {Promise<void>} - A Promise that resolves when the plugins have been inserted.
  */
-export const insertGuildPlugin = async (guild_id: string) => {
+export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
   try {
     const plugins = await supabase.from('plugins').select('*')
 
@@ -139,6 +139,20 @@ export const toggleGuildPlugin = async (
     })
   } catch (error) {
     console.log('❌ ERROR: toggleGuildPlugin(): ', error)
+  }
+}
+
+export const updateMetadataGuildPlugin = async (metadata: any, name: string, guildId: string) => {
+  try {
+    const { error } = await supabase
+      .from('guilds_plugins')
+      .update({ metadata })
+      .eq('name', name)
+      .eq('owner', guildId)
+
+    if (error) throw error
+  } catch (error) {
+    console.log('❌ ERROR: updateMetadataGuildPlugin(): ', error)
   }
 }
 

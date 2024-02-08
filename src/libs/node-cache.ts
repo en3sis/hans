@@ -15,7 +15,7 @@ export const setToCache = (key: string, value: string | object, ttl = 3) => {
 }
 
 // Creates a function for getting an item from the cache
-export const getFromCache = (key: string): never | null => {
+export const getFromCache = (key: string): string | object | null => {
   const value = CACHE.get(key)
   return value ? JSON.parse(value as string) : null
 }

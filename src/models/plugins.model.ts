@@ -66,6 +66,11 @@ export const pluginsList: Record<string, GenericPluginParts> = {
       'Provides quick Add to calendar links for Google & Outlook for the events you are subscribed to',
     category: 'productivity',
   },
+  verify: {
+    ...genericStructure,
+    description: 'Verifies that the user is human.',
+    category: 'moderation',
+  },
   // messageReactionAdd: {
   //   ...genericStructure,
   //   description: 'Notifies when a reaction is added to a message.',
@@ -107,6 +112,9 @@ export const initialGuildPluginState = () => {
     },
     events: {
       default_enabled: true,
+    },
+    verify: {
+      default_enabled: false,
     },
   }
 }

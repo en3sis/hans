@@ -1,4 +1,5 @@
-import { Client, Interaction } from 'discord.js'
+import { Client, Interaction, InteractionType } from 'discord.js'
+import { verifyModal, verifyModalSubmit } from '../controllers/plugins/verify.controller'
 import { ERROR_COLOR } from '../utils/colors'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 
@@ -6,8 +7,17 @@ module.exports = {
   name: 'interactionCreate',
   once: false,
   enabled: true,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(Hans: Client, interaction: Interaction) {
+    // Handle button interactions
+    if (interaction.isButton()) {
+      await verifyModal(interaction)
+    }
+
+    // Handle modal submit interactions
+    if (interaction.type === InteractionType.ModalSubmit) {
+      await verifyModalSubmit(interaction)
+    }
+
     if (!interaction.isCommand()) return
 
     const command = Hans.commands.get(interaction.commandName)

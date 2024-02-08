@@ -1,7 +1,7 @@
 version: '3'
 services:
   redis:
-    container_name: redis
+    container_name: redis-hans
     image: redis/redis-stack:6.2.6-v8
     ports:
       - 8888:8001
