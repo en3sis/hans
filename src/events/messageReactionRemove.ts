@@ -1,7 +1,7 @@
 import { Client, GuildMember, MessageReaction } from 'discord.js'
 
 module.exports = {
-  name: 'messageReactionAdd',
+  name: 'messageReactionRemove',
   once: false,
   enabled: false,
   async execute(Hans: Client, reaction: MessageReaction, member: GuildMember) {
@@ -17,8 +17,9 @@ module.exports = {
     }
 
     // TODO @en3sis: Implement the messageReactionAdd event
-    console.log('', {
+    console.log('💢', {
       reaction,
+      foo: reaction.emoji.id,
       member,
     })
   },

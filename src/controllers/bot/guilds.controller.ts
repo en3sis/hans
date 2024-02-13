@@ -46,6 +46,7 @@ export const insertAllGuilds = async (Hans: Client) => {
       })
       .select()
 
+    // Set the guild plugins to the default values.
     if (data)
       guilds.forEach(async (guild) => {
         try {
@@ -59,7 +60,8 @@ export const insertAllGuilds = async (Hans: Client) => {
       throw error
     }
 
-    console.log(`🪯  Initial ${data.length} guilds inserted/updated`)
+    console.info(`🪯  Initial ${data.length} guilds inserted/updated`)
+
     return data
   } catch (error) {
     console.error('❌ ERROR: insertAllGuilds(): ', error)
