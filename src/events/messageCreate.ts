@@ -8,8 +8,6 @@ module.exports = {
   async execute(Hans: Client, message: Message) {
     try {
       if (message.author.bot) return
-      // const args = message.content.slice(1).trim().split(/ +/g)
-      // const command = args.shift().toLowerCase()
 
       // Server outage
       if (!message.guild?.available) return
@@ -24,9 +22,14 @@ module.exports = {
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       // ==-=-=-=-=-=-=-=-=             DEVELOPMENT                    =-=-=-=-=-=-=-= +
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-      // Uncomment for development and do your tests/debug there, !!!DON'T COMMIT!!!
-      // TODO: Requires refactor, find a way to dynamically load the file if in development
-      // _messageCreate(Hans, message, command, args)
+      // INFO: This is a development feature that allows to run commands without the need of a bot slash command, it will only work in development mode and it will try to run the command from the messageCreate.ts file. Make sure you duplicate and rename messageCreate.template.ts file.
+      if (!!process.env.ISDEV) {
+        const args = message.content.slice(1).trim().split(/ +/g)
+        const command = args.shift().toLowerCase()
+
+        const module = await import('../controllers/_development/messageCreate')
+        module.default(Hans, message, command, args)
+      }
     } catch (error) {
       console.log('❌ messageCreate(): ', error)
     }

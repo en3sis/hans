@@ -1,4 +1,5 @@
 import { CommandInteraction } from 'discord.js'
+import { getFromCache, setToCache } from '../../libs/node-cache'
 import supabase from '../../libs/supabase'
 import { initialGuildPluginState, pluginsList } from '../../models/plugins.model'
 import {
@@ -82,6 +83,13 @@ export const resolveGuildPlugins = async (
   pluginName: string,
 ): Promise<GuildPluginData> => {
   try {
+    // Return the cached data if it exists
+    const cachedData = getFromCache(`guilds_plugins:${guild_id}:${pluginName}`)
+
+    if (cachedData) {
+      return cachedData as GuildPluginData
+    }
+
     const { data: guildPluginResult } = await supabase
       .from('guilds')
       .select('*, guilds_plugins(*, plugins(enabled, description, premium, name))')
@@ -93,15 +101,19 @@ export const resolveGuildPlugins = async (
     const guildPlugin = guildPluginResult?.guilds_plugins.find(
       (ele: GuildPlugin) => ele.name === pluginName,
     )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const globalPluginSettings: Record<string, any> = guildPlugin?.plugins
 
-    const botPlugin: Record<string, any> = guildPlugin?.plugins
-
-    if (guildPlugin && guildPlugin.enabled && botPlugin.enabled) {
-      return {
+    if (guildPlugin && guildPlugin.enabled && globalPluginSettings.enabled) {
+      const pluginData = {
         enabled: guildPlugin?.enabled || false,
         metadata: JSON.parse(JSON.stringify(guildPlugin?.metadata)),
         data: guildPlugin,
       }
+
+      setToCache(`guilds_plugins:${guild_id}:${pluginName}`, pluginData, 60 * 5)
+
+      return pluginData
     } else {
       return {
         enabled: false,
@@ -160,7 +172,7 @@ export const updateMetadataGuildPlugin = async (metadata: any, name: string, gui
  * Returns an array of plugin names and values for use in a select menu.
  * @returns {Array<{name: string, value: string}>} - An array of plugin names and values.
  */
-export const pluginsListNames = () => {
+export const pluginsListNames = (): Array<{ name: string; value: string }> => {
   return Object.entries(pluginsList).reduce((acc, [key]) => {
     return [...acc, { name: key, value: key }]
   }, [])
@@ -210,11 +222,9 @@ export const pluginChatGPTSettings = async (
 
 // =+=+=+ Threads Plugin =+=+=+
 
-/**
- * Updates the metadata for the "threads" plugin in the database for the current guild.
+/** Updates the metadata for the "threads" plugin in the database for the current guild.
  * @param {PluginsThreadsSettings} options - The options object containing the interaction and metadata.
  */
-
 export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsThreadsSettings) => {
   try {
     const { data: guildsPlugins, error } = await supabase
