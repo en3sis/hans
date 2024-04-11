@@ -71,6 +71,11 @@ export const pluginsList: Record<string, GenericPluginParts> = {
     description: 'Verifies that the user is human.',
     category: 'moderation',
   },
+  standup: {
+    ...genericStructure,
+    description: 'Notifies the members to post their standup.',
+    category: 'productivity',
+  },
   // messageReactionAdd: {
   //   ...genericStructure,
   //   description: 'Notifies when a reaction is added to a message.',
@@ -114,6 +119,9 @@ export const initialGuildPluginState = () => {
       default_enabled: true,
     },
     verify: {
+      default_enabled: false,
+    },
+    standup: {
       default_enabled: false,
     },
   }

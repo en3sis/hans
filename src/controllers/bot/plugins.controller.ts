@@ -4,8 +4,8 @@ import supabase from '../../libs/supabase'
 import { initialGuildPluginState, pluginsList } from '../../models/plugins.model'
 import {
   GuildPluginData,
-  PluginsThreadsMetadata,
   PluginsThreadsSettings,
+  PluginsThreadsMetadata,
 } from '../../types/plugins'
 import { encrypt } from '../../utils/crypto'
 import { GuildPlugin } from './guilds.controller'
@@ -144,7 +144,6 @@ export const toggleGuildPlugin = async (
       .update({ enabled: toggle })
       .eq('name', name)
       .eq('owner', interaction.guildId)
-    // .or(`name.eq.guildMemberAdd, name.eq.guildMemberRemove`)
 
     await interaction.editReply({
       content: `The plugin ${name} was successfully ${toggle ? 'enabled' : 'disabled'}`,

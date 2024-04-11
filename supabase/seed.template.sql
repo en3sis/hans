@@ -5,3 +5,6 @@
 INSERT INTO users_settings (id, created_at, user_id, metadata, type) VALUES
 (1, '2023-09-13 08:05:31+00', USER_ID_ONE, '{"timezone":"Europe/Berlin"}', 'timezone'),
 (2, '2023-09-13 08:06:04.711699+00', USER_ID_TWO, '{"timezone":"Africa/Ceuta"}', 'timezone');
+
+alter
+  publication supabase_realtime add table public.guilds_plugins;
