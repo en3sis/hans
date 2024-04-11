@@ -131,9 +131,7 @@ module.exports = {
             .setDescription('At what time the message will be sent (24h format). Example: 9, 21...')
             .setRequired(true),
         )
-        .addStringOption((option) =>
-          option.setName('message').setDescription('Message to be sent').setRequired(true),
-        )
+        .addStringOption((option) => option.setName('message').setDescription('Message to be sent'))
         .addStringOption((option) =>
           option.setName('role').setDescription('Role to mention in the message, example: @here'),
         ),
