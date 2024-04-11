@@ -78,7 +78,7 @@ export const registerStandupSchedule = async (owner: string, metadata: StandupSc
         // INFO: Opens a tread on the messaged sent to the channel.
         channel.send(`📆 Standup: **${currentDate}** | ${role ?? ''}`).then((msg) => {
           msg.startThread({
-            name: `${message ?? '✍️  Please write down your standup'}`,
+            name: `${message.length ? message : '✍️  Please write down your standup'}`,
             autoArchiveDuration: 1440,
           })
         })
@@ -88,6 +88,7 @@ export const registerStandupSchedule = async (owner: string, metadata: StandupSc
     job.start()
     // TODO: @en3sis: Expand to more than one job
     scheduledTasks[`${owner}#standup`] = job
+
     if (!!process.env.ISDEV) {
       console.debug(`✅ Standup schedule registered count:`, Object.keys(scheduledTasks).length)
     }

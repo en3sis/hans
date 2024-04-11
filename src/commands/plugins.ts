@@ -177,7 +177,8 @@ module.exports = {
         const channel = interaction.options.get('channel')!.value as string
         const expression = interaction.options.get('hour')!.value as string
         const message = interaction.options.get('message')!.value as string
-        const role = interaction.options.get('role')!.value as string
+        const roleOption = interaction.options.get('role')
+        const role = (roleOption?.value as string) ?? ''
 
         await standupPluginController(interaction, {
           channelId: channel,
