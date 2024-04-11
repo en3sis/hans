@@ -9,6 +9,7 @@ import {
 import { guildActivitySetChannel } from '../controllers/plugins/guild-activity.controller'
 import { verifyGuildPluginSettings } from '../controllers/plugins/verify.controller'
 import { logger } from '../utils/debugging'
+import { standupPluginController } from '../controllers/plugins/standup.controller'
 
 const list = pluginsListNames()
 
@@ -111,6 +112,31 @@ module.exports = {
             .setDescription('Channel which will recive the notifications')
             .setRequired(true),
         ),
+    )
+    .addSubcommand((command) =>
+      command
+        .setName('standup')
+        .setDescription(
+          'Schedules a message from Monday to Friday to be sent to a specific channel',
+        )
+        .addChannelOption((option) =>
+          option
+            .setName('channel')
+            .setDescription('Channel where the message will be sent')
+            .setRequired(true),
+        )
+        .addStringOption((option) =>
+          option
+            .setName('hour')
+            .setDescription('At what time the message will be sent (24h format). Example: 9, 21...')
+            .setRequired(true),
+        )
+        .addStringOption((option) =>
+          option.setName('message').setDescription('Message to be sent').setRequired(true),
+        )
+        .addStringOption((option) =>
+          option.setName('role').setDescription('Role to mention in the message, example: @here'),
+        ),
     ),
   async execute(interaction: CommandInteraction) {
     try {
@@ -147,6 +173,18 @@ module.exports = {
         })
       } else if (interaction.options.getSubcommand() === 'verify') {
         await verifyGuildPluginSettings(interaction)
+      } else if (interaction.options.getSubcommand() === 'standup') {
+        const channel = interaction.options.get('channel')!.value as string
+        const expression = interaction.options.get('hour')!.value as string
+        const message = interaction.options.get('message')!.value as string
+        const role = interaction.options.get('role')!.value as string
+
+        await standupPluginController(interaction, {
+          channelId: channel,
+          expression,
+          message,
+          role,
+        })
       }
     } catch (error) {
       logger('❌ Command: plugins: ', error)

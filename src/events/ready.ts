@@ -9,6 +9,7 @@ import { insertAllGuilds } from '../controllers/bot/guilds.controller'
 import { notifyPulse } from '../controllers/events/ready.controller'
 import { configsRealtime } from '../realtime/presence.realtime'
 import { reportErrorToMonitoring } from '../utils/monitoring'
+import { scheduleCronJobs } from '../controllers/tasks/cron-jobs'
 
 module.exports = {
   name: 'ready',
@@ -41,6 +42,9 @@ module.exports = {
 
       // INFO: Start the realtime presence, this will listen to the database changes and update the bot presence.
       configsRealtime()
+
+      // INFO: Schedule cron jobs.
+      await scheduleCronJobs()
     } catch (error) {
       console.log('❌ ERROR: ready(): ', error)
 

@@ -1,13 +1,25 @@
-import { Client } from 'discord.js'
+import { initStadupsSchedules } from '../plugins/standup.controller'
 
-export const CronJobsTasks = async (Hans: Client) => {
+// INFO: Stores the scheduled task so we can stop it later.
+export const scheduledTasks = {}
+
+/**  Schedule cron jobs. */
+export const scheduleCronJobs = async () => {
   try {
-    // await redditPluginInit(Hans)
-    // cron.schedule(
-    //   process.env.ISDEV === 'true' ? CRON_JOB_TIME_DEV : CRON_JOB_TIME,
-    //   async () => await redditPluginInit(Hans),
-    // )
+    // INFO: Standup Plugin
+    await initStadupsSchedules()
   } catch (error) {
-    console.error('❌ ERROR: CronJobsTasks(): ', error)
+    console.error('❌ ERROR: scheduleCronJobs(): ', error)
+  }
+}
+
+/**
+ * Stops a specific cron job.
+ * @param {string} id - The id of the cron job.
+ * */
+export const stopSpecificCronJob = (id: string) => {
+  if (scheduledTasks[id]) {
+    scheduledTasks[id].stop()
+    delete scheduledTasks[id]
   }
 }

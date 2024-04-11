@@ -8,6 +8,13 @@ export type PluginsThreadsMetadata = {
   enabled?: boolean
 }
 
+export type StandupScheduleMetadata = {
+  channelId: string
+  expression: string
+  role: string
+  message: string
+}
+
 export type PluginsThreadsSettings = {
   interaction: CommandInteraction
   metadata: PluginsThreadsMetadata
