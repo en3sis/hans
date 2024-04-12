@@ -111,7 +111,9 @@ export const resolveGuildPlugins = async (
         data: guildPlugin,
       }
 
-      setToCache(`guilds_plugins:${guild_id}:${pluginName}`, pluginData, 60 * 5)
+      if (pluginName !== 'chatGtp') {
+        setToCache(`guilds_plugins:${guild_id}:${pluginName}`, pluginData, 60 * 5)
+      }
 
       return pluginData
     } else {
