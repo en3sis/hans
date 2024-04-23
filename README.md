@@ -1,9 +1,10 @@
 <div align="center">
 	<br />
 	<p>
-		<a href="https://discord.com/invite/sMmbbSefwH"><img src="https://res.cloudinary.com/vac/image/upload/v1683578541/Hans/hans-banner-pattern.png" width="546" alt="discord.js" /></a>
+		<a href="https://hans.app">
+            <img src="https://github.com/en3sis/hans/blob/main/docs/imges/github.png?raw=true" width="546" alt="Hans, Discord Bot" />
+        </a>
 	</p>
-
 </div>
 
 ![Docker Pulls](https://img.shields.io/docker/pulls/en3sis/hans?style=for-the-badge)
