@@ -2,7 +2,7 @@
 	<br />
 	<p>
 		<a href="https://hans.app">
-            <img src="https://github.com/en3sis/hans/blob/main/docs/imges/github.png?raw=true" width="546" alt="Hans, Discord Bot" />
+            <img src="https://raw.githubusercontent.com/en3sis/hans/main/docs/images/github.png" width="546" alt="Hans, Discord Bot" />
         </a>
 	</p>
 </div>
