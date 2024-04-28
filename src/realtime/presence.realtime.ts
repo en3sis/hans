@@ -7,7 +7,7 @@ import supabase from '../libs/supabase'
 export const configsRealtime = () => {
   // Listen for changes in the configs table
   supabase
-    .channel('table-db-changes')
+    .channel('bot-configs-realtime')
     .on(
       'postgres_changes',
       {
@@ -16,6 +16,10 @@ export const configsRealtime = () => {
         table: 'configs',
       },
       async (payload) => {
+         if (!!process.env.ISDEV) {
+          console.log('Guild plugin updated:', payload.new)
+        }
+
         await setPresence(payload.new.activity_type, payload.new.activity_name)
       },
     )
@@ -23,7 +27,7 @@ export const configsRealtime = () => {
 
   // Listen for changes in the guilds plugins table and delete the cached data
   supabase
-    .channel('table-db-changes')
+    .channel('guilds-plugins-realtime')
     .on(
       'postgres_changes',
       {
@@ -32,7 +36,10 @@ export const configsRealtime = () => {
         table: 'guilds_plugins',
       },
       async (payload) => {
-        console.log('Guild plugin updated:', payload.new)
+        if (!!process.env.ISDEV) {
+          console.log('Guild plugin updated:', payload.new)
+        }
+
         // INFO: Refresh the cache for the guild plugins
         deleteFromCache(`guildPlugins:${payload.new.owner}:${payload.new.name}`)
 
