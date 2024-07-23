@@ -48,7 +48,7 @@ export const insertConfiguration = async () => {
 
 export const getBotConfiguration = async (): Promise<BotConfig> => {
   try {
-    if(getFromCache('botConfig')) return getFromCache('botConfig') as BotConfig
+    if (getFromCache('botConfig')) return getFromCache('botConfig') as BotConfig
 
     const { data } = await supabase.from('configs').select('*').single()
 
