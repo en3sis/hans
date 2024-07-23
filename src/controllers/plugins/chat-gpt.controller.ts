@@ -46,7 +46,7 @@ export const chatGTPController = async (prompt: string, apiKey: string, organiza
  */
 export const sendPrompt = async ({
   input,
-  model = 'gpt-3.5-turbo',
+  model = 'gpt-4o-mini',
   max_tokens = 300,
   temperature = 0.7,
   presence_penalty = 0.5,

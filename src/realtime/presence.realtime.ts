@@ -16,7 +16,7 @@ export const configsRealtime = () => {
         table: 'configs',
       },
       async (payload) => {
-         if (!!process.env.ISDEV) {
+        if (!!process.env.ISDEV) {
           console.log('Guild plugin updated:', payload.new)
         }
 
