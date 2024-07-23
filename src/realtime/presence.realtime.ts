@@ -16,8 +16,8 @@ export const configsRealtime = () => {
         table: 'configs',
       },
       async (payload) => {
-         if (!!process.env.ISDEV) {
-          console.log('Guild plugin updated:', payload.new)
+        if (!!process.env.ISDEV) {
+          console.info('Guild plugin updated:', payload.new)
         }
 
         await setPresence(payload.new.activity_type, payload.new.activity_name)

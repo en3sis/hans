@@ -3,6 +3,7 @@ import { Hans } from '../..'
 import supabase from '../../libs/supabase'
 import { pluginsList } from '../../models/plugins.model'
 import { Database } from '../../types/database.types'
+import { getFromCache, setToCache } from '../../libs/node-cache'
 
 export type BotConfig = Database['public']['Tables']['configs']['Row']
 
@@ -15,17 +16,20 @@ export const insertConfiguration = async () => {
       .from('configs')
       .upsert(
         {
+          id: 1,
+          name: 'Hans',
           bot_dev_folder: '/bots-playground',
           bot_guild_id: `${process.env.BOT_GUILD_ID}`,
           bot_id: `${process.env.DISCORD_CLIENT_ID}`,
           created_at: new Date().toISOString(),
           discord_client_id: `${process.env.DISCORD_CLIENT_ID}`,
-          id: 1,
           monitoring_channel_id: '1105791856207462438', // Sends errors to the monitoring channel, useful to debug in production
-          name: 'Hans',
           notify_channel_id: '905157473671975002', // Send notifications when the bot is online to this channel.
           perma_invite: 'https://discord.com/invite/sMmbbSefwH',
-          website: 'https://github.com/en3sis/hans',
+          metadata: {
+            open_ai_model: 'gpt-4o',
+          },
+          website: 'https://hans.app',
         },
         { onConflict: 'id' },
       )
@@ -44,9 +48,13 @@ export const insertConfiguration = async () => {
 
 export const getBotConfiguration = async (): Promise<BotConfig> => {
   try {
+    if(getFromCache('botConfig')) return getFromCache('botConfig') as BotConfig
+
     const { data } = await supabase.from('configs').select('*').single()
 
     if (data) {
+      setToCache('botConfig', data)
+
       return data
     } else {
       const config = await insertConfiguration()
