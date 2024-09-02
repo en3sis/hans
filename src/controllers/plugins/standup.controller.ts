@@ -8,7 +8,7 @@ import { Hans } from '../..'
 
 export const standupPluginController = async (
   interaction: CommandInteraction,
-  newSchedule: StandupScheduleMetadata
+  newSchedule: StandupScheduleMetadata,
 ) => {
   try {
     // Fetch current plugin data
@@ -18,7 +18,7 @@ export const standupPluginController = async (
 
     // Check if a schedule for this channel already exists
     const existingScheduleIndex = currentSchedules.findIndex(
-      schedule => schedule.channelId === newSchedule.channelId
+      (schedule) => schedule.channelId === newSchedule.channelId,
     )
 
     if (existingScheduleIndex !== -1) {
@@ -29,29 +29,30 @@ export const standupPluginController = async (
       currentSchedules.push(newSchedule)
     }
 
-    const updatedMetadata = currentSchedules.map(schedule => {
+    const updatedMetadata = currentSchedules.map((schedule) => {
       const { channelId, expression, role } = schedule
       const _expression = expression.startsWith('0 ') ? expression : `0 ${expression} * * 1-5`
       const isValidExpression = RegExp(/^0 [0-9,]+ \* \* 1-5$/).test(_expression)
 
       if (!isValidExpression) {
-        throw new Error(`Invalid cron expression: ${expression}, please provide a 24h format (eg: 9, 12, 15)`)
+        throw new Error(
+          `Invalid cron expression: ${expression}, please provide a 24h format (eg: 9, 12, 15)`,
+        )
       }
 
       return { ...schedule, expression: _expression }
     })
 
-    await updateMetadataGuildPlugin(
-      updatedMetadata,
-      'standup',
-      interaction.guildId,
-    )
+    await updateMetadataGuildPlugin(updatedMetadata, 'standup', interaction.guildId)
 
     await registerStandupSchedules(interaction.guildId, updatedMetadata)
 
-    const scheduleInfo = updatedMetadata.map(schedule =>
-      `<#${schedule.channelId}> at **${schedule.expression.split(' ')[1]}h** mentioning ${schedule.role || 'no role'}`
-    ).join('\n')
+    const scheduleInfo = updatedMetadata
+      .map(
+        (schedule) =>
+          `<#${schedule.channelId}> at **${schedule.expression.split(' ')[1]}h** mentioning ${schedule.role || 'no role'}`,
+      )
+      .join('\n')
 
     await interaction.editReply({
       content: `Updated Standup Notifications:\n${scheduleInfo}\n\nYou can disable it by running **/plugins toggle standup false**`,
@@ -64,10 +65,13 @@ export const standupPluginController = async (
   }
 }
 
-export const registerStandupSchedules = async (guildId: string, schedules: StandupScheduleMetadata[]) => {
+export const registerStandupSchedules = async (
+  guildId: string,
+  schedules: StandupScheduleMetadata[],
+) => {
   try {
     // Stop existing schedules for this guild
-    Object.keys(scheduledTasks).forEach(key => {
+    Object.keys(scheduledTasks).forEach((key) => {
       if (key.startsWith(`${guildId}#standup`)) {
         scheduledTasks[key].stop()
         delete scheduledTasks[key]

@@ -11,7 +11,7 @@ export const scheduleCronJobs = async () => {
 }
 
 export const stopSpecificCronJob = (id: string) => {
-  Object.keys(scheduledTasks).forEach(key => {
+  Object.keys(scheduledTasks).forEach((key) => {
     if (key.startsWith(id)) {
       scheduledTasks[key].stop()
       delete scheduledTasks[key]
