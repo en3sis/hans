@@ -5,21 +5,26 @@ import { updateMetadataGuildPlugin } from '../bot/plugins.controller'
 import supabase from '../../libs/supabase'
 import { scheduledTasks } from '../tasks/cron-jobs'
 import { Hans } from '../..'
-import { deleteFromCache } from '../../libs/node-cache'
 
 export const standupPluginController = async (
   interaction: CommandInteraction,
   newSchedule: StandupScheduleMetadata,
 ) => {
   try {
-    // Fetch current plugin data
+    const { data: guildPlugin } = await supabase
+      .from('guilds_plugins')
+      .select('metadata')
+      .eq('owner', interaction.guildId)
+      .eq('name', 'standup')
+      .single()
 
-    // Force to update the cache from the database
-    deleteFromCache(`guildPlugins:${interaction.guildId}:standup`)
-    const guildPlugin = await Hans.guildPluginSettings(interaction.guildId, 'standup')
-    const currentSchedules: StandupScheduleMetadata[] = guildPlugin?.metadata || []
+    let currentSchedules: StandupScheduleMetadata[] = []
 
-    // Check if a schedule for this channel already exists
+    if (guildPlugin?.metadata && Array.isArray(guildPlugin.metadata)) {
+      currentSchedules = guildPlugin.metadata as StandupScheduleMetadata[]
+    }
+
+    // Check if the schedule already exists
     const existingScheduleIndex = currentSchedules.findIndex(
       (schedule) => schedule.channelId === newSchedule.channelId,
     )
@@ -33,7 +38,7 @@ export const standupPluginController = async (
     }
 
     const updatedMetadata = currentSchedules.map((schedule) => {
-      const { channelId, expression, role } = schedule
+      const { expression } = schedule
       const _expression = expression.startsWith('0 ') ? expression : `0 ${expression} * * 1-5`
       const isValidExpression = RegExp(/^0 [0-9,]+ \* \* 1-5$/).test(_expression)
 
@@ -46,20 +51,27 @@ export const standupPluginController = async (
       return { ...schedule, expression: _expression }
     })
 
-    await updateMetadataGuildPlugin(updatedMetadata, 'standup', interaction.guildId)
+    console.log('Updated metadata before saving:', JSON.stringify(updatedMetadata, null, 2))
 
-    await registerStandupSchedules(interaction.guildId, updatedMetadata)
+    try {
+      await updateMetadataGuildPlugin(updatedMetadata, 'standup', interaction.guildId)
 
-    const scheduleInfo = updatedMetadata
-      .map(
-        (schedule) =>
-          `<#${schedule.channelId}> at **${schedule.expression.split(' ')[1]}h** mentioning ${schedule.role || 'no role'}`,
-      )
-      .join('\n')
+      await registerStandupSchedules(interaction.guildId, updatedMetadata)
 
-    await interaction.editReply({
-      content: `Updated Standup Notifications:\n${scheduleInfo}\n\nYou can disable it by running **/plugins toggle standup false**`,
-    })
+      const scheduleInfo = updatedMetadata
+        .map(
+          (schedule) =>
+            `<#${schedule.channelId}> at **${schedule.expression.split(' ')[1]}h** mentioning ${schedule.role || 'no role'}`,
+        )
+        .join('\n')
+
+      await interaction.editReply({
+        content: `Updated Standup Notifications:\n${scheduleInfo}\n\nYou can disable it by running /plugins toggle standup false`,
+      })
+    } catch (updateError) {
+      console.error('Error updating metadata:', updateError)
+      throw new Error('Failed to update standup schedules. Please try again.')
+    }
   } catch (error) {
     console.error('❌ ERROR: standupPluginController(): ', error)
     await interaction.editReply({

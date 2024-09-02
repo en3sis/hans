@@ -157,15 +157,27 @@ export const toggleGuildPlugin = async (
 
 export const updateMetadataGuildPlugin = async (metadata: any, name: string, guildId: string) => {
   try {
-    const { error } = await supabase
+    console.log('Updating metadata:', JSON.stringify(metadata, null, 2))
+
+    const { data, error } = await supabase
       .from('guilds_plugins')
       .update({ metadata })
       .eq('name', name)
       .eq('owner', guildId)
+      .select()
 
     if (error) throw error
+
+    if (!data || data.length === 0) {
+      throw new Error('No rows were updated')
+    }
+
+    console.log('Update successful. Updated data:', JSON.stringify(data, null, 2))
+
+    return data[0]
   } catch (error) {
-    console.log('❌ ERROR: updateMetadataGuildPlugin(): ', error)
+    console.error('❌ ERROR: updateMetadataGuildPlugin(): ', error)
+    throw error // Re-throw the error so the calling function knows the update failed
   }
 }
 
