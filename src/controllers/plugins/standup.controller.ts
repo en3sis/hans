@@ -5,6 +5,7 @@ import { updateMetadataGuildPlugin } from '../bot/plugins.controller'
 import supabase from '../../libs/supabase'
 import { scheduledTasks } from '../tasks/cron-jobs'
 import { Hans } from '../..'
+import { deleteFromCache } from '../../libs/node-cache'
 
 export const standupPluginController = async (
   interaction: CommandInteraction,
@@ -12,8 +13,10 @@ export const standupPluginController = async (
 ) => {
   try {
     // Fetch current plugin data
-    const guildPlugin = await Hans.guildPluginSettings(interaction.guildId, 'standup')
 
+    // Force to update the cache from the database
+    deleteFromCache(`guildPlugins:${interaction.guildId}:standup`)
+    const guildPlugin = await Hans.guildPluginSettings(interaction.guildId, 'standup')
     const currentSchedules: StandupScheduleMetadata[] = guildPlugin?.metadata || []
 
     // Check if a schedule for this channel already exists
