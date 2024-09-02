@@ -1,5 +1,5 @@
 import { setPresence } from '../controllers/bot/config.controller'
-import { registerStandupSchedule } from '../controllers/plugins/standup.controller'
+import { registerStandupSchedules } from '../controllers/plugins/standup.controller'
 import { stopSpecificCronJob } from '../controllers/tasks/cron-jobs'
 import { deleteFromCache } from '../libs/node-cache'
 import supabase from '../libs/supabase'
@@ -47,7 +47,7 @@ export const configsRealtime = () => {
           stopSpecificCronJob(`${payload.new.owner}#standup`)
 
           if (payload.new.enabled && payload.new.metadata) {
-            await registerStandupSchedule(payload.new.owner, payload.new.metadata)
+            await registerStandupSchedules(payload.new.owner, payload.new.metadata)
           }
         }
       },

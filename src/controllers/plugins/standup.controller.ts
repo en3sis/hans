@@ -6,34 +6,106 @@ import supabase from '../../libs/supabase'
 import { scheduledTasks } from '../tasks/cron-jobs'
 import { Hans } from '../..'
 
-// TODO: @en3sis: Allow multiples standup schedules
 export const standupPluginController = async (
   interaction: CommandInteraction,
-  metadata: StandupScheduleMetadata,
+  newSchedule: StandupScheduleMetadata
 ) => {
   try {
-    const { channelId, expression, role } = metadata
+    // Fetch current plugin data
+    const guildPlugin = await Hans.guildPluginSettings(interaction.guildId, 'standup')
 
-    const _expression = `0 ${expression} * * 1-5`
-    const isValidExpression = RegExp(/^[0-9,]+$/).test(expression)
+    const currentSchedules: StandupScheduleMetadata[] = guildPlugin?.metadata || []
 
-    if (isValidExpression) {
-      await updateMetadataGuildPlugin(
-        { ...metadata, expression: _expression },
-        'standup',
-        interaction.guildId,
-      )
+    // Check if a schedule for this channel already exists
+    const existingScheduleIndex = currentSchedules.findIndex(
+      schedule => schedule.channelId === newSchedule.channelId
+    )
 
-      await interaction.editReply({
-        content: `Enabled Standup Notifications in <#${channelId}> from **Monday to Friday** at **${expression}h** and mentioning the role ${role} \n\n You can disable it by running **/plugins toggle standup false**`,
-      })
+    if (existingScheduleIndex !== -1) {
+      // Update existing schedule
+      currentSchedules[existingScheduleIndex] = newSchedule
     } else {
-      await interaction.editReply({
-        content: `Invalid cron expression: ${expression}, please provide a 24h format (eg: 9, 12, 15)`,
-      })
+      // Add new schedule
+      currentSchedules.push(newSchedule)
     }
+
+    const updatedMetadata = currentSchedules.map(schedule => {
+      const { channelId, expression, role } = schedule
+      const _expression = expression.startsWith('0 ') ? expression : `0 ${expression} * * 1-5`
+      const isValidExpression = RegExp(/^0 [0-9,]+ \* \* 1-5$/).test(_expression)
+
+      if (!isValidExpression) {
+        throw new Error(`Invalid cron expression: ${expression}, please provide a 24h format (eg: 9, 12, 15)`)
+      }
+
+      return { ...schedule, expression: _expression }
+    })
+
+    await updateMetadataGuildPlugin(
+      updatedMetadata,
+      'standup',
+      interaction.guildId,
+    )
+
+    await registerStandupSchedules(interaction.guildId, updatedMetadata)
+
+    const scheduleInfo = updatedMetadata.map(schedule =>
+      `<#${schedule.channelId}> at **${schedule.expression.split(' ')[1]}h** mentioning ${schedule.role || 'no role'}`
+    ).join('\n')
+
+    await interaction.editReply({
+      content: `Updated Standup Notifications:\n${scheduleInfo}\n\nYou can disable it by running **/plugins toggle standup false**`,
+    })
   } catch (error) {
     console.error('❌ ERROR: standupPluginController(): ', error)
+    await interaction.editReply({
+      content: `An error occurred: ${error.message}`,
+    })
+  }
+}
+
+export const registerStandupSchedules = async (guildId: string, schedules: StandupScheduleMetadata[]) => {
+  try {
+    // Stop existing schedules for this guild
+    Object.keys(scheduledTasks).forEach(key => {
+      if (key.startsWith(`${guildId}#standup`)) {
+        scheduledTasks[key].stop()
+        delete scheduledTasks[key]
+      }
+    })
+
+    schedules.forEach((schedule, index) => {
+      const { channelId, expression, role, message } = schedule
+
+      const job = new cron.CronJob(expression, () => {
+        const channel = Hans.channels.cache.get(channelId) as TextChannel
+
+        if (channel) {
+          const currentDate = new Date().toLocaleDateString('en-GB', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+
+          channel.send(`📆 Standup: **${currentDate}** | ${role ?? ''}`).then((msg) => {
+            msg.startThread({
+              name: `${message.length ? message : '✍️  Please write down your standup'}`,
+              autoArchiveDuration: 1440,
+            })
+          })
+        }
+      })
+
+      job.start()
+      scheduledTasks[`${guildId}#standup#${index}`] = job
+    })
+
+    if (process.env.ISDEV) {
+      console.debug(`✅ Standup schedules registered for guild ${guildId}:`, schedules.length)
+    }
+  } catch (error) {
+    console.error(`❌ ERROR: registerStandupSchedules for guild ${guildId}:`, error)
   }
 }
 
@@ -49,50 +121,12 @@ export const initStadupsSchedules = async () => {
     data.forEach(async (standupGuildPlugin) => {
       if (!standupGuildPlugin.metadata || !standupGuildPlugin.enabled) return
 
-      await registerStandupSchedule(
+      await registerStandupSchedules(
         standupGuildPlugin.owner,
-        standupGuildPlugin.metadata as StandupScheduleMetadata,
+        standupGuildPlugin.metadata as StandupScheduleMetadata[],
       )
     })
   } catch (error) {
-    console.error('❌ ERROR: registerStandupSchedule(): ', error)
-  }
-}
-
-export const registerStandupSchedule = async (owner: string, metadata: StandupScheduleMetadata) => {
-  try {
-    const { channelId, expression, role, message } = metadata
-
-    const job = new cron.CronJob(expression, () => {
-      const channel = Hans.channels.cache.get(channelId) as TextChannel
-
-      if (channel) {
-        // INFO: Current date in format Tuesday, 1st of December 2020
-        const currentDate = new Date().toLocaleDateString('en-GB', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })
-
-        // INFO: Opens a tread on the messaged sent to the channel.
-        channel.send(`📆 Standup: **${currentDate}** | ${role ?? ''}`).then((msg) => {
-          msg.startThread({
-            name: `${message.length ? message : '✍️  Please write down your standup'}`,
-            autoArchiveDuration: 1440,
-          })
-        })
-      }
-    })
-
-    job.start()
-    // TODO: @en3sis: Expand to more than one job
-    scheduledTasks[`${owner}#standup`] = job
-
-    if (!!process.env.ISDEV) {
-      console.debug(`✅ Standup schedule registered count:`, Object.keys(scheduledTasks).length)
-    }
-  } catch (error) {
-    console.error('❌ ERROR: registerStandupSchedule(): ', error)
+    console.error('❌ ERROR: initStadupsSchedules(): ', error)
   }
 }
