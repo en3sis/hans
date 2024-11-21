@@ -79,12 +79,10 @@ export const verifyModal = async (interaction: Interaction) => {
     console.error(error)
     throw new Error('Failed to show the modal.')
   }
-
 }
 
 export const verifyModalSubmit = async (interaction: Interaction) => {
   try {
-
     if (interaction.type === InteractionType.ModalSubmit) {
       if (interaction.customId !== 'verify_modal') return
       const input = interaction.fields.getTextInputValue('input1').toLocaleLowerCase()
@@ -110,7 +108,9 @@ export const verifyModalSubmit = async (interaction: Interaction) => {
           if (guildRole) {
             await member.roles
               .add(guildRole)
-              .then(() => interaction.reply({ content: '✅ You are now verified.', ephemeral: true }))
+              .then(() =>
+                interaction.reply({ content: '✅ You are now verified.', ephemeral: true }),
+              )
               .catch((error) => {
                 // Handle errors, like missing permissions
                 console.error(error)
