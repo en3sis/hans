@@ -8,6 +8,10 @@ module.exports = {
   once: false,
   enabled: true,
   async execute(Hans: Client, interaction: Interaction) {
+    if (!interaction) {
+      throw new Error('Invalid interaction received')
+    }
+
     // Handle button interactions
     if (interaction.isButton()) {
       await verifyModal(interaction)
@@ -22,6 +26,8 @@ module.exports = {
 
     const command = Hans.commands.get(interaction.commandName)
 
+    if (!command) return
+
     await interaction.deferReply({
       ephemeral: command?.ephemeral ?? false,
     })
@@ -34,8 +40,6 @@ module.exports = {
         Hans.commands.map((ele) => ele.data.name).join(', '),
       )
     }
-
-    if (!command) return
 
     try {
       await command.execute(interaction)

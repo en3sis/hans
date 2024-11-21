@@ -42,80 +42,92 @@ Please click the button below to verify that you are human.
 }
 
 export const verifyModal = async (interaction: Interaction) => {
-  const emojiMap = [
-    { emoji: '😊', name: 'happy' },
-    { emoji: '😢', name: 'sad' },
-    { emoji: '😡', name: 'angry' },
-  ]
+  try {
+    const emojiMap = [
+      { emoji: '😊', name: 'happy' },
+      { emoji: '😢', name: 'sad' },
+      { emoji: '😡', name: 'angry' },
+    ]
 
-  if (interaction.isButton()) {
-    if (interaction.customId !== 'open_verify_modal') return
+    if (interaction.isButton()) {
+      if (interaction.customId !== 'open_verify_modal') return
 
-    const userCaptchaChallenge = emojiMap[Math.floor(Math.random() * emojiMap.length)]
-    deleteFromCache(`userCaptchaChallenge#${interaction.user.id}`)
-    setToCache(`userCaptchaChallenge#${interaction.user.id}`, userCaptchaChallenge, 1)
+      const userCaptchaChallenge = emojiMap[Math.floor(Math.random() * emojiMap.length)]
+      deleteFromCache(`userCaptchaChallenge#${interaction.user.id}`)
+      setToCache(`userCaptchaChallenge#${interaction.user.id}`, userCaptchaChallenge, 1)
 
-    // Define a modal
-    const modal = new ModalBuilder()
-      .setCustomId('verify_modal')
-      .setTitle('Captcha verification')
-      .addComponents(
-        new ActionRowBuilder<TextInputBuilder>().addComponents(
-          new TextInputBuilder()
-            .setCustomId('input1')
-            .setLabel(`Which emotion does this emoji ${userCaptchaChallenge.emoji} represent?`)
-            .setPlaceholder(
-              `Type the name of the emotion, ex: ${emojiMap.map((e) => e.name).join(', ')}`,
-            )
-            .setStyle(TextInputStyle.Short),
-        ),
-      )
+      // Define a modal
+      const modal = new ModalBuilder()
+        .setCustomId('verify_modal')
+        .setTitle('Captcha verification')
+        .addComponents(
+          new ActionRowBuilder<TextInputBuilder>().addComponents(
+            new TextInputBuilder()
+              .setCustomId('input1')
+              .setLabel(`Which emotion does this emoji ${userCaptchaChallenge.emoji} represent?`)
+              .setPlaceholder(
+                `Type the name of the emotion, ex: ${emojiMap.map((e) => e.name).join(', ')}`,
+              )
+              .setStyle(TextInputStyle.Short),
+          ),
+        )
 
-    // Show the modal to the user
-    await interaction.showModal(modal)
+      // Show the modal to the user
+      await interaction.showModal(modal)
+    }
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to show the modal.')
   }
+
 }
 
 export const verifyModalSubmit = async (interaction: Interaction) => {
-  if (interaction.type === InteractionType.ModalSubmit) {
-    if (interaction.customId !== 'verify_modal') return
-    const input = interaction.fields.getTextInputValue('input1').toLocaleLowerCase()
-    const userCaptchaChallenge = getFromCache(`userCaptchaChallenge#${interaction.user.id}`) as {
-      emoji: string
-      name: string
-    }
+  try {
 
-    if (input !== userCaptchaChallenge.name) {
-      await interaction.reply({
-        content: `❌ Failed to verify that you are human. Please try again.`,
-        ephemeral: true,
-      })
-    } else {
-      const member = interaction.member
+    if (interaction.type === InteractionType.ModalSubmit) {
+      if (interaction.customId !== 'verify_modal') return
+      const input = interaction.fields.getTextInputValue('input1').toLocaleLowerCase()
+      const userCaptchaChallenge = getFromCache(`userCaptchaChallenge#${interaction.user.id}`) as {
+        emoji: string
+        name: string
+      }
 
-      // Ensure the member is indeed a GuildMember object to access the GuildMemberRoleManager
-      if (member instanceof GuildMember) {
-        const guildPluginSettings = await Hans.guildPluginSettings(interaction.guildId, 'verify')
-
-        const guildRole = interaction.guild.roles.cache.get(guildPluginSettings.metadata.role)
-
-        if (guildRole) {
-          await member.roles
-            .add(guildRole)
-            .then(() => interaction.reply({ content: '✅ You are now verified.', ephemeral: true }))
-            .catch((error) => {
-              // Handle errors, like missing permissions
-              console.error(error)
-              interaction.reply({ content: 'Failed to add the role.', ephemeral: true })
-            })
-        } else {
-          // Role not found
-          interaction.reply({ content: 'Role not found.', ephemeral: true })
-        }
+      if (input !== userCaptchaChallenge.name) {
+        await interaction.reply({
+          content: `❌ Failed to verify that you are human. Please try again.`,
+          ephemeral: true,
+        })
       } else {
-        // Member is not a GuildMember object
-        interaction.reply({ content: 'Could not resolve member details.', ephemeral: true })
+        const member = interaction.member
+
+        // Ensure the member is indeed a GuildMember object to access the GuildMemberRoleManager
+        if (member instanceof GuildMember) {
+          const guildPluginSettings = await Hans.guildPluginSettings(interaction.guildId, 'verify')
+
+          const guildRole = interaction.guild.roles.cache.get(guildPluginSettings.metadata.role)
+
+          if (guildRole) {
+            await member.roles
+              .add(guildRole)
+              .then(() => interaction.reply({ content: '✅ You are now verified.', ephemeral: true }))
+              .catch((error) => {
+                // Handle errors, like missing permissions
+                console.error(error)
+                interaction.reply({ content: 'Failed to add the role.', ephemeral: true })
+              })
+          } else {
+            // Role not found
+            interaction.reply({ content: 'Role not found.', ephemeral: true })
+          }
+        } else {
+          // Member is not a GuildMember object
+          interaction.reply({ content: 'Could not resolve member details.', ephemeral: true })
+        }
       }
     }
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to verify the user.')
   }
 }
