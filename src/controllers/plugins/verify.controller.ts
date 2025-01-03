@@ -53,6 +53,14 @@ export const verifyModal = async (interaction: Interaction) => {
       if (interaction.customId !== 'open_verify_modal') return
 
       const userCaptchaChallenge = emojiMap[Math.floor(Math.random() * emojiMap.length)]
+      if (!userCaptchaChallenge) {
+        await interaction.reply({
+          content: 'An error occurred while generating the captcha. Please try again.',
+          ephemeral: true
+        });
+        return;
+      }
+
       deleteFromCache(`userCaptchaChallenge#${interaction.user.id}`)
       setToCache(`userCaptchaChallenge#${interaction.user.id}`, userCaptchaChallenge, 1)
 
@@ -91,7 +99,7 @@ export const verifyModalSubmit = async (interaction: Interaction) => {
         name: string
       }
 
-      if (input !== userCaptchaChallenge.name) {
+      if (input !== userCaptchaChallenge?.name) {
         await interaction.reply({
           content: `❌ Failed to verify that you are human. Please try again.`,
           ephemeral: true,
