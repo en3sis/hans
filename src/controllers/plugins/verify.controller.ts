@@ -7,6 +7,7 @@ import {
   Interaction,
   InteractionType,
   ModalBuilder,
+  ModalSubmitInteraction,
   TextChannel,
   TextInputBuilder,
   TextInputStyle,
@@ -56,9 +57,9 @@ export const verifyModal = async (interaction: Interaction) => {
       if (!userCaptchaChallenge) {
         await interaction.reply({
           content: 'An error occurred while generating the captcha. Please try again.',
-          ephemeral: true
-        });
-        return;
+          ephemeral: true,
+        })
+        return
       }
 
       deleteFromCache(`userCaptchaChallenge#${interaction.user.id}`)
@@ -89,10 +90,13 @@ export const verifyModal = async (interaction: Interaction) => {
   }
 }
 
-export const verifyModalSubmit = async (interaction: Interaction) => {
+export const verifyModalSubmit = async (interaction: ModalSubmitInteraction) => {
   try {
     if (interaction.type === InteractionType.ModalSubmit) {
       if (interaction.customId !== 'verify_modal') return
+
+      await interaction.deferReply({ ephemeral: true })
+
       const input = interaction.fields.getTextInputValue('input1').toLocaleLowerCase()
       const userCaptchaChallenge = getFromCache(`userCaptchaChallenge#${interaction.user.id}`) as {
         emoji: string
@@ -100,42 +104,36 @@ export const verifyModalSubmit = async (interaction: Interaction) => {
       }
 
       if (input !== userCaptchaChallenge?.name) {
-        await interaction.reply({
+        await interaction.followUp({
           content: `❌ Failed to verify that you are human. Please try again.`,
           ephemeral: true,
         })
       } else {
         const member = interaction.member
 
-        // Ensure the member is indeed a GuildMember object to access the GuildMemberRoleManager
         if (member instanceof GuildMember) {
           const guildPluginSettings = await Hans.guildPluginSettings(interaction.guildId, 'verify')
-
-          const guildRole = interaction.guild.roles.cache.get(guildPluginSettings.metadata.role)
+          const guildRole = interaction.guild?.roles.cache.get(guildPluginSettings.metadata.role)
 
           if (guildRole) {
             await member.roles
               .add(guildRole)
               .then(() =>
-                interaction.reply({ content: '✅ You are now verified.', ephemeral: true }),
+                interaction.followUp({ content: '✅ You are now verified.', ephemeral: true }),
               )
-              .catch((error) => {
-                // Handle errors, like missing permissions
-                console.error(error)
-                interaction.reply({ content: 'Failed to add the role.', ephemeral: true })
+              .catch(() => {
+                interaction.followUp({ content: 'Failed to add the role.', ephemeral: true })
               })
           } else {
-            // Role not found
-            interaction.reply({ content: 'Role not found.', ephemeral: true })
+            interaction.followUp({ content: 'Role not found.', ephemeral: true })
           }
         } else {
-          // Member is not a GuildMember object
-          interaction.reply({ content: 'Could not resolve member details.', ephemeral: true })
+          interaction.followUp({ content: 'Could not resolve member details.', ephemeral: true })
         }
       }
     }
   } catch (error) {
     console.error(error)
-    throw new Error('Failed to verify the user.')
+    await interaction.followUp({ content: 'Failed to verify the user.', ephemeral: true })
   }
 }
