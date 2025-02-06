@@ -1,6 +1,6 @@
 import { differenceInSeconds, endOfDay } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { formatDistanceToNow } from 'date-fns'
 
 /**
  * Returns a string representing the time difference between the given time and now.

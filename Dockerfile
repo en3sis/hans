@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:18-alpine AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
 
 ARG M1=false
@@ -7,13 +7,13 @@ ARG M1=false
 # Install python3, g++ and make for building native dependencies if you're running on MacOS with M1 chip, run the command as docker build --build-arg M1=true -t hans:test .
 RUN if [ "$M1" = "true" ] ; then \
   apk add --no-cache python3 g++ make \
-; fi
+  ; fi
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # Rebuild the source code only when needed
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -21,7 +21,7 @@ COPY . .
 RUN yarn build
 
 # Production image, copy all the files and run next
-FROM node:18-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production

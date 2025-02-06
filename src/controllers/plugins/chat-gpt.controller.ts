@@ -1,12 +1,11 @@
 import { CommandInteraction } from 'discord.js'
-import { Configuration, OpenAIApi } from 'openai'
 import supabase from '../../libs/supabase'
 import { GuildPluginChatGTPMetadata } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { CHATGPT_COMMANDS_USAGE_DAILY } from '../../utils/constants'
 import { decrypt } from '../../utils/crypto'
-import { ROLE_MENTION_REGEX } from '../../utils/regex'
 import { GuildPlugin } from '../bot/guilds.controller'
+import OpenAI from 'openai'
 
 interface IOpenAIRequestSettings {
   model?: string
@@ -23,7 +22,7 @@ type PluginMetadata = GuildPluginChatGTPMetadata['metadata']
 
 export const chatGTPController = async (prompt: string, apiKey: string, organization: string) => {
   try {
-    const { response, token } = await sendPrompt({
+    const { response, token, model } = await sendPrompt({
       input: prompt,
       apiKey,
       organization,
@@ -32,6 +31,7 @@ export const chatGTPController = async (prompt: string, apiKey: string, organiza
     return {
       response: response.replace('AI:', ''),
       token,
+      model,
     }
   } catch (error) {
     console.log('❌ chatGTPController(): ', error)
@@ -42,41 +42,27 @@ export const chatGTPController = async (prompt: string, apiKey: string, organiza
 /**
  * OpenAI API request
  * @param IOpenAIRequestSettings
- * @returns Promise<string>
+ * @returns Promise<{response, token, model}>
  */
 export const sendPrompt = async ({
   input,
   model = 'gpt-4o-mini',
-  max_tokens = 300,
-  temperature = 0.7,
-  presence_penalty = 0.5,
-  frequency_penalty = 0.5,
+  max_tokens = 3000,
   apiKey,
-  organization,
 }: IOpenAIRequestSettings) => {
   try {
-    const OPEN_AI_CLIENT = new OpenAIApi(
-      new Configuration({
-        apiKey: apiKey,
-        organization: organization,
-      }),
-    )
+    const OPEN_AI_CLIENT = new OpenAI({ apiKey: apiKey })
 
     // INFO: 10% chance of being sarcastic, spice things up a bit.
     const sarcasm = Math.random() < 0.1 ? 'My answer is extremely sarcastic and clever' : ''
 
-    const completion = await OPEN_AI_CLIENT.createChatCompletion({
+    const completion = await OPEN_AI_CLIENT.chat.completions.create({
       model,
-      n: 1,
-      temperature: temperature,
-      max_tokens: max_tokens,
-      top_p: 0.3,
-      presence_penalty,
-      frequency_penalty,
+      max_completion_tokens: max_tokens,
       messages: [
         {
           role: 'system',
-          content: `I'm Hans, your all-knowing assistant. ${sarcasm}.  Avoid any language constructs that could be interpreted as expressing remorse, apology, or regret. Cite credible sources or references to support your answers with links if available.Current date: ${new Date().toLocaleDateString()}`,
+          content: `You are Hans, your all-knowing assistant. ${sarcasm}.  Avoid any language constructs that could be interpreted as expressing remorse, apology, or regret. Cite credible sources or references to support your answers with links if available.Current date: ${new Date().toLocaleDateString()}. When providing code/comamnds, make sure you use markdown code block and provide the correct langauge sytnax.`,
         },
         {
           role: 'user',
@@ -86,8 +72,9 @@ export const sendPrompt = async ({
     })
 
     const response = {
-      response: completion.data.choices[0].message.content.replace(ROLE_MENTION_REGEX, '$1'),
-      token: completion.data.usage.total_tokens,
+      response: completion.choices[0].message.content,
+      token: completion.usage.total_tokens,
+      model: completion.model,
     }
 
     return response
@@ -132,9 +119,7 @@ export const chatGptCommandHandler = async (
           },
           description: `${answer?.response}`,
           footer: {
-            text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.002).toFixed(
-              6,
-            )} ${!guild.premium ? `| ${usage - 1} usages left for today` : ''}`,
+            text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.00015).toFixed(6)} ${!guild.premium ? `| ${usage - 1} usages left for today` : ''} | Model: ${answer.model}`,
           },
           color: DEFAULT_COLOR,
         },

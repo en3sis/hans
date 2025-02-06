@@ -1,4 +1,4 @@
-import formatDistance from 'date-fns/formatDistance'
+import { formatDistance } from 'date-fns'
 import { ChatInputCommandInteraction, Colors } from 'discord.js'
 import { TIMEZONES_LIST } from '../../data/timezones'
 import supabase from '../../libs/supabase'

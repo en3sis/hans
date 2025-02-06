@@ -64,7 +64,7 @@ const fetchCommands = async ({
         .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
       for (const file of commandsFiles) {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
         const command = require(`${(path.resolve(__dirname), `../commands${folderPath}/${file}`)}`)
         commands.push(command.data.toJSON())
       }

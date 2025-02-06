@@ -41,7 +41,7 @@ const setCommandsNames = () => {
         .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
       files.forEach((file) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
         const command = require(path.join(path.resolve(__dirname), `/commands${ele}/${file}`))
 
         if ('data' in command) {
@@ -68,7 +68,7 @@ const eventFiles = fs
   .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
 for (const file of eventFiles) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
   const event = require(`./events/${file}`)
 
   if (event.enabled) {
@@ -90,6 +90,7 @@ Hans.on('unhandledRejection', async (error) => {
     description: `${error.message}`,
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   !!process.env.ISDEV && (await reportErrorToMonitoring({ embeds: _embed }))
   console.error('Unhandled promise rejection:', error)
 })

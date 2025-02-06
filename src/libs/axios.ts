@@ -18,9 +18,9 @@ export const githubAPI = async (endpoint: string, auth = false) => {
   } catch (error) {
     console.log('❌ ERROR: githubAPI(): ', error)
     if (typeof error === 'string') {
-      error
+      return error
     } else if (error instanceof Error) {
-      error.message
+      return error.message
     }
   }
 }
