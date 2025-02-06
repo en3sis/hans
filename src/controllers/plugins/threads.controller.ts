@@ -73,7 +73,7 @@ export const disallowCommentsInPublicThreads = async (message: Message) => {
     if (isStaff(message) || threadChannel.ownerId === message.author.id) return
 
     await message.delete()
-    await message.channel
+    await threadChannel
       .send('🪬 Only Owner & Staff can comment in public threads in this channel.')
       .then((msg: Message) => setTimeout(() => msg.delete(), 5000))
   } catch (error) {

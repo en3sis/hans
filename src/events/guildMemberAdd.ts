@@ -1,4 +1,4 @@
-import formatDistance from 'date-fns/formatDistance'
+import { formatDistance } from 'date-fns'
 import { Client, GuildMember, TextChannel } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 
