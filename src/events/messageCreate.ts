@@ -1,5 +1,6 @@
 import { Client, Message } from 'discord.js'
 import { threadAutoCreate } from '../controllers/plugins/threads.controller'
+import { checkQuestAnswer } from '../controllers/plugins/quests.controller'
 
 module.exports = {
   name: 'messageCreate',
@@ -18,6 +19,9 @@ module.exports = {
       // Plugins
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       await threadAutoCreate(message, await Hans.guildPluginSettings(message.guildId, 'threads'))
+
+      // Check quest answers in quest threads
+      await checkQuestAnswer(message)
 
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       // ==-=-=-=-=-=-=-=-=             DEVELOPMENT                    =-=-=-=-=-=-=-= +
