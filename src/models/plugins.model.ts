@@ -76,6 +76,12 @@ export const pluginsList: Record<string, GenericPluginParts> = {
     description: 'Notifies the members to post their standup.',
     category: 'productivity',
   },
+  quests: {
+    ...genericStructure,
+    description:
+      'Allows admins to create quest events where users can win rewards by answering questions correctly.',
+    category: 'engagement',
+  },
   // messageReactionAdd: {
   //   ...genericStructure,
   //   description: 'Notifies when a reaction is added to a message.',
@@ -123,6 +129,9 @@ export const initialGuildPluginState = () => {
     },
     standup: {
       default_enabled: false,
+    },
+    quests: {
+      default_enabled: true,
     },
   }
 }
