@@ -158,7 +158,7 @@ export const checkQuestAnswer = async (message: Message) => {
     }
 
     // Check answer
-    if (message.content.toLowerCase().trim() === quest.answer.toLowerCase().trim()) {
+    if (message.content.toLowerCase().includes(quest.answer.toLowerCase().trim())) {
       // Check if user has DMs enabled
       let canReceiveDMs = true
       try {
