@@ -18,10 +18,10 @@ export const createQuest = async (
       .from('guilds')
       .select('id')
       .eq('guild_id', interaction.guildId)
-      .single();
+      .single()
 
     if (!guild) {
-      throw new Error('Guild not found');
+      throw new Error('Guild not found')
     }
 
     const newQuest = {
@@ -34,9 +34,7 @@ export const createQuest = async (
     }
 
     // Insert quest into guild_quests table
-    const { error } = await supabase
-      .from('guild_quests')
-      .insert(newQuest)
+    const { error } = await supabase.from('guild_quests').insert(newQuest)
 
     if (error) throw error
 
@@ -123,9 +121,9 @@ export const checkQuestAnswer = async (message: Message) => {
       .from('guilds')
       .select('id')
       .eq('guild_id', message.guildId)
-      .single();
+      .single()
 
-    if (!guild) return;
+    if (!guild) return
 
     // Get active quests for this guild
     const { data: quests } = await supabase
@@ -144,10 +142,7 @@ export const checkQuestAnswer = async (message: Message) => {
     if (!quest) return
 
     // Check if answer is correct
-    if (
-      quest.answer &&
-      message.content.toLowerCase().includes(quest.answer.toLowerCase())
-    ) {
+    if (quest.answer && message.content.toLowerCase().includes(quest.answer.toLowerCase())) {
       // Get quest index
       const { data: questData } = await supabase
         .from('guild_quests')
@@ -237,13 +232,13 @@ export const claimQuestReward = async (interaction: CommandInteraction) => {
       .from('guilds')
       .select('id')
       .eq('guild_id', interaction.guildId)
-      .single();
+      .single()
 
     if (!guild) {
       return {
         success: false,
         message: 'Guild not found.',
-      };
+      }
     }
 
     // Get quest data
@@ -280,13 +275,13 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
       .from('guilds')
       .select('id')
       .eq('guild_id', guildId)
-      .single();
+      .single()
 
     if (!guild) {
       return {
         success: false,
         message: 'Guild not found.',
-      };
+      }
     }
 
     // Get quest data
@@ -350,7 +345,7 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
       .from('guild_quests')
       .select('*')
       .eq('id', questId)
-      .single();
+      .single()
 
     if (questData) {
       const { error: updateError } = await supabase
@@ -361,9 +356,9 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
             dm_failed: true,
           },
         })
-        .eq('id', questId);
+        .eq('id', questId)
 
-      if (updateError) console.error('Failed to update quest:', updateError);
+      if (updateError) console.error('Failed to update quest:', updateError)
     }
 
     return {
@@ -380,9 +375,9 @@ export const getActiveQuests = async (guildId: string) => {
       .from('guilds')
       .select('id')
       .eq('guild_id', guildId)
-      .single();
+      .single()
 
-    if (!guild) return [];
+    if (!guild) return []
 
     const { data: quests } = await supabase
       .from('guild_quests')
@@ -405,9 +400,9 @@ export const getQuestById = async (guildId: string, questId: string) => {
       .from('guilds')
       .select('id')
       .eq('guild_id', guildId)
-      .single();
+      .single()
 
-    if (!guild) return null;
+    if (!guild) return null
 
     const { data: quest } = await supabase
       .from('guild_quests')
@@ -429,7 +424,7 @@ export const drawQuestWinners = async (
 ): Promise<{ success: boolean; message: string }> => {
   try {
     // Check if user has permission
-    const member = await interaction.guild.members.fetch(interaction.user.id);
+    const member = await interaction.guild.members.fetch(interaction.user.id)
     if (!member.permissions.has('Administrator')) {
       return {
         success: false,
@@ -442,13 +437,13 @@ export const drawQuestWinners = async (
       .from('guilds')
       .select('id')
       .eq('guild_id', interaction.guildId)
-      .single();
+      .single()
 
     if (!guild) {
       return {
         success: false,
         message: 'Guild not found.',
-      };
+      }
     }
 
     // Get quest data
