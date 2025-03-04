@@ -1,46 +1,42 @@
-import { CommandInteraction, Message, ThreadChannel, User } from 'discord.js'
+import { CommandInteraction, Message, ThreadChannel, User, TextChannel } from 'discord.js'
 import supabase from '../../libs/supabase'
-import { GuildPluginQuestsMetadata } from '../../types/plugins'
+import { GuildQuest } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { isStaff } from '../../utils/permissions'
 import { v4 as uuidv4 } from 'uuid'
 
-type QuestData = GuildPluginQuestsMetadata['metadata']['quests'][0]
-
 export const createQuest = async (
   interaction: CommandInteraction,
   questData: Omit<
-    QuestData,
-    'id' | 'created_at' | 'is_claimed' | 'is_pending_claim' | 'thread_id' | 'winner'
+    GuildQuest,
+    'id' | 'guild_id' | 'created_at' | 'is_claimed' | 'is_pending_claim' | 'thread_id' | 'winner'
   >,
 ) => {
   try {
-    // Get current plugin data
-    const { data: pluginData } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'quests')
-      .eq('owner', interaction.guildId)
-      .single()
+    // Create new quest
+    const { data: guild } = await supabase
+      .from('guilds')
+      .select('id')
+      .eq('guild_id', interaction.guildId)
+      .single();
 
-    const metadata = pluginData?.metadata || { quests: [], settings: {} }
-    const newQuest: QuestData = {
+    if (!guild) {
+      throw new Error('Guild not found');
+    }
+
+    const newQuest = {
       ...questData,
       id: uuidv4(),
+      guild_id: guild.id,
       created_at: new Date().toISOString(),
       is_claimed: false,
       is_pending_claim: false,
     }
 
-    // Add new quest to metadata
-    metadata.quests = [...(metadata.quests || []), newQuest]
-
-    // Update plugin metadata
+    // Insert quest into guild_quests table
     const { error } = await supabase
-      .from('guilds_plugins')
-      .update({ metadata })
-      .eq('name', 'quests')
-      .eq('owner', interaction.guildId)
+      .from('guild_quests')
+      .insert(newQuest)
 
     if (error) throw error
 
@@ -103,15 +99,13 @@ export const createQuest = async (
     }
 
     // Update quest with thread ID and message ID
-    metadata.quests = metadata.quests.map((q) =>
-      q.id === newQuest.id ? { ...q, thread_id: thread?.id, message_id: questMessage.id } : q,
-    )
-
     await supabase
-      .from('guilds_plugins')
-      .update({ metadata })
-      .eq('name', 'quests')
-      .eq('owner', interaction.guildId)
+      .from('guild_quests')
+      .update({
+        thread_id: thread?.id,
+        message_id: questMessage.id,
+      })
+      .eq('id', newQuest.id)
 
     return thread || questMessage
   } catch (error) {
@@ -122,43 +116,63 @@ export const createQuest = async (
 
 export const checkQuestAnswer = async (message: Message) => {
   try {
-    if (!message.channel.isThread()) return
-    const thread = message.channel as ThreadChannel
+    if (!message.guildId) return
 
-    // Get plugin data
-    const { data: pluginData } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'quests')
-      .eq('owner', message.guildId)
-      .single()
+    // Get guild ID from database
+    const { data: guild } = await supabase
+      .from('guilds')
+      .select('id')
+      .eq('guild_id', message.guildId)
+      .single();
 
-    if (!pluginData?.metadata?.quests) return
+    if (!guild) return;
 
-    // Find quest by thread ID
-    const quest = pluginData.metadata.quests.find(
-      (q) => q.thread_id === thread.id && !q.is_claimed && !q.is_pending_claim,
-    )
+    // Get active quests for this guild
+    const { data: quests } = await supabase
+      .from('guild_quests')
+      .select('*')
+      .eq('guild_id', guild.id)
+      .eq('mode', 'quiz')
+      .eq('is_claimed', false)
+      .eq('is_pending_claim', false)
+      .gt('expiration_date', new Date().toISOString())
 
+    if (!quests?.length) return
+
+    // Check if message is in a quest thread
+    const quest = quests.find((q) => q.thread_id === message.channelId)
     if (!quest) return
 
-    // Check if quest has expired
-    if (new Date(quest.expiration_date) < new Date()) {
-      await thread.setArchived(true)
-      await thread.send({
-        embeds: [
-          {
-            title: '⏰ Quest Expired',
-            description: 'This quest has expired and can no longer be completed.',
-            color: 0xff0000,
-          },
-        ],
-      })
-      return
-    }
+    // Check if answer is correct
+    if (
+      quest.answer &&
+      message.content.toLowerCase().includes(quest.answer.toLowerCase())
+    ) {
+      // Get quest index
+      const { data: questData } = await supabase
+        .from('guild_quests')
+        .select('*')
+        .eq('id', quest.id)
+        .single()
 
-    // Check answer
-    if (message.content.toLowerCase().includes(quest.answer.toLowerCase().trim())) {
+      if (!questData) return
+
+      // Update quest as pending claim
+      const { error } = await supabase
+        .from('guild_quests')
+        .update({
+          is_pending_claim: true,
+          winner: {
+            id: message.author.id,
+            username: message.author.username,
+            claimed_at: new Date().toISOString(),
+            dm_sent: false,
+          },
+        })
+        .eq('id', quest.id)
+
+      if (error) throw error
+
       // Check if user has DMs enabled
       let canReceiveDMs = true
       try {
@@ -177,49 +191,9 @@ export const checkQuestAnswer = async (message: Message) => {
         canReceiveDMs = false
       }
 
-      // Update quest as pending claim or claimed based on DM status
-      const metadata = pluginData.metadata
-      metadata.quests = metadata.quests.map((q) => {
-        if (q.id === quest.id) {
-          if (canReceiveDMs) {
-            // If DMs are open, mark as pending claim
-            return {
-              ...q,
-              is_pending_claim: true,
-              winner: {
-                id: message.author.id,
-                username: message.author.username,
-                claimed_at: new Date().toISOString(),
-                dm_sent: false,
-              },
-            }
-          } else {
-            // If DMs are closed, just mark as pending
-            return {
-              ...q,
-              is_pending_claim: true,
-              winner: {
-                id: message.author.id,
-                username: message.author.username,
-                claimed_at: new Date().toISOString(),
-                dm_sent: false,
-                dm_failed: true,
-              },
-            }
-          }
-        }
-        return q
-      })
-
-      await supabase
-        .from('guilds_plugins')
-        .update({ metadata })
-        .eq('name', 'quests')
-        .eq('owner', message.guildId)
-
       // Send congratulation message in thread
       if (canReceiveDMs) {
-        await thread.send({
+        await (message.channel as TextChannel).send({
           embeds: [
             {
               title: '🎉 Correct Answer!',
@@ -230,17 +204,10 @@ export const checkQuestAnswer = async (message: Message) => {
         })
 
         // Send reward via DM
-        try {
-          await sendQuestReward(message.guildId, quest.id, message.author)
-        } catch (error) {
-          console.error('Failed to send DM to winner:', error)
-          await thread.send({
-            content: `${message.author} I couldn't send you a DM. Please make sure you have DMs enabled for this server and use \`/quests claim\` to claim your reward.`,
-          })
-        }
+        await sendQuestReward(message.guildId, quest.id, message.author)
       } else {
         // Inform user they need to enable DMs
-        await thread.send({
+        await (message.channel as TextChannel).send({
           embeds: [
             {
               title: '🎉 Correct Answer!',
@@ -265,128 +232,103 @@ export const checkQuestAnswer = async (message: Message) => {
 
 export const claimQuestReward = async (interaction: CommandInteraction) => {
   try {
-    // Get plugin data
-    const { data: pluginData } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'quests')
-      .eq('owner', interaction.guildId)
+    // Get guild ID from database
+    const { data: guild } = await supabase
+      .from('guilds')
+      .select('id')
+      .eq('guild_id', interaction.guildId)
+      .single();
+
+    if (!guild) {
+      return {
+        success: false,
+        message: 'Guild not found.',
+      };
+    }
+
+    // Get quest data
+    const { data: quest } = await supabase
+      .from('guild_quests')
+      .select('*')
+      .eq('guild_id', guild.id)
+      .eq('is_pending_claim', true)
+      .eq('winner->id', interaction.user.id)
       .single()
 
-    if (!pluginData?.metadata?.quests) {
+    if (!quest) {
       return {
         success: false,
-        message: 'No quests found for this server.',
+        message: 'No pending quest rewards found for you.',
       }
     }
 
-    // Find pending quests for this user
-    const pendingQuests = pluginData.metadata.quests.filter(
-      (q) => q.is_pending_claim && q.winner?.id === interaction.user.id && !q.is_claimed,
-    )
-
-    if (pendingQuests.length === 0) {
-      return {
-        success: false,
-        message: 'You have no pending quest rewards to claim.',
-      }
-    }
-
-    // Try to send rewards for all pending quests
-    const results = await Promise.all(
-      pendingQuests.map((quest) =>
-        sendQuestReward(interaction.guildId, quest.id, interaction.user),
-      ),
-    )
-
-    // Count successes and failures
-    const successful = results.filter((r) => r.success).length
-    const failed = results.filter((r) => !r.success).length
-
-    if (successful > 0 && failed === 0) {
-      return {
-        success: true,
-        message: `Successfully sent ${successful} quest reward${successful !== 1 ? 's' : ''} to your DMs!`,
-      }
-    } else if (successful > 0 && failed > 0) {
-      return {
-        success: true,
-        message: `Sent ${successful} quest reward${successful !== 1 ? 's' : ''} to your DMs, but failed to send ${failed} reward${failed !== 1 ? 's' : ''}.`,
-      }
-    } else {
-      return {
-        success: false,
-        message:
-          'Failed to send quest rewards. Please make sure you have DMs enabled for this server.',
-      }
-    }
+    // Send reward to user
+    return await sendQuestReward(interaction.guildId, quest.id, interaction.user)
   } catch (error) {
-    console.error('❌ ERROR: claimQuestReward', error)
+    console.error('Error claiming quest reward:', error)
     return {
       success: false,
-      message: 'An error occurred while claiming your rewards.',
+      message: 'An error occurred while claiming your reward.',
     }
   }
 }
 
 export const sendQuestReward = async (guildId: string, questId: string, user: User) => {
   try {
-    // Get plugin data
-    const { data: pluginData } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'quests')
-      .eq('owner', guildId)
+    // Get guild ID from database
+    const { data: guild } = await supabase
+      .from('guilds')
+      .select('id')
+      .eq('guild_id', guildId)
+      .single();
+
+    if (!guild) {
+      return {
+        success: false,
+        message: 'Guild not found.',
+      };
+    }
+
+    // Get quest data
+    const { data: quest } = await supabase
+      .from('guild_quests')
+      .select('*')
+      .eq('guild_id', guild.id)
+      .eq('id', questId)
       .single()
 
-    if (!pluginData?.metadata?.quests) {
-      return { success: false, message: 'Quest not found' }
+    if (!quest) {
+      return {
+        success: false,
+        message: 'Quest not found.',
+      }
     }
 
-    // Find the quest
-    const questIndex = pluginData.metadata.quests.findIndex((q) => q.id === questId)
-    if (questIndex === -1) {
-      return { success: false, message: 'Quest not found' }
-    }
+    // Send DM to winner
+    await user.send({
+      embeds: [
+        {
+          title: `🎉 You've won a quest reward!`,
+          description: `Congratulations! You've won the "${quest.title}" quest in the server.`,
+          fields: [
+            {
+              name: 'Reward',
+              value: quest.reward,
+            },
+            {
+              name: 'Reward Code',
+              value: quest.reward_code || 'No code provided for this reward.',
+            },
+          ],
+          color: DEFAULT_COLOR,
+        },
+      ],
+    })
 
-    const quest = pluginData.metadata.quests[questIndex]
-
-    // Check if this is the winner
-    if (!quest.winner || quest.winner.id !== user.id) {
-      return { success: false, message: 'You are not the winner of this quest' }
-    }
-
-    // Check if already claimed
-    if (quest.is_claimed) {
-      return { success: false, message: 'Reward already claimed' }
-    }
-
-    // Send the reward via DM
-    try {
-      await user.send({
-        embeds: [
-          {
-            title: '🎁 Quest Reward',
-            description: `Congratulations on completing the quest "${quest.title}"!`,
-            fields: [
-              {
-                name: 'Reward Description',
-                value: quest.reward,
-              },
-              {
-                name: 'Reward Code',
-                value: quest.reward_code || 'No code provided for this reward.',
-              },
-            ],
-            color: DEFAULT_COLOR,
-          },
-        ],
-      })
-
-      // Update quest as claimed
-      const metadata = pluginData.metadata
-      metadata.quests[questIndex] = {
-        ...quest,
+    // Update quest as claimed
+    const { error } = await supabase
+      .from('guild_quests')
+      .update({
         is_claimed: true,
         is_pending_claim: false,
         winner: {
@@ -394,77 +336,89 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
           dm_sent: true,
           dm_failed: false,
         },
-      }
+      })
+      .eq('id', quest.id)
 
-      await supabase
-        .from('guilds_plugins')
-        .update({ metadata })
-        .eq('name', 'quests')
-        .eq('owner', guildId)
+    if (error) throw error
 
-      return { success: true, message: 'Reward sent successfully' }
-    } catch (error) {
-      console.error('Failed to send DM to winner:', error)
-
-      // Update quest to mark DM as failed
-      const metadata = pluginData.metadata
-      metadata.quests[questIndex] = {
-        ...quest,
-        winner: {
-          ...quest.winner,
-          dm_failed: true,
-        },
-      }
-
-      await supabase
-        .from('guilds_plugins')
-        .update({ metadata })
-        .eq('name', 'quests')
-        .eq('owner', guildId)
-
-      return { success: false, message: 'Failed to send DM' }
-    }
+    return { success: true, message: 'Reward sent successfully' }
   } catch (error) {
-    console.error('❌ ERROR: sendQuestReward', error)
-    return { success: false, message: 'An error occurred' }
+    console.error('Failed to send DM to winner:', error)
+
+    // Update quest to mark DM as failed
+    const { data: questData } = await supabase
+      .from('guild_quests')
+      .select('*')
+      .eq('id', questId)
+      .single();
+
+    if (questData) {
+      const { error: updateError } = await supabase
+        .from('guild_quests')
+        .update({
+          winner: {
+            ...questData.winner,
+            dm_failed: true,
+          },
+        })
+        .eq('id', questId);
+
+      if (updateError) console.error('Failed to update quest:', updateError);
+    }
+
+    return {
+      success: false,
+      message: 'Failed to send reward DM. Please contact an admin.',
+    }
   }
 }
 
 export const getActiveQuests = async (guildId: string) => {
   try {
-    const { data: pluginData, error } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'quests')
-      .eq('owner', guildId)
-      .single()
+    // Get guild ID from database
+    const { data: guild } = await supabase
+      .from('guilds')
+      .select('id')
+      .eq('guild_id', guildId)
+      .single();
 
-    if (error) throw error
+    if (!guild) return [];
 
-    const now = new Date().toISOString()
-    return (pluginData?.metadata?.quests || []).filter(
-      (quest) => !quest.is_claimed && quest.expiration_date > now,
-    )
+    const { data: quests } = await supabase
+      .from('guild_quests')
+      .select('*')
+      .eq('guild_id', guild.id)
+      .eq('is_claimed', false)
+      .order('created_at', { ascending: false })
+
+    return quests || []
   } catch (error) {
-    console.error('❌ ERROR: getActiveQuests', error)
+    console.error('Error getting active quests:', error)
     return []
   }
 }
 
 export const getQuestById = async (guildId: string, questId: string) => {
   try {
-    const { data: pluginData, error } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'quests')
-      .eq('owner', guildId)
+    // Get guild ID from database
+    const { data: guild } = await supabase
+      .from('guilds')
+      .select('id')
+      .eq('guild_id', guildId)
+      .single();
+
+    if (!guild) return null;
+
+    const { data: quest } = await supabase
+      .from('guild_quests')
+      .select('*')
+      .eq('guild_id', guild.id)
+      .eq('id', questId)
       .single()
 
-    if (error) throw error
-
-    return pluginData?.metadata?.quests?.find((q) => q.id === questId) || null
+    return quest
   } catch (error) {
-    console.error('❌ ERROR: getQuestById', error)
+    console.error('Error getting quest by ID:', error)
     return null
   }
 }
@@ -474,28 +428,57 @@ export const drawQuestWinners = async (
   questId: string,
 ): Promise<{ success: boolean; message: string }> => {
   try {
-    // Get plugin data
-    const { data: pluginData } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'quests')
-      .eq('owner', interaction.guildId)
-      .single()
-
-    if (!pluginData?.metadata?.quests) {
+    // Check if user has permission
+    const member = await interaction.guild.members.fetch(interaction.user.id);
+    if (!member.permissions.has('Administrator')) {
       return {
         success: false,
-        message: 'No quests found for this server.',
+        message: 'You do not have permission to draw winners.',
       }
     }
 
-    // Find the quest
-    const questIndex = pluginData.metadata.quests.findIndex((q) => q.id === questId)
-    if (questIndex === -1) {
-      return { success: false, message: 'Quest not found' }
+    // Get guild ID from database
+    const { data: guild } = await supabase
+      .from('guilds')
+      .select('id')
+      .eq('guild_id', interaction.guildId)
+      .single();
+
+    if (!guild) {
+      return {
+        success: false,
+        message: 'Guild not found.',
+      };
     }
 
-    const quest = pluginData.metadata.quests[questIndex]
+    // Get quest data
+    const { data: quest } = await supabase
+      .from('guild_quests')
+      .select('*')
+      .eq('guild_id', guild.id)
+      .eq('id', questId)
+      .single()
+
+    if (!quest) {
+      return {
+        success: false,
+        message: 'Quest not found.',
+      }
+    }
+
+    if (quest.mode !== 'raffle') {
+      return {
+        success: false,
+        message: 'This quest is not a raffle.',
+      }
+    }
+
+    if (quest.is_claimed || quest.is_pending_claim) {
+      return {
+        success: false,
+        message: 'This quest has already been claimed or is pending claim.',
+      }
+    }
 
     // Get the quest message
     const channel = await interaction.guild.channels.fetch(quest.channel_id)
@@ -544,17 +527,15 @@ export const drawQuestWinners = async (
     }
 
     // Update quest with winners
-    const metadata = pluginData.metadata
-    metadata.quests[questIndex] = {
-      ...quest,
-      winners,
-    }
+    const { error } = await supabase
+      .from('guild_quests')
+      .update({
+        is_pending_claim: true,
+        winners: winners,
+      })
+      .eq('id', quest.id)
 
-    await supabase
-      .from('guilds_plugins')
-      .update({ metadata })
-      .eq('name', 'quests')
-      .eq('owner', interaction.guildId)
+    if (error) throw error
 
     // Send winner announcement and DMs if reward codes exist
     const thread = quest.thread_id ? await interaction.guild.channels.fetch(quest.thread_id) : null
@@ -609,28 +590,14 @@ export const drawQuestWinners = async (
           winner.dm_failed = true
         }
       }
-
-      // Update quest with DM status
-      metadata.quests[questIndex] = {
-        ...quest,
-        winners,
-      }
-
-      await supabase
-        .from('guilds_plugins')
-        .update({ metadata })
-        .eq('name', 'quests')
-        .eq('owner', interaction.guildId)
     }
 
     return {
       success: true,
-      message: `Successfully selected ${winners.length} winner${
-        winners.length !== 1 ? 's' : ''
-      }! ${rewardCodes.length > 0 ? 'Reward codes have been sent via DM.' : ''} Check the quest thread for the announcement.`,
+      message: `Successfully drew ${winners.length} winner(s) for the quest.`,
     }
   } catch (error) {
-    console.error('❌ ERROR: drawQuestWinners', error)
+    console.error('Error drawing quest winners:', error)
     return {
       success: false,
       message: 'An error occurred while drawing winners.',

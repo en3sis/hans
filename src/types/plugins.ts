@@ -36,40 +36,42 @@ export interface GuildPluginChatGTPMetadata extends GuildPluginData {
 
 export interface GuildPluginQuestsMetadata extends GuildPluginData {
   metadata: {
-    quests: Array<{
-      id: string
-      title: string
-      description: string
-      question?: string
-      answer?: string
-      reward: string
-      reward_code?: string
-      channel_id: string
-      thread_id?: string
-      created_by: string
-      created_at: string
-      expiration_date: string
-      is_claimed: boolean
-      is_pending_claim: boolean
-      mode: 'quiz' | 'raffle'
-      winners_count?: number
-      winner?: {
-        id: string
-        username: string
-        claimed_at: string
-        dm_sent: boolean
-        dm_failed?: boolean
-      }
-      winners?: Array<{
-        id: string
-        username: string
-        selected_at: string
-        dm_sent: boolean
-        dm_failed?: boolean
-        reward_code?: string
-      }>
-      message_id?: string
-    }>
     settings: Record<string, unknown>
   }
+}
+
+export interface GuildQuest {
+  id: string // UUID string
+  guild_id: number // Integer ID from guilds table
+  title: string
+  description: string
+  question?: string
+  answer?: string
+  mode: 'quiz' | 'raffle'
+  winners_count?: number
+  reward: string
+  reward_code?: string
+  channel_id: string
+  thread_id?: string
+  message_id?: string
+  created_by: string
+  created_at: string
+  expiration_date: string
+  is_claimed: boolean
+  is_pending_claim: boolean
+  winner?: {
+    id: string
+    username: string
+    claimed_at: string
+    dm_sent: boolean
+    dm_failed?: boolean
+  }
+  winners?: Array<{
+    id: string
+    username: string
+    selected_at: string
+    dm_sent: boolean
+    dm_failed?: boolean
+    reward_code?: string
+  }>
 }
