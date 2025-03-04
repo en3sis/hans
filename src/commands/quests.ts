@@ -10,6 +10,7 @@ import {
   createQuest,
   getActiveQuests,
   getQuestById,
+  drawQuestWinners,
 } from '../controllers/plugins/quests.controller'
 import { logger } from '../utils/debugging'
 
@@ -34,12 +35,13 @@ module.exports = {
         )
         .addStringOption((option) =>
           option
-            .setName('question')
-            .setDescription('The question to be answered')
-            .setRequired(true),
-        )
-        .addStringOption((option) =>
-          option.setName('answer').setDescription('The correct answer').setRequired(true),
+            .setName('mode')
+            .setDescription('Quest mode: quiz (answer question) or raffle (react to participate)')
+            .setRequired(true)
+            .addChoices(
+              { name: 'Quiz - Answer question to win', value: 'quiz' },
+              { name: 'Raffle - React to participate', value: 'raffle' },
+            ),
         )
         .addStringOption((option) =>
           option
@@ -56,6 +58,26 @@ module.exports = {
         )
         .addStringOption((option) =>
           option
+            .setName('question')
+            .setDescription('The question to be answered (quiz mode only)')
+            .setRequired(false),
+        )
+        .addStringOption((option) =>
+          option
+            .setName('answer')
+            .setDescription('The correct answer (quiz mode only)')
+            .setRequired(false),
+        )
+        .addIntegerOption((option) =>
+          option
+            .setName('winners_count')
+            .setDescription('Number of winners to select (raffle mode only)')
+            .setMinValue(1)
+            .setMaxValue(10)
+            .setRequired(false),
+        )
+        .addStringOption((option) =>
+          option
             .setName('reward_code')
             .setDescription('The actual reward code (sent privately via DM)')
             .setRequired(false),
@@ -65,7 +87,8 @@ module.exports = {
             .setName('expiration_days')
             .setDescription('Number of days until the quest expires')
             .setMinValue(1)
-            .setMaxValue(30),
+            .setMaxValue(30)
+            .setRequired(false),
         ),
     )
     .addSubcommand((subcommand) =>
@@ -81,6 +104,14 @@ module.exports = {
     )
     .addSubcommand((subcommand) =>
       subcommand.setName('claim').setDescription('Claim rewards for quests you have completed'),
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('draw_winners')
+        .setDescription('Draw winners for a raffle quest')
+        .addStringOption((option) =>
+          option.setName('quest_id').setDescription('ID of the quest').setRequired(true),
+        ),
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
@@ -119,23 +150,46 @@ module.exports = {
     try {
       switch (subcommand) {
         case 'create': {
+          const mode = interaction.options.getString('mode', true) as 'quiz' | 'raffle'
           const title = interaction.options.getString('title', true)
           const description = interaction.options.getString('description', true)
-          const question = interaction.options.getString('question', true)
-          const answer = interaction.options.getString('answer', true)
+          const question = interaction.options.getString('question')
+          const answer = interaction.options.getString('answer')
+          const winnersCount = interaction.options.getInteger('winners_count') || 1
           const rewardDescription = interaction.options.getString('reward_description', true)
           const rewardCode = interaction.options.getString('reward_code')
           const channel = interaction.options.getChannel('channel', true)
           const expirationDays = interaction.options.getInteger('expiration_days') || 7
 
+          // Validate mode-specific requirements
+          if (mode === 'quiz' && (!question || !answer)) {
+            await interaction.editReply({
+              content: 'Question and answer are required for quiz mode.',
+            })
+            break
+          }
+
+          // Validate reward codes for raffle mode
+          if (mode === 'raffle' && rewardCode) {
+            const codes = rewardCode.split(',').map((code) => code.trim())
+            if (codes.length !== winnersCount) {
+              await interaction.editReply({
+                content: `Please provide exactly ${winnersCount} reward codes (comma-separated) for ${winnersCount} winners, or leave empty for no DM rewards.`,
+              })
+              break
+            }
+          }
+
           const expirationDate = new Date()
           expirationDate.setDate(expirationDate.getDate() + expirationDays)
 
-          const thread = await createQuest(interaction, {
+          const result = await createQuest(interaction, {
             title,
             description,
             question,
             answer,
+            mode,
+            winners_count: mode === 'raffle' ? winnersCount : undefined,
             reward: rewardDescription,
             reward_code: rewardCode || rewardDescription,
             channel_id: channel.id,
@@ -144,7 +198,7 @@ module.exports = {
           })
 
           await interaction.editReply({
-            content: `Quest created successfully! Thread: ${thread.url}`,
+            content: `Quest created successfully! ${mode === 'quiz' ? `Thread: ${result.url}` : `Message: ${result.url}`}`,
           })
           break
         }
@@ -266,6 +320,46 @@ module.exports = {
                     ],
               },
             ],
+          })
+          break
+        }
+
+        case 'draw_winners': {
+          const questId = interaction.options.getString('quest_id', true)
+          const quest = await getQuestById(interaction.guildId, questId)
+
+          if (!quest) {
+            await interaction.editReply({
+              content: 'Quest not found.',
+            })
+            break
+          }
+
+          if (quest.mode !== 'raffle') {
+            await interaction.editReply({
+              content: 'This command can only be used with raffle quests.',
+            })
+            break
+          }
+
+          if (new Date(quest.expiration_date) > new Date()) {
+            await interaction.editReply({
+              content: 'This quest has not expired yet.',
+            })
+            break
+          }
+
+          if (quest.winners?.length) {
+            await interaction.editReply({
+              content: 'Winners have already been drawn for this quest.',
+            })
+            break
+          }
+
+          const result = await drawQuestWinners(interaction, questId)
+
+          await interaction.editReply({
+            content: result.message,
           })
           break
         }

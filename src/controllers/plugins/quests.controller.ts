@@ -49,13 +49,28 @@ export const createQuest = async (
     if (!channel?.isTextBased()) throw new Error('Invalid channel')
 
     const questEmbed = {
-      title: `🎯 ${newQuest.title}`,
+      title: `${questData.mode === 'quiz' ? '🎯' : '🎉'} ${newQuest.title}`,
       description: newQuest.description,
       fields: [
-        {
-          name: '❓ Question',
-          value: newQuest.question,
-        },
+        ...(questData.mode === 'quiz'
+          ? [
+              {
+                name: '❓ Question',
+                value: newQuest.question,
+              },
+            ]
+          : [
+              {
+                name: '🎲 How to Participate',
+                value: 'React with 🎉 to enter the raffle!',
+              },
+              {
+                name: '👥 Winners',
+                value: `${newQuest.winners_count || 1} lucky winner${
+                  newQuest.winners_count !== 1 ? 's' : ''
+                } will be selected`,
+              },
+            ]),
         {
           name: '🎁 Reward',
           value: newQuest.reward,
@@ -72,14 +87,24 @@ export const createQuest = async (
     }
 
     const questMessage = await channel.send({ embeds: [questEmbed] })
-    const thread = await questMessage.startThread({
-      name: `🎯 Quest: ${newQuest.title}`,
-      autoArchiveDuration: 1440,
-    })
 
-    // Update quest with thread ID
+    // For raffle mode, add the reaction
+    if (questData.mode === 'raffle') {
+      await questMessage.react('🎉')
+    }
+
+    let thread: ThreadChannel | null = null
+    // Only create thread for quiz mode
+    if (questData.mode === 'quiz') {
+      thread = await questMessage.startThread({
+        name: '🎯 Quest: ' + newQuest.title,
+        autoArchiveDuration: 1440,
+      })
+    }
+
+    // Update quest with thread ID and message ID
     metadata.quests = metadata.quests.map((q) =>
-      q.id === newQuest.id ? { ...q, thread_id: thread.id } : q,
+      q.id === newQuest.id ? { ...q, thread_id: thread?.id, message_id: questMessage.id } : q,
     )
 
     await supabase
@@ -88,7 +113,7 @@ export const createQuest = async (
       .eq('name', 'quests')
       .eq('owner', interaction.guildId)
 
-    return thread
+    return thread || questMessage
   } catch (error) {
     console.error('❌ ERROR: createQuest', error)
     throw error
@@ -441,5 +466,174 @@ export const getQuestById = async (guildId: string, questId: string) => {
   } catch (error) {
     console.error('❌ ERROR: getQuestById', error)
     return null
+  }
+}
+
+export const drawQuestWinners = async (
+  interaction: CommandInteraction,
+  questId: string,
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    // Get plugin data
+    const { data: pluginData } = await supabase
+      .from('guilds_plugins')
+      .select('metadata')
+      .eq('name', 'quests')
+      .eq('owner', interaction.guildId)
+      .single()
+
+    if (!pluginData?.metadata?.quests) {
+      return {
+        success: false,
+        message: 'No quests found for this server.',
+      }
+    }
+
+    // Find the quest
+    const questIndex = pluginData.metadata.quests.findIndex((q) => q.id === questId)
+    if (questIndex === -1) {
+      return { success: false, message: 'Quest not found' }
+    }
+
+    const quest = pluginData.metadata.quests[questIndex]
+
+    // Get the quest message
+    const channel = await interaction.guild.channels.fetch(quest.channel_id)
+    if (!channel?.isTextBased()) {
+      return { success: false, message: 'Invalid channel' }
+    }
+
+    const message = await channel.messages.fetch(quest.message_id)
+    if (!message) {
+      return { success: false, message: 'Quest message not found' }
+    }
+
+    // Get reaction users
+    const reaction = message.reactions.cache.get('🎉')
+    if (!reaction) {
+      return { success: false, message: 'No participants found' }
+    }
+
+    // Fetch all users who reacted
+    await reaction.users.fetch()
+    const participants = Array.from(reaction.users.cache.values()).filter((user) => !user.bot)
+
+    if (participants.length === 0) {
+      return { success: false, message: 'No participants found' }
+    }
+
+    // Randomly select winners
+    const winnersCount = Math.min(quest.winners_count || 1, participants.length)
+    const winners: typeof quest.winners = []
+
+    // Split reward codes if they exist
+    const rewardCodes = quest.reward_code
+      ? quest.reward_code.split(',').map((code) => code.trim())
+      : []
+
+    for (let i = 0; i < winnersCount; i++) {
+      const winnerIndex = Math.floor(Math.random() * participants.length)
+      const winner = participants.splice(winnerIndex, 1)[0]
+      winners.push({
+        id: winner.id,
+        username: winner.username,
+        selected_at: new Date().toISOString(),
+        dm_sent: false,
+        reward_code: rewardCodes[i] || undefined,
+      })
+    }
+
+    // Update quest with winners
+    const metadata = pluginData.metadata
+    metadata.quests[questIndex] = {
+      ...quest,
+      winners,
+    }
+
+    await supabase
+      .from('guilds_plugins')
+      .update({ metadata })
+      .eq('name', 'quests')
+      .eq('owner', interaction.guildId)
+
+    // Send winner announcement and DMs if reward codes exist
+    const thread = quest.thread_id ? await interaction.guild.channels.fetch(quest.thread_id) : null
+
+    const winnerMentions = winners.map((w) => `<@${w.id}>`).join(', ')
+    const announcementEmbed = {
+      title: '🎉 Winners Drawn!',
+      description: `Congratulations to our lucky winner${
+        winners.length !== 1 ? 's' : ''
+      }:\n${winnerMentions}\n\n${
+        rewardCodes.length > 0
+          ? 'Check your DMs for your reward code!'
+          : 'A staff member will contact you shortly with your reward!'
+      }`,
+      color: DEFAULT_COLOR,
+    }
+
+    await message.reply({ embeds: [announcementEmbed] })
+    if (thread?.isThread()) {
+      await thread.send({ embeds: [announcementEmbed] })
+    }
+
+    // Send DMs to winners if reward codes exist
+    if (rewardCodes.length > 0) {
+      for (const winner of winners) {
+        try {
+          const user = await interaction.guild.members.fetch(winner.id)
+          await user.send({
+            embeds: [
+              {
+                title: '🎁 Quest Reward',
+                description: `Congratulations on winning the quest "${quest.title}"!`,
+                fields: [
+                  {
+                    name: 'Reward Description',
+                    value: quest.reward,
+                  },
+                  {
+                    name: 'Your Reward Code',
+                    value: winner.reward_code || 'No code provided for this reward.',
+                  },
+                ],
+                color: DEFAULT_COLOR,
+              },
+            ],
+          })
+
+          // Update winner's DM status
+          winner.dm_sent = true
+        } catch (error) {
+          console.error(`Failed to send DM to winner ${winner.username}:`, error)
+          winner.dm_failed = true
+        }
+      }
+
+      // Update quest with DM status
+      metadata.quests[questIndex] = {
+        ...quest,
+        winners,
+      }
+
+      await supabase
+        .from('guilds_plugins')
+        .update({ metadata })
+        .eq('name', 'quests')
+        .eq('owner', interaction.guildId)
+    }
+
+    return {
+      success: true,
+      message: `Successfully selected ${winners.length} winner${
+        winners.length !== 1 ? 's' : ''
+      }! ${rewardCodes.length > 0 ? 'Reward codes have been sent via DM.' : ''} Check the quest thread for the announcement.`,
+    }
+  } catch (error) {
+    console.error('❌ ERROR: drawQuestWinners', error)
+    return {
+      success: false,
+      message: 'An error occurred while drawing winners.',
+    }
   }
 }

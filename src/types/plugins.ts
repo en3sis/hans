@@ -40,17 +40,19 @@ export interface GuildPluginQuestsMetadata extends GuildPluginData {
       id: string
       title: string
       description: string
-      question: string
-      answer: string
+      question?: string
+      answer?: string
       reward: string
       reward_code?: string
+      channel_id: string
+      thread_id?: string
+      created_by: string
+      created_at: string
       expiration_date: string
       is_claimed: boolean
       is_pending_claim: boolean
-      created_at: string
-      created_by: string
-      channel_id: string
-      thread_id?: string
+      mode: 'quiz' | 'raffle'
+      winners_count?: number
       winner?: {
         id: string
         username: string
@@ -58,11 +60,16 @@ export interface GuildPluginQuestsMetadata extends GuildPluginData {
         dm_sent: boolean
         dm_failed?: boolean
       }
+      winners?: Array<{
+        id: string
+        username: string
+        selected_at: string
+        dm_sent: boolean
+        dm_failed?: boolean
+        reward_code?: string
+      }>
+      message_id?: string
     }>
-    settings: {
-      moderator_roles: string[]
-      allowed_channels: string[]
-      default_expiration_days: number
-    }
+    settings: Record<string, unknown>
   }
 }
