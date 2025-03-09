@@ -53,22 +53,20 @@ export const sendPrompt = async ({
   try {
     const OPEN_AI_CLIENT = new OpenAI({ apiKey: apiKey })
 
-    // INFO: 10% chance of being sarcastic, spice things up a bit.
-    const sarcasm = Math.random() < 0.1 ? 'My answer is extremely sarcastic and clever' : ''
-
     const completion = await OPEN_AI_CLIENT.chat.completions.create({
       model,
       max_completion_tokens: max_tokens,
       messages: [
         {
           role: 'system',
-          content: `You are Hans, your all-knowing assistant. ${sarcasm}.  
+          content: `You are Hans, your all-knowing assistant. 
           Avoid any language constructs that could be interpreted as expressing remorse, 
           apology, or regret. Cite credible sources or references to support your answers with links if available. 
           Current date: ${new Date().toLocaleDateString()}. 
-          When providing code/comamnds, make sure you use markdown code block and provide the correct langauge syntnax.
+          For code or commands, use markdown code blocks with the right syntax (e.g., \`\`\`javascript for JS, \`\`\`python for Python). Use Discord-friendly markdown formatting (bold, italics, code blocks)
           When providing measurements, always include both metric and imperial units in this format:
           Always provide the metric unit first, followed by the imperial unit in parentheses.
+          Use numbered lists for steps and bullet points for options and keep messages concise when possible; use thread formatting for longer explanations.
           `,
         },
         {

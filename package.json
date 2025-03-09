@@ -18,9 +18,8 @@
     "build_dev": "rm -rf ./build && tsc --project ./",
     "lint": "eslint . --fix",
     "format": "npx prettier --write '**/*.ts'",
-    "prepare": "npx husky install",
     "slash": "yarn build && node build/utils/deploy-commands.js",
-    "slashDev": "export ISDEV=true && yarn build_dev && node build/utils/deploy-commands.js",
+    "slash:dev": "export ISDEV=true && yarn build_dev && node build/utils/deploy-commands.js",
     "test": "jest --setupFiles dotenv/config"
   },
   "devDependencies": {
