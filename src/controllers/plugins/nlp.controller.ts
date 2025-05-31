@@ -67,6 +67,9 @@ Examples:
 - "what's the weather in Tokyo" → {"command": "weather", "parameters": {"city": "Tokyo"}, "confidence": 0.95}
 - "temperature in London" → {"command": "weather", "parameters": {"city": "London"}, "confidence": 0.90}
 - "delete 5 messages" → {"command": "moderation", "parameters": {"n": "5"}, "confidence": 0.90}
+- "remove last 10 messages" → {"command": "moderation", "parameters": {"n": "10"}, "confidence": 0.90}
+- "purge 3 messages" → {"command": "moderation", "parameters": {"n": "3"}, "confidence": 0.90}
+- "clear the last 7 messages" → {"command": "moderation", "parameters": {"n": "7"}, "confidence": 0.85}
 - "show ninja twitch" → {"command": "twitch", "parameters": {"username": "ninja"}, "confidence": 0.85}
 - "twitch profile summit1g" → {"command": "twitch", "parameters": {"username": "summit1g"}, "confidence": 0.85}
 - "what is JavaScript" → {"command": "ask", "parameters": {"prompt": "what is JavaScript"}, "confidence": 0.80}
@@ -81,8 +84,9 @@ Twitch command triggers:
 - Patterns like "show [username] twitch", "twitch profile [username]", "twitch user [username]"
 
 Moderation command triggers:
-- Any mention of "delete", "remove", "purge" with a number and "messages"
-- Patterns like "delete [n] messages", "remove last [n] messages", "purge [n] messages"
+- Any mention of "delete", "remove", "purge", "clear", "clean" with a number and "messages"
+- Patterns like "delete [n] messages", "remove last [n] messages", "purge [n] messages", "clear the last [n] messages"
+- Numbers can be written as digits (5, 10) or words (five, ten) - convert to digits
 
 Rules:
 - confidence: 0.0-1.0 (use "ask" if < 0.7 or unclear)
@@ -328,8 +332,6 @@ export const handleMentionNLP = async (message: Message) => {
       data: guildData,
     } = (await resolveGuildPlugins(message.guildId!, 'chatGtp')) as GuildPluginChatGTPMetadata
 
-    console.log('🔍 Guild plugin data:', JSON.stringify(guildData, null, 2))
-
     if (!enabled) {
       return await message.reply('This plugin requires ChatGPT to be enabled for this server.')
     }
@@ -364,7 +366,7 @@ export const handleMentionNLP = async (message: Message) => {
     }
 
     // Send thinking message that will be edited by the command
-    const thinkingMessage = await message.reply('🤔 Let me understand what you want...')
+    const thinkingMessage = await message.reply('💭 Let me understand what you want...')
 
     const commandMapping = await parseNaturalLanguageCommand(userInput, API_KEY, ORGANIZATION)
 
@@ -372,6 +374,10 @@ export const handleMentionNLP = async (message: Message) => {
       console.log(
         '⚠️ Low confidence, falling back to ask command. Confidence:',
         commandMapping.confidence,
+      )
+
+      await thinkingMessage.edit(
+        `💭 I couldn't understand what you want me to do. Please try again.`,
       )
     }
 
