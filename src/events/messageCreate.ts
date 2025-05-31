@@ -1,6 +1,7 @@
 import { Client, Message } from 'discord.js'
 import { threadAutoCreate } from '../controllers/plugins/threads.controller'
 import { checkQuestAnswer } from '../controllers/plugins/quests.controller'
+import { handleMentionNLP } from '../controllers/plugins/nlp.controller'
 
 module.exports = {
   name: 'messageCreate',
@@ -15,6 +16,13 @@ module.exports = {
 
       // Not logged in
       if (message.client.user === null) return
+
+      // Check if the bot is mentioned and handle NLP
+      if (message.mentions.has(Hans.user!.id)) {
+        await handleMentionNLP(message)
+
+        return
+      }
 
       // Plugins
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
