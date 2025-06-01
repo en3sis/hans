@@ -13,7 +13,8 @@
   "scripts": {
     "start": "node build/utils/deploy-commands.js && node build/index.js",
     "dev": "docker-compose -f docker-compose.dev.yaml up -d && ISDEV=true nodemon hans",
-    "build": "tsc --project ./",
+    "build": "tsc --project ./ && yarn generate-nlp-model",
+    "generate-nlp-model": "node scripts/generate-nlp-model.js",
     "types:local": "supabase gen types typescript --local --schema public > src/types/database.types.ts",
     "build_dev": "rm -rf ./build && tsc --project ./",
     "lint": "eslint . --fix",

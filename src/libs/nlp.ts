@@ -256,7 +256,15 @@ export class HansNLP {
         return true
       }
 
-      // Train new model if none exists
+      // In production, if no model exists, throw an error instead of training
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error(
+          'No pre-trained NLP model found in production environment. ' +
+            'Please ensure the model is generated during build time.',
+        )
+      }
+
+      // Train new model if none exists (only in development)
       if (!!process.env.ISDEV) {
         console.log('🤖 [NLP TRAINING] No existing model found. Training new model...')
       }

@@ -30,6 +30,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 NON_ROOT
 
 COPY --from=builder --chown=NON_ROOT:nodejs /app/build ./build
+COPY --from=builder --chown=NON_ROOT:nodejs /app/src/models ./src/models
 COPY --from=builder --chown=NON_ROOT:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=NON_ROOT:nodejs /app/package.json ./package.json
 COPY --from=deps /app/yarn.lock ./
