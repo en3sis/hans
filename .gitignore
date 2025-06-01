@@ -19,3 +19,4 @@ package-lock.json
 
 # NLP Models
 /_old
+/model.nlp

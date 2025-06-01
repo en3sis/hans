@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { purgeMessages } from '../controllers/plugins/moderation.controller'
+import { purgeMessages, purgeUserMessages } from '../controllers/plugins/moderation.controller'
 import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
@@ -21,6 +21,20 @@ module.exports = {
             .addNumberOption((option) =>
               option.setRequired(true).setName('n').setDescription('Amount of messages, max 100'),
             ),
+        )
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('user')
+            .setDescription('Removes the latest {n} messages from a specific user')
+            .addUserOption((option) =>
+              option
+                .setRequired(true)
+                .setName('user')
+                .setDescription('User to delete messages from'),
+            )
+            .addNumberOption((option) =>
+              option.setRequired(true).setName('n').setDescription('Amount of messages, max 100'),
+            ),
         ),
     ),
   async execute(interaction: CommandInteraction) {
@@ -33,7 +47,13 @@ module.exports = {
       if (!interaction.isChatInputCommand()) return
 
       if (interaction.options.getSubcommandGroup() === 'messages') {
-        await purgeMessages(interaction)
+        const subcommand = interaction.options.getSubcommand()
+
+        if (subcommand === 'purge') {
+          await purgeMessages(interaction)
+        } else if (subcommand === 'user') {
+          await purgeUserMessages(interaction)
+        }
       }
     } catch (error) {
       logger('❌ Command: moderation: ', error)

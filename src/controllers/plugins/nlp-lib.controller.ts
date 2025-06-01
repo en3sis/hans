@@ -4,6 +4,7 @@ import { resolveGuildPlugins } from '../bot/plugins.controller'
 import { logger } from '../../utils/debugging'
 import { GuildPluginChatGTPMetadata } from '../../types/plugins'
 import { HansNLP } from '../../libs/nlp'
+import { findUserByNameOrNickname } from './moderation.controller'
 
 interface CommandMapping {
   command: string
@@ -82,7 +83,13 @@ class MockInteraction {
 
   get options() {
     return {
-      get: (name: string) => this._options.get(name),
+      get: (name: string) => {
+        const option = this._options.get(name)
+        if (name === 'user' && option?.value && typeof option.value === 'object') {
+          return { user: option.value }
+        }
+        return option
+      },
       getSubcommand: () => this.subcommand,
       getSubcommandGroup: () => this.subcommandGroup,
       getString: (name: string) => this._options.get(name)?.value as string,
@@ -298,18 +305,47 @@ const executeSlashCommand = async (
       break
 
     case 'moderation':
+      const moderationOptions: Record<string, any> = {
+        n: parseInt(commandMapping.parameters?.n || commandMapping.parameters?.amount || '1'),
+      }
+
+      let subcommand = 'purge'
+      const subcommandGroup = 'messages'
+
+      if (commandMapping.parameters?.user) {
+        const targetUser = await findUserByNameOrNickname(
+          message.guild!,
+          commandMapping.parameters.user,
+        )
+
+        if (targetUser) {
+          moderationOptions.user = targetUser
+          subcommand = 'user'
+
+          if (!!process.env.ISDEV) {
+            console.log(
+              `🎯 [NLP-LIB] Found user: ${targetUser.username} (${targetUser.id}) for query: "${commandMapping.parameters.user}"`,
+            )
+          }
+        } else {
+          if (!!process.env.ISDEV) {
+            console.log(
+              `⚠️ [NLP-LIB] User not found for query: "${commandMapping.parameters.user}", falling back to general purge`,
+            )
+          }
+        }
+      }
+
       mockInteraction = new MockInteraction(
         message,
         'moderation',
-        {
-          n: parseInt(commandMapping.parameters?.n || commandMapping.parameters?.amount || '1'),
-        },
+        moderationOptions,
         thinkingMessage,
         memberPermissions,
         isEphemeral,
       )
-      mockInteraction.setSubcommandGroup('messages')
-      mockInteraction.setSubcommand('purge')
+      mockInteraction.setSubcommandGroup(subcommandGroup)
+      mockInteraction.setSubcommand(subcommand)
       break
 
     case 'ask':

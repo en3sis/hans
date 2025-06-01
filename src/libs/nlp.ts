@@ -37,7 +37,12 @@ export class HansNLP {
   private modelPath: string
 
   constructor() {
-    this.manager = new NlpManager({ languages: ['en'], forceNER: true })
+    this.manager = new NlpManager({
+      languages: ['en'],
+      forceNER: true,
+      autoSave: false,
+      modelFileName: 'hans-nlp-model.nlp',
+    })
     this.isInitialized = false
     this.trainingData = this.getTrainingData()
     this.modelPath = path.join(__dirname, '../models/hans-nlp-model.nlp')
@@ -171,11 +176,29 @@ export class HansNLP {
           'cleanup chat history',
           'clear recent chat',
           'delete spam messages',
+          'remove last 5 for Sorin',
+          'delete 10 messages from John',
+          'purge 3 messages by Alice',
+          'clear 7 messages from Bob',
+          'remove 15 messages by Mike',
+          'delete messages from Sarah',
+          'purge user messages for Tom',
+          'clear messages by Emma',
+          'remove Alex messages',
+          'delete last 5 from ninja',
+          'remove 10 for summit1g',
+          'purge 20 messages from shroud',
+          'clear messages by pokimane',
+          'delete user spam from trolluser',
+          'remove last messages for username123',
+          'purge recent posts by moderator',
+          'clean up messages from spammer',
         ],
         answers: [
           'I will delete the messages for you',
           'Purging messages from the channel',
           'Cleaning up the chat',
+          'Removing messages from the specified user',
         ],
         entities: [
           { start: 7, end: 8, entity: 'amount', sourceText: '5' },
@@ -192,6 +215,23 @@ export class HansNLP {
           { start: 7, end: 9, entity: 'amount', sourceText: '12' },
           { start: 7, end: 9, entity: 'amount', sourceText: '20' },
           { start: 7, end: 9, entity: 'amount', sourceText: '50' },
+          { start: 19, end: 24, entity: 'user', sourceText: 'Sorin' },
+          { start: 24, end: 28, entity: 'user', sourceText: 'John' },
+          { start: 22, end: 27, entity: 'user', sourceText: 'Alice' },
+          { start: 23, end: 26, entity: 'user', sourceText: 'Bob' },
+          { start: 22, end: 26, entity: 'user', sourceText: 'Mike' },
+          { start: 22, end: 27, entity: 'user', sourceText: 'Sarah' },
+          { start: 21, end: 24, entity: 'user', sourceText: 'Tom' },
+          { start: 19, end: 23, entity: 'user', sourceText: 'Emma' },
+          { start: 7, end: 11, entity: 'user', sourceText: 'Alex' },
+          { start: 17, end: 22, entity: 'user', sourceText: 'ninja' },
+          { start: 13, end: 21, entity: 'user', sourceText: 'summit1g' },
+          { start: 25, end: 31, entity: 'user', sourceText: 'shroud' },
+          { start: 19, end: 27, entity: 'user', sourceText: 'pokimane' },
+          { start: 22, end: 31, entity: 'user', sourceText: 'trolluser' },
+          { start: 26, end: 37, entity: 'user', sourceText: 'username123' },
+          { start: 21, end: 30, entity: 'user', sourceText: 'moderator' },
+          { start: 24, end: 31, entity: 'user', sourceText: 'spammer' },
         ],
       },
       ask: {
@@ -463,6 +503,40 @@ export class HansNLP {
             extractionLog.push(`🔢 Default amount: "${params.n}"`)
           }
         }
+
+        // Look for user entity
+        const userEntity = entities.find((e) => e.entity === 'user')
+        if (userEntity) {
+          params.user = userEntity.sourceText
+          extractionLog.push(`👤 User from entity: "${params.user}"`)
+        } else {
+          // Pattern matching for user mentions in various formats
+          const userMatch =
+            input.match(/(?:for|from|by|user)\s+([a-zA-Z0-9_]+)/i) ||
+            input.match(/([a-zA-Z0-9_]+)\s+messages/i) ||
+            input.match(/messages\s+(?:from|by)\s+([a-zA-Z0-9_]+)/i) ||
+            input.match(/(?:delete|remove|purge|clear)\s+([a-zA-Z0-9_]+)(?:\s+messages)?/i)
+
+          if (userMatch) {
+            const potentialUser = userMatch[1]
+            // Skip common words that might be matched
+            const commonWords = [
+              'last',
+              'recent',
+              'spam',
+              'messages',
+              'user',
+              'all',
+              'the',
+              'these',
+              'those',
+            ]
+            if (!commonWords.includes(potentialUser.toLowerCase())) {
+              params.user = potentialUser
+              extractionLog.push(`👤 User from pattern: "${params.user}"`)
+            }
+          }
+        }
         break
 
       case 'ask':
@@ -511,6 +585,12 @@ export class HansNLP {
     // Delete existing model file
     if (fs.existsSync(this.modelPath)) {
       fs.unlinkSync(this.modelPath)
+    }
+
+    // Also remove any duplicate model files
+    const rootModelPath = path.join(process.cwd(), 'model.nlp')
+    if (fs.existsSync(rootModelPath)) {
+      fs.unlinkSync(rootModelPath)
     }
 
     // Reset initialization flag

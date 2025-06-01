@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, TextChannel } from 'discord.js'
+import { CommandInteraction, Message, TextChannel, User, Guild } from 'discord.js'
 import { sentimentAnalysis } from '../../libs/sentiment'
 import { sentimentUrgencyTable } from '../../utils/colors'
 
@@ -37,6 +37,60 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
 
     await interaction
       .editReply({ content: `🗑 Deleted ${messagesToDelete.length} messages.` })
+      .then(() => {
+        setTimeout(() => {
+          const sentMessage = (interaction as any).sentMessage
+          if (sentMessage && sentMessage.delete) {
+            sentMessage.delete().catch(() => {})
+          }
+        }, 2000)
+      })
+  } catch (error) {
+    throw Error(error.message)
+  }
+}
+
+export const purgeUserMessages = async (interaction: CommandInteraction) => {
+  try {
+    const amount = interaction.options.get('n').value as number
+    const targetUser = interaction.options.get('user').user
+
+    if (!interaction.memberPermissions.has(['Administrator']))
+      return interaction.editReply({
+        content: 'You do not have permission to use this command',
+      })
+
+    if (amount > 100) {
+      return interaction.editReply({
+        content: 'You can only delete up to 100 messages at once.',
+      })
+    }
+
+    const fetchLimit = Math.min(amount * 10, 500)
+    const fetched = await interaction.channel.messages.fetch({
+      limit: fetchLimit,
+    })
+
+    const thinkingMessageId = (interaction as any).sentMessage?.id
+
+    const messagesToDelete = Array.from(fetched.values())
+      .filter((msg) => msg.id !== thinkingMessageId && msg.author.id === targetUser.id)
+      .slice(0, amount)
+
+    if (messagesToDelete.length === 0) {
+      return interaction.editReply({
+        content: `No messages found from ${targetUser.username} to delete.`,
+      })
+    }
+
+    await interaction.channel.bulkDelete(messagesToDelete).catch(async (err) => {
+      await interaction.editReply({ content: `Error deleting messages: ${err.message}` })
+    })
+
+    await interaction
+      .editReply({
+        content: `🗑 Deleted ${messagesToDelete.length} messages from ${targetUser.username}.`,
+      })
       .then(() => {
         setTimeout(() => {
           const sentMessage = (interaction as any).sentMessage
@@ -125,5 +179,38 @@ export const sentimentAnalysisFn = async (
         },
       ],
     })
+  }
+}
+
+export const findUserByNameOrNickname = async (
+  guild: Guild,
+  nameQuery: string,
+): Promise<User | null> => {
+  if (!guild) return null
+
+  const normalizedQuery = nameQuery.toLowerCase().trim()
+
+  try {
+    await guild.members.fetch()
+
+    const member = guild.members.cache.find((member) => {
+      const username = member.user.username.toLowerCase()
+      const displayName = member.displayName.toLowerCase()
+      const nickname = member.nickname?.toLowerCase()
+
+      return (
+        username === normalizedQuery ||
+        displayName === normalizedQuery ||
+        nickname === normalizedQuery ||
+        username.includes(normalizedQuery) ||
+        displayName.includes(normalizedQuery) ||
+        (nickname && nickname.includes(normalizedQuery))
+      )
+    })
+
+    return member?.user || null
+  } catch (error) {
+    console.error('Error finding user:', error)
+    return null
   }
 }
