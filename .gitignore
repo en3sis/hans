@@ -18,5 +18,4 @@ build/
 package-lock.json
 
 # NLP Models
-/src/models/*.nlp
 /_old

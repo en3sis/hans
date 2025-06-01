@@ -1,0 +1,3833 @@
+{
+  "settings": {
+    "languages": [
+      "en"
+    ],
+    "forceNER": true,
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "en"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "en": {
+        "settings": {
+          "locale": "en",
+          "trainByDomain": false,
+          "tag": "domain-manager-en",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "in,madrid,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "in,is,temperatur,the,tokyo,what": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "how,is,the,today,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "in,london,temperatur": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "in,is,it,pari,rain": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "climat,in,new,york": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "berlin,in,is,like,the,weather,what": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "hot,how,in,is,it,miami": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "angel,in,is,it,los,sunni": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "chicago,for,forecast,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "barcelona,current,in,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "check,for,rome,temperatur": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "condit,in,moscow,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "cold,in,is,it,stockholm": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "dublin,for,updat,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "climat,how,in,is,sydney,the": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "amsterdam,in,temperatur,today": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "in,status,vienna,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "francisco,in,is,it,san,windi": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "for,mumbai,report,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "current,in,seoul,temperatur": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "citi,in,my,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "condit,local,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "forecast,today,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "check,outsid,weather": {
+            "intent": "weather",
+            "domain": "default"
+          },
+          "ninja,show,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "profil,summit1g,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "get,shroud,twitch,user": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "ninja,profil,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "check,streamer,twitch,xqc": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "channel,pokiman,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "info,streamer,tfue": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "amouranth,me,show,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "hasanabi,stat,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "lirik,twitch,user": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "asmongold,profil,streamer": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "check,out,sodapoppin,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "channel,myth,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "show,timthetatman,twitch,user": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "disguisedtoast,get,info,on,streamer,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "drlupo,profil,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "channel,check,nickmerc,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "cohhcarnag,me,show,twitch,user": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "dakotaz,info,streamer,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "get,kitboga,profil,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "channel,mizkif,show,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "ludwig,twitch,user": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "profil,streamer,valkyra": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "check,pewdiepi,twitch,user": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "channel,info,markipli,twitch": {
+            "intent": "twitch",
+            "domain": "default"
+          },
+          "5,delet,messag": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "10,last,messag,remov": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "3,messag,purg": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "7,clear,last,messag,the": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "15,clean,messag,up": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "20,delet,messag,recent": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "2,messag,remov": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "50,last,messag,purg": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "8,clear,messag": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "12,clean,messag": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "delet,messag,one": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "messag,remov,two": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "messag,purg,three": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "clear,four,messag": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "delet,five,messag": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "messag,remov,six": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "messag,purg,seven": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "clear,eight,messag": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "delet,messag,nine": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "messag,remov,ten": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "5,delet": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "10,remov": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "3,purg": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "7,clear": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "15,clean": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "20,delet": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "2,remov": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "50,purg": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "8,clear": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "12,clean": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "bulk,delet,messag": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "chat,delet,mass": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "chat,cleanup,histori": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "chat,clear,recent": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "delet,messag,spam": {
+            "intent": "moderation",
+            "domain": "default"
+          },
+          "is,javascript,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "explain,physic,quantum": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "doe,how,learn,machin,work": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "about,artifici,intellig,me,tell": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "help,me,react,understand": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "is,life,mean,of,the,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "comput,do,how,work": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "blockchain,explain,technolog": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "is,typescript,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "doe,how,internet,the,work": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "about,js,me,node,tell": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "artifici,is,network,neural,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "databas,design,explain": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "doe,encrypt,how,work": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "cloud,comput,is,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "and,api,explain,rest": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "doe,git,how,work": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "docker,is,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "architectur,explain,microservic": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "authent,doe,how,work": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "devop,is,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "cd,ci,explain,pipelin": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "cach,doe,how,work": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "graphql,is,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "explain,secur,web": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "help,me,program,with": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "about,code,me,teach": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "develop,explain,softwar": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "are,design,pattern,what": {
+            "intent": "ask",
+            "domain": "default"
+          },
+          "how,optim,perform,to": {
+            "intent": "ask",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "weather": "default",
+          "twitch": "default",
+          "moderation": "default",
+          "ask": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "weather in Madrid",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is the temperature in Tokyo",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "how is the weather today",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "temperature in London",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "is it raining in Paris",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "climate in New York",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is the weather like in Berlin",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "how hot is it in Miami",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "is it sunny in Los Angeles",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "weather forecast for Chicago",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "current weather in Barcelona",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "temperature check for Rome",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "weather conditions in Moscow",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "is it cold in Stockholm",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "weather update for Dublin",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "how is the climate in Sydney",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "temperature today in Amsterdam",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "weather status in Vienna",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "is it windy in San Francisco",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "weather report for Mumbai",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "current temperature in Seoul",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "weather in my city",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "local weather conditions",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "today weather forecast",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "check weather outside",
+            "intent": "weather"
+          },
+          {
+            "domain": "default",
+            "utterance": "show ninja twitch",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch profile summit1g",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "get twitch user shroud",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "ninja twitch profile",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "check twitch streamer xqc",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch channel pokimane",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "streamer info tfue",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "show me amouranth twitch",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "hasanabi twitch stats",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch user lirik",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "streamer profile asmongold",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "check out sodapoppin twitch",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch channel myth",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "show twitch user timthetatman",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "get info on twitch streamer disguisedtoast",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch profile drlupo",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "check twitch channel nickmercs",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "show me twitch user cohhcarnage",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch streamer info dakotaz",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "get twitch profile kitboga",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "show twitch channel mizkif",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch user ludwig",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "streamer profile valkyrae",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "check twitch user pewdiepie",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "twitch channel info markiplier",
+            "intent": "twitch"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete 5 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "remove last 10 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "purge 3 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clear the last 7 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clean up 15 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete recent 20 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "remove 2 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "purge last 50 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clear 8 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clean 12 messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete one message",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "remove two messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "purge three messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clear four messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete five messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "remove six messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "purge seven messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clear eight messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete nine messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "remove ten messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete 5",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "remove 10",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "purge 3",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clear 7",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clean 15",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete 20",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "remove 2",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "purge 50",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clear 8",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clean 12",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "bulk delete messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "mass delete chat",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "cleanup chat history",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "clear recent chat",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "delete spam messages",
+            "intent": "moderation"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is JavaScript",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain quantum physics",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how does machine learning work",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "tell me about artificial intelligence",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "help me understand React",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is the meaning of life",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how do computers work",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain blockchain technology",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is TypeScript",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how does the internet work",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "tell me about Node.js",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is artificial neural networks",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain database design",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how does encryption work",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is cloud computing",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain APIs and REST",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how does Git work",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is Docker",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain microservices architecture",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how does authentication work",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is DevOps",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain CI/CD pipelines",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how does caching work",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is GraphQL",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain web security",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "help me with programming",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "teach me about coding",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain software development",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "what are design patterns",
+            "intent": "ask"
+          },
+          {
+            "domain": "default",
+            "utterance": "how to optimize performance",
+            "intent": "ask"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "en",
+              "tag": "nlu-en",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "2": 1,
+              "3": 1,
+              "5": 1,
+              "7": 1,
+              "8": 1,
+              "10": 1,
+              "12": 1,
+              "15": 1,
+              "20": 1,
+              "50": 1,
+              "weather": 1,
+              "in": 1,
+              "madrid": 1,
+              "what": 1,
+              "is": 1,
+              "the": 1,
+              "temperatur": 1,
+              "tokyo": 1,
+              "how": 1,
+              "today": 1,
+              "london": 1,
+              "it": 1,
+              "rain": 1,
+              "pari": 1,
+              "climat": 1,
+              "new": 1,
+              "york": 1,
+              "like": 1,
+              "berlin": 1,
+              "hot": 1,
+              "miami": 1,
+              "sunni": 1,
+              "los": 1,
+              "angel": 1,
+              "forecast": 1,
+              "for": 1,
+              "chicago": 1,
+              "current": 1,
+              "barcelona": 1,
+              "check": 1,
+              "rome": 1,
+              "condit": 1,
+              "moscow": 1,
+              "cold": 1,
+              "stockholm": 1,
+              "updat": 1,
+              "dublin": 1,
+              "sydney": 1,
+              "amsterdam": 1,
+              "status": 1,
+              "vienna": 1,
+              "windi": 1,
+              "san": 1,
+              "francisco": 1,
+              "report": 1,
+              "mumbai": 1,
+              "seoul": 1,
+              "my": 1,
+              "citi": 1,
+              "local": 1,
+              "outsid": 1,
+              "show": 1,
+              "ninja": 1,
+              "twitch": 1,
+              "profil": 1,
+              "summit1g": 1,
+              "get": 1,
+              "user": 1,
+              "shroud": 1,
+              "streamer": 1,
+              "xqc": 1,
+              "channel": 1,
+              "pokiman": 1,
+              "info": 1,
+              "tfue": 1,
+              "me": 1,
+              "amouranth": 1,
+              "hasanabi": 1,
+              "stat": 1,
+              "lirik": 1,
+              "asmongold": 1,
+              "out": 1,
+              "sodapoppin": 1,
+              "myth": 1,
+              "timthetatman": 1,
+              "on": 1,
+              "disguisedtoast": 1,
+              "drlupo": 1,
+              "nickmerc": 1,
+              "cohhcarnag": 1,
+              "dakotaz": 1,
+              "kitboga": 1,
+              "mizkif": 1,
+              "ludwig": 1,
+              "valkyra": 1,
+              "pewdiepi": 1,
+              "markipli": 1,
+              "delet": 1,
+              "messag": 1,
+              "remov": 1,
+              "last": 1,
+              "purg": 1,
+              "clear": 1,
+              "clean": 1,
+              "up": 1,
+              "recent": 1,
+              "one": 1,
+              "two": 1,
+              "three": 1,
+              "four": 1,
+              "five": 1,
+              "six": 1,
+              "seven": 1,
+              "eight": 1,
+              "nine": 1,
+              "ten": 1,
+              "bulk": 1,
+              "mass": 1,
+              "chat": 1,
+              "cleanup": 1,
+              "histori": 1,
+              "spam": 1,
+              "javascript": 1,
+              "explain": 1,
+              "quantum": 1,
+              "physic": 1,
+              "doe": 1,
+              "machin": 1,
+              "learn": 1,
+              "work": 1,
+              "tell": 1,
+              "about": 1,
+              "artifici": 1,
+              "intellig": 1,
+              "help": 1,
+              "understand": 1,
+              "react": 1,
+              "mean": 1,
+              "of": 1,
+              "life": 1,
+              "do": 1,
+              "comput": 1,
+              "blockchain": 1,
+              "technolog": 1,
+              "typescript": 1,
+              "internet": 1,
+              "node": 1,
+              "js": 1,
+              "neural": 1,
+              "network": 1,
+              "databas": 1,
+              "design": 1,
+              "encrypt": 1,
+              "cloud": 1,
+              "api": 1,
+              "and": 1,
+              "rest": 1,
+              "git": 1,
+              "docker": 1,
+              "microservic": 1,
+              "architectur": 1,
+              "authent": 1,
+              "devop": 1,
+              "ci": 1,
+              "cd": 1,
+              "pipelin": 1,
+              "cach": 1,
+              "graphql": 1,
+              "web": 1,
+              "secur": 1,
+              "with": 1,
+              "program": 1,
+              "teach": 1,
+              "code": 1,
+              "softwar": 1,
+              "develop": 1,
+              "are": 1,
+              "pattern": 1,
+              "to": 1,
+              "optim": 1,
+              "perform": 1
+            },
+            "intents": {
+              "weather": 1,
+              "twitch": 1,
+              "moderation": 1,
+              "ask": 1
+            },
+            "intentFeatures": {
+              "weather": {
+                "weather": 1,
+                "in": 1,
+                "madrid": 1,
+                "what": 1,
+                "is": 1,
+                "the": 1,
+                "temperatur": 1,
+                "tokyo": 1,
+                "how": 1,
+                "today": 1,
+                "london": 1,
+                "it": 1,
+                "rain": 1,
+                "pari": 1,
+                "climat": 1,
+                "new": 1,
+                "york": 1,
+                "like": 1,
+                "berlin": 1,
+                "hot": 1,
+                "miami": 1,
+                "sunni": 1,
+                "los": 1,
+                "angel": 1,
+                "forecast": 1,
+                "for": 1,
+                "chicago": 1,
+                "current": 1,
+                "barcelona": 1,
+                "check": 1,
+                "rome": 1,
+                "condit": 1,
+                "moscow": 1,
+                "cold": 1,
+                "stockholm": 1,
+                "updat": 1,
+                "dublin": 1,
+                "sydney": 1,
+                "amsterdam": 1,
+                "status": 1,
+                "vienna": 1,
+                "windi": 1,
+                "san": 1,
+                "francisco": 1,
+                "report": 1,
+                "mumbai": 1,
+                "seoul": 1,
+                "my": 1,
+                "citi": 1,
+                "local": 1,
+                "outsid": 1
+              },
+              "twitch": {
+                "show": 1,
+                "ninja": 1,
+                "twitch": 1,
+                "profil": 1,
+                "summit1g": 1,
+                "get": 1,
+                "user": 1,
+                "shroud": 1,
+                "check": 1,
+                "streamer": 1,
+                "xqc": 1,
+                "channel": 1,
+                "pokiman": 1,
+                "info": 1,
+                "tfue": 1,
+                "me": 1,
+                "amouranth": 1,
+                "hasanabi": 1,
+                "stat": 1,
+                "lirik": 1,
+                "asmongold": 1,
+                "out": 1,
+                "sodapoppin": 1,
+                "myth": 1,
+                "timthetatman": 1,
+                "on": 1,
+                "disguisedtoast": 1,
+                "drlupo": 1,
+                "nickmerc": 1,
+                "cohhcarnag": 1,
+                "dakotaz": 1,
+                "kitboga": 1,
+                "mizkif": 1,
+                "ludwig": 1,
+                "valkyra": 1,
+                "pewdiepi": 1,
+                "markipli": 1
+              },
+              "moderation": {
+                "2": 1,
+                "3": 1,
+                "5": 1,
+                "7": 1,
+                "8": 1,
+                "10": 1,
+                "12": 1,
+                "15": 1,
+                "20": 1,
+                "50": 1,
+                "delet": 1,
+                "messag": 1,
+                "remov": 1,
+                "last": 1,
+                "purg": 1,
+                "clear": 1,
+                "the": 1,
+                "clean": 1,
+                "up": 1,
+                "recent": 1,
+                "one": 1,
+                "two": 1,
+                "three": 1,
+                "four": 1,
+                "five": 1,
+                "six": 1,
+                "seven": 1,
+                "eight": 1,
+                "nine": 1,
+                "ten": 1,
+                "bulk": 1,
+                "mass": 1,
+                "chat": 1,
+                "cleanup": 1,
+                "histori": 1,
+                "spam": 1
+              },
+              "ask": {
+                "what": 1,
+                "is": 1,
+                "javascript": 1,
+                "explain": 1,
+                "quantum": 1,
+                "physic": 1,
+                "how": 1,
+                "doe": 1,
+                "machin": 1,
+                "learn": 1,
+                "work": 1,
+                "tell": 1,
+                "me": 1,
+                "about": 1,
+                "artifici": 1,
+                "intellig": 1,
+                "help": 1,
+                "understand": 1,
+                "react": 1,
+                "the": 1,
+                "mean": 1,
+                "of": 1,
+                "life": 1,
+                "do": 1,
+                "comput": 1,
+                "blockchain": 1,
+                "technolog": 1,
+                "typescript": 1,
+                "internet": 1,
+                "node": 1,
+                "js": 1,
+                "neural": 1,
+                "network": 1,
+                "databas": 1,
+                "design": 1,
+                "encrypt": 1,
+                "cloud": 1,
+                "api": 1,
+                "and": 1,
+                "rest": 1,
+                "git": 1,
+                "docker": 1,
+                "microservic": 1,
+                "architectur": 1,
+                "authent": 1,
+                "devop": 1,
+                "ci": 1,
+                "cd": 1,
+                "pipelin": 1,
+                "cach": 1,
+                "graphql": 1,
+                "web": 1,
+                "secur": 1,
+                "with": 1,
+                "program": 1,
+                "teach": 1,
+                "code": 1,
+                "softwar": 1,
+                "develop": 1,
+                "are": 1,
+                "pattern": 1,
+                "to": 1,
+                "optim": 1,
+                "perform": 1
+              }
+            },
+            "featuresToIntent": {
+              "2": [
+                "moderation"
+              ],
+              "3": [
+                "moderation"
+              ],
+              "5": [
+                "moderation"
+              ],
+              "7": [
+                "moderation"
+              ],
+              "8": [
+                "moderation"
+              ],
+              "10": [
+                "moderation"
+              ],
+              "12": [
+                "moderation"
+              ],
+              "15": [
+                "moderation"
+              ],
+              "20": [
+                "moderation"
+              ],
+              "50": [
+                "moderation"
+              ],
+              "weather": [
+                "weather"
+              ],
+              "in": [
+                "weather"
+              ],
+              "madrid": [
+                "weather"
+              ],
+              "what": [
+                "weather",
+                "ask"
+              ],
+              "is": [
+                "weather",
+                "ask"
+              ],
+              "the": [
+                "weather",
+                "moderation",
+                "ask"
+              ],
+              "temperatur": [
+                "weather"
+              ],
+              "tokyo": [
+                "weather"
+              ],
+              "how": [
+                "weather",
+                "ask"
+              ],
+              "today": [
+                "weather"
+              ],
+              "london": [
+                "weather"
+              ],
+              "it": [
+                "weather"
+              ],
+              "rain": [
+                "weather"
+              ],
+              "pari": [
+                "weather"
+              ],
+              "climat": [
+                "weather"
+              ],
+              "new": [
+                "weather"
+              ],
+              "york": [
+                "weather"
+              ],
+              "like": [
+                "weather"
+              ],
+              "berlin": [
+                "weather"
+              ],
+              "hot": [
+                "weather"
+              ],
+              "miami": [
+                "weather"
+              ],
+              "sunni": [
+                "weather"
+              ],
+              "los": [
+                "weather"
+              ],
+              "angel": [
+                "weather"
+              ],
+              "forecast": [
+                "weather"
+              ],
+              "for": [
+                "weather"
+              ],
+              "chicago": [
+                "weather"
+              ],
+              "current": [
+                "weather"
+              ],
+              "barcelona": [
+                "weather"
+              ],
+              "check": [
+                "weather",
+                "twitch"
+              ],
+              "rome": [
+                "weather"
+              ],
+              "condit": [
+                "weather"
+              ],
+              "moscow": [
+                "weather"
+              ],
+              "cold": [
+                "weather"
+              ],
+              "stockholm": [
+                "weather"
+              ],
+              "updat": [
+                "weather"
+              ],
+              "dublin": [
+                "weather"
+              ],
+              "sydney": [
+                "weather"
+              ],
+              "amsterdam": [
+                "weather"
+              ],
+              "status": [
+                "weather"
+              ],
+              "vienna": [
+                "weather"
+              ],
+              "windi": [
+                "weather"
+              ],
+              "san": [
+                "weather"
+              ],
+              "francisco": [
+                "weather"
+              ],
+              "report": [
+                "weather"
+              ],
+              "mumbai": [
+                "weather"
+              ],
+              "seoul": [
+                "weather"
+              ],
+              "my": [
+                "weather"
+              ],
+              "citi": [
+                "weather"
+              ],
+              "local": [
+                "weather"
+              ],
+              "outsid": [
+                "weather"
+              ],
+              "show": [
+                "twitch"
+              ],
+              "ninja": [
+                "twitch"
+              ],
+              "twitch": [
+                "twitch"
+              ],
+              "profil": [
+                "twitch"
+              ],
+              "summit1g": [
+                "twitch"
+              ],
+              "get": [
+                "twitch"
+              ],
+              "user": [
+                "twitch"
+              ],
+              "shroud": [
+                "twitch"
+              ],
+              "streamer": [
+                "twitch"
+              ],
+              "xqc": [
+                "twitch"
+              ],
+              "channel": [
+                "twitch"
+              ],
+              "pokiman": [
+                "twitch"
+              ],
+              "info": [
+                "twitch"
+              ],
+              "tfue": [
+                "twitch"
+              ],
+              "me": [
+                "twitch",
+                "ask"
+              ],
+              "amouranth": [
+                "twitch"
+              ],
+              "hasanabi": [
+                "twitch"
+              ],
+              "stat": [
+                "twitch"
+              ],
+              "lirik": [
+                "twitch"
+              ],
+              "asmongold": [
+                "twitch"
+              ],
+              "out": [
+                "twitch"
+              ],
+              "sodapoppin": [
+                "twitch"
+              ],
+              "myth": [
+                "twitch"
+              ],
+              "timthetatman": [
+                "twitch"
+              ],
+              "on": [
+                "twitch"
+              ],
+              "disguisedtoast": [
+                "twitch"
+              ],
+              "drlupo": [
+                "twitch"
+              ],
+              "nickmerc": [
+                "twitch"
+              ],
+              "cohhcarnag": [
+                "twitch"
+              ],
+              "dakotaz": [
+                "twitch"
+              ],
+              "kitboga": [
+                "twitch"
+              ],
+              "mizkif": [
+                "twitch"
+              ],
+              "ludwig": [
+                "twitch"
+              ],
+              "valkyra": [
+                "twitch"
+              ],
+              "pewdiepi": [
+                "twitch"
+              ],
+              "markipli": [
+                "twitch"
+              ],
+              "delet": [
+                "moderation"
+              ],
+              "messag": [
+                "moderation"
+              ],
+              "remov": [
+                "moderation"
+              ],
+              "last": [
+                "moderation"
+              ],
+              "purg": [
+                "moderation"
+              ],
+              "clear": [
+                "moderation"
+              ],
+              "clean": [
+                "moderation"
+              ],
+              "up": [
+                "moderation"
+              ],
+              "recent": [
+                "moderation"
+              ],
+              "one": [
+                "moderation"
+              ],
+              "two": [
+                "moderation"
+              ],
+              "three": [
+                "moderation"
+              ],
+              "four": [
+                "moderation"
+              ],
+              "five": [
+                "moderation"
+              ],
+              "six": [
+                "moderation"
+              ],
+              "seven": [
+                "moderation"
+              ],
+              "eight": [
+                "moderation"
+              ],
+              "nine": [
+                "moderation"
+              ],
+              "ten": [
+                "moderation"
+              ],
+              "bulk": [
+                "moderation"
+              ],
+              "mass": [
+                "moderation"
+              ],
+              "chat": [
+                "moderation"
+              ],
+              "cleanup": [
+                "moderation"
+              ],
+              "histori": [
+                "moderation"
+              ],
+              "spam": [
+                "moderation"
+              ],
+              "javascript": [
+                "ask"
+              ],
+              "explain": [
+                "ask"
+              ],
+              "quantum": [
+                "ask"
+              ],
+              "physic": [
+                "ask"
+              ],
+              "doe": [
+                "ask"
+              ],
+              "machin": [
+                "ask"
+              ],
+              "learn": [
+                "ask"
+              ],
+              "work": [
+                "ask"
+              ],
+              "tell": [
+                "ask"
+              ],
+              "about": [
+                "ask"
+              ],
+              "artifici": [
+                "ask"
+              ],
+              "intellig": [
+                "ask"
+              ],
+              "help": [
+                "ask"
+              ],
+              "understand": [
+                "ask"
+              ],
+              "react": [
+                "ask"
+              ],
+              "mean": [
+                "ask"
+              ],
+              "of": [
+                "ask"
+              ],
+              "life": [
+                "ask"
+              ],
+              "do": [
+                "ask"
+              ],
+              "comput": [
+                "ask"
+              ],
+              "blockchain": [
+                "ask"
+              ],
+              "technolog": [
+                "ask"
+              ],
+              "typescript": [
+                "ask"
+              ],
+              "internet": [
+                "ask"
+              ],
+              "node": [
+                "ask"
+              ],
+              "js": [
+                "ask"
+              ],
+              "neural": [
+                "ask"
+              ],
+              "network": [
+                "ask"
+              ],
+              "databas": [
+                "ask"
+              ],
+              "design": [
+                "ask"
+              ],
+              "encrypt": [
+                "ask"
+              ],
+              "cloud": [
+                "ask"
+              ],
+              "api": [
+                "ask"
+              ],
+              "and": [
+                "ask"
+              ],
+              "rest": [
+                "ask"
+              ],
+              "git": [
+                "ask"
+              ],
+              "docker": [
+                "ask"
+              ],
+              "microservic": [
+                "ask"
+              ],
+              "architectur": [
+                "ask"
+              ],
+              "authent": [
+                "ask"
+              ],
+              "devop": [
+                "ask"
+              ],
+              "ci": [
+                "ask"
+              ],
+              "cd": [
+                "ask"
+              ],
+              "pipelin": [
+                "ask"
+              ],
+              "cach": [
+                "ask"
+              ],
+              "graphql": [
+                "ask"
+              ],
+              "web": [
+                "ask"
+              ],
+              "secur": [
+                "ask"
+              ],
+              "with": [
+                "ask"
+              ],
+              "program": [
+                "ask"
+              ],
+              "teach": [
+                "ask"
+              ],
+              "code": [
+                "ask"
+              ],
+              "softwar": [
+                "ask"
+              ],
+              "develop": [
+                "ask"
+              ],
+              "are": [
+                "ask"
+              ],
+              "pattern": [
+                "ask"
+              ],
+              "to": [
+                "ask"
+              ],
+              "optim": [
+                "ask"
+              ],
+              "perform": [
+                "ask"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "en",
+                "tag": "nlu-en",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "weather",
+                "in",
+                "madrid",
+                "what",
+                "is",
+                "the",
+                "temperatur",
+                "tokyo",
+                "how",
+                "today",
+                "london",
+                "it",
+                "rain",
+                "pari",
+                "climat",
+                "new",
+                "york",
+                "like",
+                "berlin",
+                "hot",
+                "miami",
+                "sunni",
+                "los",
+                "angel",
+                "forecast",
+                "for",
+                "chicago",
+                "current",
+                "barcelona",
+                "check",
+                "rome",
+                "condit",
+                "moscow",
+                "cold",
+                "stockholm",
+                "updat",
+                "dublin",
+                "sydney",
+                "amsterdam",
+                "status",
+                "vienna",
+                "windi",
+                "san",
+                "francisco",
+                "report",
+                "mumbai",
+                "seoul",
+                "my",
+                "citi",
+                "local",
+                "outsid",
+                "show",
+                "ninja",
+                "twitch",
+                "profil",
+                "summit1g",
+                "get",
+                "user",
+                "shroud",
+                "streamer",
+                "xqc",
+                "channel",
+                "pokiman",
+                "info",
+                "tfue",
+                "me",
+                "amouranth",
+                "hasanabi",
+                "stat",
+                "lirik",
+                "asmongold",
+                "out",
+                "sodapoppin",
+                "myth",
+                "timthetatman",
+                "on",
+                "disguisedtoast",
+                "drlupo",
+                "nickmerc",
+                "cohhcarnag",
+                "dakotaz",
+                "kitboga",
+                "mizkif",
+                "ludwig",
+                "valkyra",
+                "pewdiepi",
+                "markipli",
+                "5",
+                "delet",
+                "messag",
+                "10",
+                "remov",
+                "last",
+                "3",
+                "purg",
+                "7",
+                "clear",
+                "15",
+                "clean",
+                "up",
+                "20",
+                "recent",
+                "2",
+                "50",
+                "8",
+                "12",
+                "one",
+                "two",
+                "three",
+                "four",
+                "five",
+                "six",
+                "seven",
+                "eight",
+                "nine",
+                "ten",
+                "bulk",
+                "mass",
+                "chat",
+                "cleanup",
+                "histori",
+                "spam",
+                "javascript",
+                "explain",
+                "quantum",
+                "physic",
+                "doe",
+                "machin",
+                "learn",
+                "work",
+                "tell",
+                "about",
+                "artifici",
+                "intellig",
+                "help",
+                "understand",
+                "react",
+                "mean",
+                "of",
+                "life",
+                "do",
+                "comput",
+                "blockchain",
+                "technolog",
+                "typescript",
+                "internet",
+                "node",
+                "js",
+                "neural",
+                "network",
+                "databas",
+                "design",
+                "encrypt",
+                "cloud",
+                "api",
+                "and",
+                "rest",
+                "git",
+                "docker",
+                "microservic",
+                "architectur",
+                "authent",
+                "devop",
+                "ci",
+                "cd",
+                "pipelin",
+                "cach",
+                "graphql",
+                "web",
+                "secur",
+                "with",
+                "program",
+                "teach",
+                "code",
+                "softwar",
+                "develop",
+                "are",
+                "pattern",
+                "to",
+                "optim",
+                "perform"
+              ],
+              "intents": [
+                "weather",
+                "twitch",
+                "moderation",
+                "ask"
+              ],
+              "perceptrons": [
+                [
+                  7.534867763519287,
+                  6.03399658203125,
+                  -0.5059313774108887,
+                  -2.8128302097320557,
+                  1.9905011653900146,
+                  0.8656055331230164,
+                  5.312553882598877,
+                  1.636358380317688,
+                  0.2763923108577728,
+                  2.622853994369507,
+                  1.7158336639404297,
+                  3.418348789215088,
+                  0.8230111598968506,
+                  0.8230111598968506,
+                  2.9532999992370605,
+                  2.065962553024292,
+                  2.065962553024292,
+                  -0.2739812433719635,
+                  -0.2739812433719635,
+                  0.6662220358848572,
+                  0.6662220358848572,
+                  0.5459681153297424,
+                  0.5459681153297424,
+                  0.5459681153297424,
+                  2.6408464908599854,
+                  3.357133388519287,
+                  -0.2807954251766205,
+                  0.42390912771224976,
+                  -0.8837510347366333,
+                  2.9520599842071533,
+                  1.4472030401229858,
+                  1.7083011865615845,
+                  -2.0946109294891357,
+                  0.8282145857810974,
+                  0.8282145857810974,
+                  1.0977075099945068,
+                  1.0977075099945068,
+                  0.8862375617027283,
+                  -0.7974804043769836,
+                  -0.22033822536468506,
+                  -0.22033822536468506,
+                  0.5510473251342773,
+                  0.5510473251342773,
+                  0.5510473251342773,
+                  1.1019816398620605,
+                  1.1019816398620605,
+                  1.3084393739700317,
+                  -0.21759572625160217,
+                  -0.21759572625160217,
+                  3.806290626525879,
+                  2.584575653076172,
+                  -0.5192658305168152,
+                  -0.46991729736328125,
+                  -3.3869850635528564,
+                  -1.037062644958496,
+                  -0.20121091604232788,
+                  -0.17971819639205933,
+                  -0.6450839638710022,
+                  -0.17971819639205933,
+                  -1.103246808052063,
+                  -0.1702793538570404,
+                  -0.5448240637779236,
+                  -0.11854039877653122,
+                  -0.2945888042449951,
+                  -0.2945888042449951,
+                  -0.7467386722564697,
+                  -0.08547040820121765,
+                  -0.0816250666975975,
+                  -0.0816250666975975,
+                  -0.06249731779098511,
+                  -0.18656352162361145,
+                  -0.3865492641925812,
+                  -0.3865492641925812,
+                  -0.039906419813632965,
+                  -0.006685936823487282,
+                  0,
+                  0,
+                  -0.006091300863772631,
+                  -0.22793035209178925,
+                  0,
+                  0,
+                  0,
+                  0,
+                  -0.01031997799873352,
+                  -0.08355444669723511,
+                  -0.1266411691904068,
+                  0,
+                  -0.46919792890548706,
+                  -1.0392197370529175,
+                  -1.9646401405334473,
+                  -0.461406946182251,
+                  -0.9133590459823608,
+                  -0.6178083419799805,
+                  -0.44419196248054504,
+                  -0.8938353657722473,
+                  -0.5030831694602966,
+                  -0.9582861065864563,
+                  -0.43693211674690247,
+                  -0.8425836563110352,
+                  -0.08158604055643082,
+                  -0.284514456987381,
+                  -0.1705159991979599,
+                  -0.31045615673065186,
+                  -0.3174596130847931,
+                  -0.25379663705825806,
+                  -0.3631810247898102,
+                  -0.023269454017281532,
+                  -0.020790113136172295,
+                  -0.019580626860260963,
+                  -0.012034622021019459,
+                  -0.008086052723228931,
+                  -0.008252155967056751,
+                  -0.009575212374329567,
+                  -0.002936825156211853,
+                  -0.0013079708442091942,
+                  -0.0027107358910143375,
+                  0,
+                  -0.08957631140947342,
+                  -0.5508905053138733,
+                  -0.32856762409210205,
+                  -0.32856762409210205,
+                  0,
+                  -0.696559727191925,
+                  -1.0151596069335938,
+                  -0.22666694223880768,
+                  -0.22666694223880768,
+                  -0.9000425338745117,
+                  -0.2542208433151245,
+                  -0.2542208433151245,
+                  -1.1918156147003174,
+                  -0.18556904792785645,
+                  -0.28939303755760193,
+                  -0.408755362033844,
+                  -0.09610921889543533,
+                  -0.28620263934135437,
+                  -0.17046542465686798,
+                  -0.17046542465686798,
+                  -0.7819950580596924,
+                  -0.7819950580596924,
+                  -0.7819950580596924,
+                  -0.2552076578140259,
+                  -0.5543975830078125,
+                  -0.15165327489376068,
+                  -0.15165327489376068,
+                  -0.5378813147544861,
+                  -0.5517759323120117,
+                  -0.043210722506046295,
+                  -0.043210722506046295,
+                  -0.24742400646209717,
+                  -0.24742400646209717,
+                  -0.10637637227773666,
+                  -0.10637637227773666,
+                  -0.026681747287511826,
+                  -0.23767678439617157,
+                  -0.08011552691459656,
+                  -0.08011552691459656,
+                  -0.08011552691459656,
+                  0,
+                  -0.3809542953968048,
+                  -0.09729818254709244,
+                  -0.09729818254709244,
+                  0,
+                  -0.375166654586792,
+                  -0.06558889895677567,
+                  -0.06558889895677567,
+                  -0.06558889895677567,
+                  0,
+                  -0.36768823862075806,
+                  -0.09562386572360992,
+                  -0.09562386572360992,
+                  -0.08695074170827866,
+                  -0.08695074170827866,
+                  -0.08516708761453629,
+                  -0.08516708761453629,
+                  -0.0951848030090332,
+                  -0.0951848030090332,
+                  0,
+                  0,
+                  -0.5647001266479492,
+                  -0.5647001266479492,
+                  -0.5647001266479492,
+                  1.2076373967204208
+                ],
+                [
+                  -1.5370233058929443,
+                  -0.8917941451072693,
+                  -0.10260114818811417,
+                  -0.996906578540802,
+                  -0.8511438965797424,
+                  -0.35878226161003113,
+                  -0.8963245153427124,
+                  0,
+                  -0.9115561246871948,
+                  -0.1527576744556427,
+                  -0.14754879474639893,
+                  -0.10343223810195923,
+                  -0.03570767492055893,
+                  -0.03570767492055893,
+                  -0.33600470423698425,
+                  -0.33600470423698425,
+                  -0.33600470423698425,
+                  0,
+                  0,
+                  0,
+                  0,
+                  -0.019550075754523277,
+                  -0.019550075754523277,
+                  -0.019550075754523277,
+                  -0.2143358588218689,
+                  -0.8389395475387573,
+                  -0.0669623538851738,
+                  -0.08329054713249207,
+                  -0.03704911097884178,
+                  0.5076025128364563,
+                  -0.6662459373474121,
+                  -0.19947819411754608,
+                  -0.02049320936203003,
+                  -0.028354587033391,
+                  -0.028354587033391,
+                  -0.03072415664792061,
+                  -0.03072415664792061,
+                  0,
+                  -0.031024685129523277,
+                  -0.006061329040676355,
+                  -0.006061329040676355,
+                  -0.018925866112113,
+                  -0.018925866112113,
+                  -0.018925866112113,
+                  -0.018242448568344116,
+                  -0.018242448568344116,
+                  -0.029904106631875038,
+                  -0.0019367472268640995,
+                  -0.0019367472268640995,
+                  -0.1716158390045166,
+                  -0.854422926902771,
+                  2.5224685668945312,
+                  1.0006834268569946,
+                  8.055463790893555,
+                  4.0193328857421875,
+                  0.13990727066993713,
+                  0.07280313223600388,
+                  2.9445650577545166,
+                  1.257615327835083,
+                  5.495159149169922,
+                  -1.548925757408142,
+                  2.860123872756958,
+                  1.4917163848876953,
+                  1.4627153873443604,
+                  5.392983913421631,
+                  -0.32341888546943665,
+                  2.171462297439575,
+                  2.1751532554626465,
+                  2.1751532554626465,
+                  1.3439053297042847,
+                  2.7956135272979736,
+                  1.92115318775177,
+                  1.92115318775177,
+                  1.3882120847702026,
+                  -0.9770642518997192,
+                  -1.328266978263855,
+                  -1.328266978263855,
+                  0.15788744390010834,
+                  0.8712910413742065,
+                  -0.7760429978370667,
+                  -2.562565803527832,
+                  0.1436922401189804,
+                  -0.8517618775367737,
+                  1.3146097660064697,
+                  2.7494876384735107,
+                  0.7906585335731506,
+                  -0.038678497076034546,
+                  -0.5331810712814331,
+                  -1.4066548347473145,
+                  -2.730982542037964,
+                  -0.6163489818572998,
+                  -1.3261679410934448,
+                  -0.5792874693870544,
+                  -0.6162084937095642,
+                  -1.3125050067901611,
+                  -0.579300582408905,
+                  -1.3350226879119873,
+                  -0.6449055671691895,
+                  -1.2688941955566406,
+                  -0.12512382864952087,
+                  -0.49172669649124146,
+                  -0.25700220465660095,
+                  -0.5708956122398376,
+                  -0.5832932591438293,
+                  -0.558758020401001,
+                  -0.6233113408088684,
+                  -0.03939612954854965,
+                  -0.03491297736763954,
+                  -0.03218235820531845,
+                  -0.028967775404453278,
+                  -0.013748631812632084,
+                  -0.01343981921672821,
+                  -0.014655234292149544,
+                  -0.014205251820385456,
+                  -0.0016783553874120116,
+                  -0.0034764204174280167,
+                  0,
+                  -0.10171347111463547,
+                  -0.8012545704841614,
+                  -0.5497137308120728,
+                  -0.5497137308120728,
+                  0,
+                  -0.1945638209581375,
+                  -1.5058815479278564,
+                  -0.21857386827468872,
+                  -0.21857386827468872,
+                  -0.39423030614852905,
+                  -0.14148098230361938,
+                  -0.14148098230361938,
+                  -0.5808491706848145,
+                  -0.4679553508758545,
+                  -0.874769389629364,
+                  -0.3011915385723114,
+                  -0.23676671087741852,
+                  -0.8371554017066956,
+                  -0.4221367835998535,
+                  -0.4221367835998535,
+                  -0.05970333516597748,
+                  -0.05970333516597748,
+                  -0.05970333516597748,
+                  -0.18633697926998138,
+                  -0.22862465679645538,
+                  -0.20289595425128937,
+                  -0.20289595425128937,
+                  -0.10338936001062393,
+                  -0.03263477236032486,
+                  -0.18005803227424622,
+                  -0.18005803227424622,
+                  -0.02960084192454815,
+                  -0.02960084192454815,
+                  -0.12883955240249634,
+                  -0.40824267268180847,
+                  -0.04285658150911331,
+                  -0.031156307086348534,
+                  -0.13612088561058044,
+                  -0.13612088561058044,
+                  -0.13612088561058044,
+                  -0.0290602408349514,
+                  -0.061446141451597214,
+                  -0.20001034438610077,
+                  -0.20001034438610077,
+                  -0.021821403875947,
+                  -0.05844654515385628,
+                  -0.1336139738559723,
+                  -0.1336139738559723,
+                  -0.1336139738559723,
+                  -0.018855644389986992,
+                  -0.055706799030303955,
+                  -0.1987646371126175,
+                  -0.1987646371126175,
+                  -0.41437357664108276,
+                  -0.41437357664108276,
+                  -0.3949219584465027,
+                  -0.3949219584465027,
+                  -0.19811215996742249,
+                  -0.19811215996742249,
+                  -0.24890124797821045,
+                  -0.24890124797821045,
+                  -0.3303176462650299,
+                  -0.3303176462650299,
+                  -0.3303176462650299,
+                  1.9063088311826784
+                ],
+                [
+                  -3.604947566986084,
+                  -2.9056785106658936,
+                  -0.33913454413414,
+                  -2.926748037338257,
+                  -2.38510799407959,
+                  -0.5257567167282104,
+                  -1.828134536743164,
+                  0,
+                  -2.6480612754821777,
+                  -0.8143548369407654,
+                  -0.6903893351554871,
+                  -0.1253041923046112,
+                  -0.062479402869939804,
+                  -0.062479402869939804,
+                  -0.8383615612983704,
+                  -0.8383615612983704,
+                  -0.8383615612983704,
+                  0,
+                  0,
+                  0,
+                  0,
+                  -0.014480369165539742,
+                  -0.014480369165539742,
+                  -0.014480369165539742,
+                  -0.9953840374946594,
+                  -1.5863187313079834,
+                  -0.3234160840511322,
+                  -0.43470051884651184,
+                  -0.12667790055274963,
+                  -1.3476548194885254,
+                  -0.6596659421920776,
+                  -0.9673573970794678,
+                  -0.08757652342319489,
+                  -0.005919239483773708,
+                  -0.005919239483773708,
+                  -0.2551286518573761,
+                  -0.2551286518573761,
+                  0,
+                  -0.19241443276405334,
+                  -0.03789377957582474,
+                  -0.03789377957582474,
+                  -0.0037637061905115843,
+                  -0.0037637061905115843,
+                  -0.0037637061905115843,
+                  -0.21052317321300507,
+                  -0.21052317321300507,
+                  -0.2544582486152649,
+                  -0.006391435395926237,
+                  -0.006391435395926237,
+                  -0.8455570936203003,
+                  -0.4647921621799469,
+                  -0.6120399832725525,
+                  -0.7517244815826416,
+                  -4.057857513427734,
+                  -1.942470908164978,
+                  -0.3278388977050781,
+                  -0.36624324321746826,
+                  -1.0529383420944214,
+                  -0.3564922511577606,
+                  -2.801401376724243,
+                  -0.10111483931541443,
+                  -0.9455511569976807,
+                  -0.4878465533256531,
+                  -1.3169046640396118,
+                  -1.2953895330429077,
+                  -2.889972448348999,
+                  0,
+                  -0.6797518134117126,
+                  -0.6797518134117126,
+                  -0.32657143473625183,
+                  -0.683285653591156,
+                  -0.061446964740753174,
+                  -0.061446964740753174,
+                  -0.41096368432044983,
+                  -0.024129033088684082,
+                  -0.00379496649838984,
+                  -0.00379496649838984,
+                  -0.012348332442343235,
+                  0,
+                  0,
+                  -0.0006819918053224683,
+                  0,
+                  -0.022746672853827477,
+                  -0.3004908859729767,
+                  -0.6604045033454895,
+                  0,
+                  -0.008011097088456154,
+                  1.403558611869812,
+                  7.159231662750244,
+                  0.7930247187614441,
+                  2.059859037399292,
+                  7.005915641784668,
+                  -0.9819326996803284,
+                  1.7361958026885986,
+                  6.784360408782959,
+                  2.486233949661255,
+                  6.9061455726623535,
+                  3.071681261062622,
+                  5.814301013946533,
+                  -0.8062878251075745,
+                  1.8546234369277954,
+                  -0.8436328768730164,
+                  1.5492051839828491,
+                  2.316307306289673,
+                  1.6585309505462646,
+                  2.743110418319702,
+                  1.153668761253357,
+                  1.215943455696106,
+                  1.4029662609100342,
+                  1.2406620979309082,
+                  1.126178503036499,
+                  1.1506799459457397,
+                  1.3066672086715698,
+                  1.1331255435943604,
+                  1.0087732076644897,
+                  1.016180396080017,
+                  0.7057504653930664,
+                  -0.7420240044593811,
+                  2.693511962890625,
+                  3.0751280784606934,
+                  3.0751280784606934,
+                  0.6263999938964844,
+                  -0.502461314201355,
+                  -4.359025955200195,
+                  -0.6780186295509338,
+                  -0.6780186295509338,
+                  -1.1598401069641113,
+                  -0.43666374683380127,
+                  -0.43666374683380127,
+                  -1.709088921546936,
+                  -0.9068735241889954,
+                  -1.5421866178512573,
+                  -0.6832611560821533,
+                  -0.4658892750740051,
+                  -1.346680760383606,
+                  -0.6105539798736572,
+                  -0.6105539798736572,
+                  -0.3730037808418274,
+                  -0.3730037808418274,
+                  -0.3730037808418274,
+                  -0.4900108575820923,
+                  -0.6232999563217163,
+                  -0.5848507881164551,
+                  -0.5848507881164551,
+                  -0.25993120670318604,
+                  -0.25454697012901306,
+                  -0.27046215534210205,
+                  -0.27046215534210205,
+                  -0.09974168241024017,
+                  -0.09974168241024017,
+                  -0.411201536655426,
+                  -1.1671218872070312,
+                  -0.08171805739402771,
+                  -0.06391013413667679,
+                  -0.39453133940696716,
+                  -0.39453133940696716,
+                  -0.39453133940696716,
+                  -0.03843027353286743,
+                  -0.13349729776382446,
+                  -0.5370392799377441,
+                  -0.5370392799377441,
+                  -0.00947771966457367,
+                  -0.12305983155965805,
+                  -0.3585887551307678,
+                  -0.3585887551307678,
+                  -0.3585887551307678,
+                  0,
+                  -0.11648482829332352,
+                  -0.5347161889076233,
+                  -0.5347161889076233,
+                  -0.5960975289344788,
+                  -0.5960975289344788,
+                  -0.4973869025707245,
+                  -0.4973869025707245,
+                  -0.5327581167221069,
+                  -0.5327581167221069,
+                  -0.6663379669189453,
+                  -0.6663379669189453,
+                  -0.9250965714454651,
+                  -0.9250965714454651,
+                  -0.9250965714454651,
+                  5.432787343041531
+                ],
+                [
+                  -4.587973594665527,
+                  -6.258874893188477,
+                  -0.3211371600627899,
+                  7.552473068237305,
+                  2.30966854095459,
+                  -2.092176675796509,
+                  -2.8779709339141846,
+                  -2.03933048248291,
+                  3.6987037658691406,
+                  -2.194040298461914,
+                  -0.18648535013198853,
+                  -1.5237962007522583,
+                  -0.456741064786911,
+                  -0.456741064786911,
+                  -0.642255961894989,
+                  -0.14643138647079468,
+                  -0.14643138647079468,
+                  -0.618581235408783,
+                  -0.618581235408783,
+                  -0.7765375375747681,
+                  -0.7765375375747681,
+                  -0.04476727545261383,
+                  -0.04476727545261383,
+                  -0.04476727545261383,
+                  -0.3179011940956116,
+                  -1.0088478326797485,
+                  -0.22506365180015564,
+                  0,
+                  0,
+                  -0.7758453488349915,
+                  -0.29108935594558716,
+                  -0.1543092280626297,
+                  0,
+                  0,
+                  0,
+                  -0.14626699686050415,
+                  -0.14626699686050415,
+                  -0.3585451543331146,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  -0.0663955807685852,
+                  -0.0663955807685852,
+                  0,
+                  0,
+                  0,
+                  -0.1543092280626297,
+                  -0.08881426602602005,
+                  -2.3268210887908936,
+                  -0.642280638217926,
+                  -4.434577465057373,
+                  -1.5329041481018066,
+                  -0.3026544451713562,
+                  -0.27793821692466736,
+                  -1.0756429433822632,
+                  -0.27793821692466736,
+                  -1.9342538118362427,
+                  -0.16755931079387665,
+                  -0.3801270127296448,
+                  -0.27297237515449524,
+                  -0.7975850105285645,
+                  -0.7975850105285645,
+                  4.752598285675049,
+                  -1.167343258857727,
+                  -0.12822814285755157,
+                  -0.12822814285755157,
+                  -0.07208134979009628,
+                  -0.4260932505130768,
+                  -0.017780758440494537,
+                  -0.017780758440494537,
+                  -0.05559157952666283,
+                  0,
+                  0,
+                  0,
+                  -0.0040331450290977955,
+                  0,
+                  -0.5618008375167847,
+                  0,
+                  0,
+                  0,
+                  0,
+                  -0.307745099067688,
+                  0,
+                  0,
+                  -1.0077552795410156,
+                  -2.2052605152130127,
+                  -2.7043685913085938,
+                  -1.0335010290145874,
+                  -2.0887482166290283,
+                  -0.43152135610580444,
+                  -1.0343233346939087,
+                  -2.075198173522949,
+                  -0.8869292736053467,
+                  -2.112924337387085,
+                  -1.056839942932129,
+                  -1.9934372901916504,
+                  -0.16934330761432648,
+                  -0.7680739760398865,
+                  -0.36116698384284973,
+                  -0.8541756868362427,
+                  -0.8328701257705688,
+                  -0.8196126222610474,
+                  -0.9010212421417236,
+                  -0.07059449702501297,
+                  -0.07496318966150284,
+                  -0.076545350253582,
+                  -0.0767836794257164,
+                  -0.01760781556367874,
+                  -0.030805863440036774,
+                  -0.037283800542354584,
+                  -0.044723991304636,
+                  -0.0009402511641383171,
+                  -0.008852981962263584,
+                  0,
+                  -0.22410722076892853,
+                  -1.3070333003997803,
+                  -0.8261073231697083,
+                  -0.8261073231697083,
+                  0,
+                  1.5780423879623413,
+                  8.882036209106445,
+                  1.2802104949951172,
+                  1.2802104949951172,
+                  3.0084359645843506,
+                  0.0807872787117958,
+                  0.0807872787117958,
+                  4.573818206787109,
+                  1.62033212184906,
+                  3.311666965484619,
+                  1.020196557044983,
+                  0.739931583404541,
+                  3.346618890762329,
+                  1.6729258298873901,
+                  1.6729258298873901,
+                  1.2253934144973755,
+                  1.2253934144973755,
+                  1.2253934144973755,
+                  1.5630468130111694,
+                  1.587140679359436,
+                  1.2793970108032227,
+                  1.2793970108032227,
+                  1.6070170402526855,
+                  2.2407546043395996,
+                  0.8803200721740723,
+                  0.8803200721740723,
+                  0.2801114618778229,
+                  0.2801114618778229,
+                  0.7641441226005554,
+                  1.8061456680297852,
+                  0.18380683660507202,
+                  0.023590827360749245,
+                  0.8552406430244446,
+                  0.8552406430244446,
+                  0.8552406430244446,
+                  0.17975492775440216,
+                  1.5982003211975098,
+                  1.2848440408706665,
+                  1.2848440408706665,
+                  0.16946037113666534,
+                  1.5798747539520264,
+                  0.8558123707771301,
+                  0.8558123707771301,
+                  0.8558123707771301,
+                  0.15571945905685425,
+                  1.5487511157989502,
+                  1.2818154096603394,
+                  1.2818154096603394,
+                  1.6736845970153809,
+                  1.6736845970153809,
+                  1.6913771629333496,
+                  1.6913771629333496,
+                  1.2809501886367798,
+                  1.2809501886367798,
+                  1.0424765348434448,
+                  1.0424765348434448,
+                  2.583068609237671,
+                  2.583068609237671,
+                  2.583068609237671,
+                  2.8395994566792266
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "en",
+        "weather in Madrid"
+      ],
+      [
+        "en",
+        "what is the temperature in Tokyo"
+      ],
+      [
+        "en",
+        "how is the weather today"
+      ],
+      [
+        "en",
+        "temperature in London"
+      ],
+      [
+        "en",
+        "is it raining in Paris"
+      ],
+      [
+        "en",
+        "climate in New York"
+      ],
+      [
+        "en",
+        "what is the weather like in Berlin"
+      ],
+      [
+        "en",
+        "how hot is it in Miami"
+      ],
+      [
+        "en",
+        "is it sunny in Los Angeles"
+      ],
+      [
+        "en",
+        "weather forecast for Chicago"
+      ],
+      [
+        "en",
+        "current weather in Barcelona"
+      ],
+      [
+        "en",
+        "temperature check for Rome"
+      ],
+      [
+        "en",
+        "weather conditions in Moscow"
+      ],
+      [
+        "en",
+        "is it cold in Stockholm"
+      ],
+      [
+        "en",
+        "weather update for Dublin"
+      ],
+      [
+        "en",
+        "how is the climate in Sydney"
+      ],
+      [
+        "en",
+        "temperature today in Amsterdam"
+      ],
+      [
+        "en",
+        "weather status in Vienna"
+      ],
+      [
+        "en",
+        "is it windy in San Francisco"
+      ],
+      [
+        "en",
+        "weather report for Mumbai"
+      ],
+      [
+        "en",
+        "current temperature in Seoul"
+      ],
+      [
+        "en",
+        "weather in my city"
+      ],
+      [
+        "en",
+        "local weather conditions"
+      ],
+      [
+        "en",
+        "today weather forecast"
+      ],
+      [
+        "en",
+        "check weather outside"
+      ],
+      [
+        "en",
+        "show ninja twitch"
+      ],
+      [
+        "en",
+        "twitch profile summit1g"
+      ],
+      [
+        "en",
+        "get twitch user shroud"
+      ],
+      [
+        "en",
+        "ninja twitch profile"
+      ],
+      [
+        "en",
+        "check twitch streamer xqc"
+      ],
+      [
+        "en",
+        "twitch channel pokimane"
+      ],
+      [
+        "en",
+        "streamer info tfue"
+      ],
+      [
+        "en",
+        "show me amouranth twitch"
+      ],
+      [
+        "en",
+        "hasanabi twitch stats"
+      ],
+      [
+        "en",
+        "twitch user lirik"
+      ],
+      [
+        "en",
+        "streamer profile asmongold"
+      ],
+      [
+        "en",
+        "check out sodapoppin twitch"
+      ],
+      [
+        "en",
+        "twitch channel myth"
+      ],
+      [
+        "en",
+        "show twitch user timthetatman"
+      ],
+      [
+        "en",
+        "get info on twitch streamer disguisedtoast"
+      ],
+      [
+        "en",
+        "twitch profile drlupo"
+      ],
+      [
+        "en",
+        "check twitch channel nickmercs"
+      ],
+      [
+        "en",
+        "show me twitch user cohhcarnage"
+      ],
+      [
+        "en",
+        "twitch streamer info dakotaz"
+      ],
+      [
+        "en",
+        "get twitch profile kitboga"
+      ],
+      [
+        "en",
+        "show twitch channel mizkif"
+      ],
+      [
+        "en",
+        "twitch user ludwig"
+      ],
+      [
+        "en",
+        "streamer profile valkyrae"
+      ],
+      [
+        "en",
+        "check twitch user pewdiepie"
+      ],
+      [
+        "en",
+        "twitch channel info markiplier"
+      ],
+      [
+        "en",
+        "delete 5 messages"
+      ],
+      [
+        "en",
+        "remove last 10 messages"
+      ],
+      [
+        "en",
+        "purge 3 messages"
+      ],
+      [
+        "en",
+        "clear the last 7 messages"
+      ],
+      [
+        "en",
+        "clean up 15 messages"
+      ],
+      [
+        "en",
+        "delete recent 20 messages"
+      ],
+      [
+        "en",
+        "remove 2 messages"
+      ],
+      [
+        "en",
+        "purge last 50 messages"
+      ],
+      [
+        "en",
+        "clear 8 messages"
+      ],
+      [
+        "en",
+        "clean 12 messages"
+      ],
+      [
+        "en",
+        "delete one message"
+      ],
+      [
+        "en",
+        "remove two messages"
+      ],
+      [
+        "en",
+        "purge three messages"
+      ],
+      [
+        "en",
+        "clear four messages"
+      ],
+      [
+        "en",
+        "delete five messages"
+      ],
+      [
+        "en",
+        "remove six messages"
+      ],
+      [
+        "en",
+        "purge seven messages"
+      ],
+      [
+        "en",
+        "clear eight messages"
+      ],
+      [
+        "en",
+        "delete nine messages"
+      ],
+      [
+        "en",
+        "remove ten messages"
+      ],
+      [
+        "en",
+        "delete 5"
+      ],
+      [
+        "en",
+        "remove 10"
+      ],
+      [
+        "en",
+        "purge 3"
+      ],
+      [
+        "en",
+        "clear 7"
+      ],
+      [
+        "en",
+        "clean 15"
+      ],
+      [
+        "en",
+        "delete 20"
+      ],
+      [
+        "en",
+        "remove 2"
+      ],
+      [
+        "en",
+        "purge 50"
+      ],
+      [
+        "en",
+        "clear 8"
+      ],
+      [
+        "en",
+        "clean 12"
+      ],
+      [
+        "en",
+        "bulk delete messages"
+      ],
+      [
+        "en",
+        "mass delete chat"
+      ],
+      [
+        "en",
+        "cleanup chat history"
+      ],
+      [
+        "en",
+        "clear recent chat"
+      ],
+      [
+        "en",
+        "delete spam messages"
+      ],
+      [
+        "en",
+        "what is JavaScript"
+      ],
+      [
+        "en",
+        "explain quantum physics"
+      ],
+      [
+        "en",
+        "how does machine learning work"
+      ],
+      [
+        "en",
+        "tell me about artificial intelligence"
+      ],
+      [
+        "en",
+        "help me understand React"
+      ],
+      [
+        "en",
+        "what is the meaning of life"
+      ],
+      [
+        "en",
+        "how do computers work"
+      ],
+      [
+        "en",
+        "explain blockchain technology"
+      ],
+      [
+        "en",
+        "what is TypeScript"
+      ],
+      [
+        "en",
+        "how does the internet work"
+      ],
+      [
+        "en",
+        "tell me about Node.js"
+      ],
+      [
+        "en",
+        "what is artificial neural networks"
+      ],
+      [
+        "en",
+        "explain database design"
+      ],
+      [
+        "en",
+        "how does encryption work"
+      ],
+      [
+        "en",
+        "what is cloud computing"
+      ],
+      [
+        "en",
+        "explain APIs and REST"
+      ],
+      [
+        "en",
+        "how does Git work"
+      ],
+      [
+        "en",
+        "what is Docker"
+      ],
+      [
+        "en",
+        "explain microservices architecture"
+      ],
+      [
+        "en",
+        "how does authentication work"
+      ],
+      [
+        "en",
+        "what is DevOps"
+      ],
+      [
+        "en",
+        "explain CI/CD pipelines"
+      ],
+      [
+        "en",
+        "how does caching work"
+      ],
+      [
+        "en",
+        "what is GraphQL"
+      ],
+      [
+        "en",
+        "explain web security"
+      ],
+      [
+        "en",
+        "help me with programming"
+      ],
+      [
+        "en",
+        "teach me about coding"
+      ],
+      [
+        "en",
+        "explain software development"
+      ],
+      [
+        "en",
+        "what are design patterns"
+      ],
+      [
+        "en",
+        "how to optimize performance"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {
+      "1": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "2": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "3": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "4": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "5": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "6": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "7": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "8": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "9": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "10": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "12": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "15": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "20": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "50": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "amount",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "Madrid": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "city",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "Tokyo": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "city",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "London": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "city",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "Paris": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "city",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "New York": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "city",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "ninja": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "username",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "summit1g": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "username",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "shroud": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "username",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      },
+      "xqc": {
+        "en": {
+          "name": "en",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "username",
+              "texts": [
+                "en"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {
+      "en": {
+        "weather": [
+          {
+            "answer": "I will check the weather for you"
+          },
+          {
+            "answer": "Getting weather information"
+          },
+          {
+            "answer": "Fetching current weather data"
+          }
+        ],
+        "twitch": [
+          {
+            "answer": "I will get the Twitch profile for you"
+          },
+          {
+            "answer": "Fetching Twitch streamer information"
+          },
+          {
+            "answer": "Getting Twitch channel data"
+          }
+        ],
+        "moderation": [
+          {
+            "answer": "I will delete the messages for you"
+          },
+          {
+            "answer": "Purging messages from the channel"
+          },
+          {
+            "answer": "Cleaning up the chat"
+          }
+        ],
+        "ask": [
+          {
+            "answer": "I will help answer your question"
+          },
+          {
+            "answer": "Let me explain that for you"
+          },
+          {
+            "answer": "I can help you understand that topic"
+          }
+        ]
+      }
+    }
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}
