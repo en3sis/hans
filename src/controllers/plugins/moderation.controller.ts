@@ -18,14 +18,33 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
     }
 
     const fetched = await interaction.channel.messages.fetch({
-      limit: amount,
+      limit: amount + 10,
     })
 
-    await interaction.channel.bulkDelete(fetched).catch(async (err) => {
-      await interaction.editReply({ content: err.message })
+    const thinkingMessageId = (interaction as any).sentMessage?.id
+
+    const messagesToDelete = Array.from(fetched.values())
+      .filter((msg) => msg.id !== thinkingMessageId)
+      .slice(0, amount)
+
+    if (messagesToDelete.length === 0) {
+      return interaction.editReply({ content: 'No messages found to delete.' })
+    }
+
+    await interaction.channel.bulkDelete(messagesToDelete).catch(async (err) => {
+      await interaction.editReply({ content: `Error deleting messages: ${err.message}` })
     })
 
-    await interaction.editReply({ content: `🗑 Deleted ${amount} messages.` })
+    await interaction
+      .editReply({ content: `🗑 Deleted ${messagesToDelete.length} messages.` })
+      .then(() => {
+        setTimeout(() => {
+          const sentMessage = (interaction as any).sentMessage
+          if (sentMessage && sentMessage.delete) {
+            sentMessage.delete().catch(() => {})
+          }
+        }, 2000)
+      })
   } catch (error) {
     throw Error(error.message)
   }

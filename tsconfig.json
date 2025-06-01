@@ -27,5 +27,5 @@
   },
   "lib": ["esnext"],
   "typeRoots": ["./src/", "./node_modules/@types"],
-  "exclude": ["node_modules/", "build/", "tests/**"]
+  "exclude": ["node_modules/", "build/", "tests/**", "_old"]
 }

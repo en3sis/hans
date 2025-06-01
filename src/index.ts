@@ -5,6 +5,7 @@ import path from 'path'
 import supabase from './libs/supabase'
 import { reportErrorToMonitoring } from './utils/monitoring'
 import { ProjectValidator } from './utils/pre-validation'
+import { HansNLP } from './libs/nlp'
 
 /** =============================================================================
  * 🛠 Initial configuration
@@ -27,6 +28,25 @@ export const Hans = new Client({
 })
 
 Hans.supabase = supabase
+
+/** =============================================================================
+ * 🤖 NLP initialization
+  ============================================================================== */
+const initializeNLP = async () => {
+  try {
+    if (!!process.env.ISDEV) {
+      console.log('🧠 [STARTUP] Initializing NLP system...')
+    }
+    const nlp = new HansNLP()
+    await nlp.initialize()
+    if (!!process.env.ISDEV) {
+      console.log('✅ [STARTUP] NLP system ready!')
+    }
+  } catch (error) {
+    console.error('❌ [STARTUP] Failed to initialize NLP:', error)
+  }
+}
+
 /** =============================================================================
  * 🎉 Command handlers
   ============================================================================== */
@@ -80,7 +100,15 @@ for (const file of eventFiles) {
   }
 }
 
-Hans.login(process.env.DISCORD_TOKEN!)
+// Initialize NLP system before bot login
+initializeNLP()
+  .then(() => {
+    Hans.login(process.env.DISCORD_TOKEN!)
+  })
+  .catch((error) => {
+    console.error('❌ [STARTUP] Failed to start bot due to NLP initialization error:', error)
+    process.exit(1)
+  })
 
 Hans.on('error', (err) => !!process.env.ISDEV && console.log('❌ ERROR: initHans()', err))
 Hans.on('debug', (msg) => !!process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))

@@ -54,6 +54,7 @@
     "dotenv": "^16.0.2",
     "lodash": "^4.17.21",
     "node-cache": "^5.1.2",
+    "node-nlp": "^5.0.0-alpha.5",
     "openai": "^4.82.0",
     "redis": "^4.6.8",
     "sentiment": "^5.0.2",
