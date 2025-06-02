@@ -19,12 +19,14 @@ module.exports = {
 
       // Check if the bot is mentioned and handle NLP
       const inDevName = process.env.ISDEV ? 'bot' : 'hans'
+      const mentionedUserIds = message.mentions.users.map((user) => user.id)
+      const isBotMentioned = mentionedUserIds.includes(Hans.user!.id)
+
       if (
-        message.mentions.has(Hans.user!.id) ||
+        (isBotMentioned && !message.mentions.everyone) ||
         message.content.toLowerCase().startsWith(inDevName)
       ) {
         await handleMentionNLPLib(message)
-
         return
       }
 
