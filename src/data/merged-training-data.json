@@ -2,6 +2,42 @@
   "weather": {
     "intents": [
       {
+        "utterance": "What is the weather in Málaga?",
+        "entities": [
+          { "start": 23, "end": 29, "entity": "city", "sourceText": "Málaga" }
+        ]
+      },
+      {
+        "utterance": "What is the weather in Bogotá?",
+        "entities": [
+          { "start": 23, "end": 29, "entity": "city", "sourceText": "Bogotá" }
+        ]
+      },
+      {
+        "utterance": "Is it raining in Málaga?",
+        "entities": [
+          { "start": 17, "end": 23, "entity": "city", "sourceText": "Málaga" }
+        ]
+      },
+      {
+        "utterance": "What is the weather in São Paulo?",
+        "entities": [
+          { "start": 23, "end": 32, "entity": "city", "sourceText": "São Paulo" }
+        ]
+      },
+      {
+        "utterance": "Give me the forecast for Bogotá",
+        "entities": [
+          { "start": 25, "end": 31, "entity": "city", "sourceText": "Bogotá" }
+        ]
+      },
+      {
+        "utterance": "How's the weather in Montréal?",
+        "entities": [
+          { "start": 21, "end": 29, "entity": "city", "sourceText": "Montréal" }
+        ]
+      },
+      {
         "utterance": "is it raining in New York",
         "entities": [
           {

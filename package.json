@@ -13,8 +13,9 @@
   "scripts": {
     "start": "node build/utils/deploy-commands.js && node build/index.js",
     "dev": "docker-compose -f docker-compose.dev.yaml up -d && ISDEV=true nodemon hans",
-    "build": "tsc --project ./ && yarn generate-nlp-model",
-    "generate-nlp-model": "node scripts/generate-nlp-model.js",
+    "build": "rm -rf ./build && tsc --project ./ && yarn generate-nlp-model",
+    "generate-nlp-model": "rm -rf ./src/models/hans-nlp-model.nlp && node scripts/generate-nlp-model.js",
+    "validate-nlp-dataset": "node scripts/check-entity-indices.js",
     "types:local": "supabase gen types typescript --local --schema public > src/types/database.types.ts",
     "build_dev": "rm -rf ./build && tsc --project ./",
     "lint": "eslint . --fix",

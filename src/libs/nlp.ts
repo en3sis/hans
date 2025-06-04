@@ -307,7 +307,7 @@ export class HansNLP {
 
           if (userMatch) {
             const potentialUser = userMatch[1]
-            // Skip common words that might be matched
+            // Skip common words and numbers that might be matched
             const commonWords = [
               'last',
               'recent',
@@ -319,7 +319,10 @@ export class HansNLP {
               'these',
               'those',
             ]
-            if (!commonWords.includes(potentialUser.toLowerCase())) {
+            if (
+              !commonWords.includes(potentialUser.toLowerCase()) &&
+              isNaN(Number(potentialUser))
+            ) {
               params.user = potentialUser
               extractionLog.push(`👤 User from pattern: "${params.user}"`)
             }
