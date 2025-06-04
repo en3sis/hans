@@ -1,0 +1,2676 @@
+{
+  "weather": {
+    "intents": [
+      {
+        "utterance": "is it raining in New York",
+        "entities": [
+          {
+            "start": 17,
+            "end": 25,
+            "entity": "city",
+            "sourceText": "New York"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the weather like in London",
+        "entities": [
+          {
+            "start": 27,
+            "end": 33,
+            "entity": "city",
+            "sourceText": "London"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the forecast for Dubai this weekend",
+        "entities": [
+          {
+            "start": 24,
+            "end": 29,
+            "entity": "city",
+            "sourceText": "Dubai"
+          }
+        ]
+      },
+      {
+        "utterance": "temperature forecast for Dubai",
+        "entities": [
+          {
+            "start": 25,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Dubai"
+          }
+        ]
+      },
+      {
+        "utterance": "sunny in Toronto tomorrow?",
+        "entities": [
+          {
+            "start": 9,
+            "end": 16,
+            "entity": "city",
+            "sourceText": "Toronto"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the forecast for Rome this weekend",
+        "entities": [
+          {
+            "start": 24,
+            "end": 28,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "how's the weather in Paris today",
+        "entities": [
+          {
+            "start": 21,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Paris"
+          }
+        ]
+      },
+      {
+        "utterance": "humidity levels in Toronto today",
+        "entities": [
+          {
+            "start": 19,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Toronto"
+          }
+        ]
+      },
+      {
+        "utterance": "weather conditions in London now",
+        "entities": [
+          {
+            "start": 22,
+            "end": 28,
+            "entity": "city",
+            "sourceText": "London"
+          }
+        ]
+      },
+      {
+        "utterance": "is it raining in Rome",
+        "entities": [
+          {
+            "start": 17,
+            "end": 21,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "is it raining in San Francisco",
+        "entities": [
+          {
+            "start": 17,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "San Francisco"
+          }
+        ]
+      },
+      {
+        "utterance": "weather conditions in Rome now",
+        "entities": [
+          {
+            "start": 22,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "temperature forecast for New York",
+        "entities": [
+          {
+            "start": 25,
+            "end": 33,
+            "entity": "city",
+            "sourceText": "New York"
+          }
+        ]
+      },
+      {
+        "utterance": "will it snow in Dubai",
+        "entities": [
+          {
+            "start": 16,
+            "end": 21,
+            "entity": "city",
+            "sourceText": "Dubai"
+          }
+        ]
+      },
+      {
+        "utterance": "will it snow in Paris",
+        "entities": [
+          {
+            "start": 16,
+            "end": 21,
+            "entity": "city",
+            "sourceText": "Paris"
+          }
+        ]
+      },
+      {
+        "utterance": "is it raining in Dubai",
+        "entities": [
+          {
+            "start": 17,
+            "end": 22,
+            "entity": "city",
+            "sourceText": "Dubai"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the weather like in Tokyo",
+        "entities": [
+          {
+            "start": 27,
+            "end": 32,
+            "entity": "city",
+            "sourceText": "Tokyo"
+          }
+        ]
+      },
+      {
+        "utterance": "weather conditions in New York now",
+        "entities": [
+          {
+            "start": 22,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "New York"
+          }
+        ]
+      },
+      {
+        "utterance": "temperature forecast for Berlin",
+        "entities": [
+          {
+            "start": 25,
+            "end": 31,
+            "entity": "city",
+            "sourceText": "Berlin"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the forecast for New York this weekend",
+        "entities": [
+          {
+            "start": 24,
+            "end": 32,
+            "entity": "city",
+            "sourceText": "New York"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the weather like in Rome",
+        "entities": [
+          {
+            "start": 27,
+            "end": 31,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "weather conditions in Toronto now",
+        "entities": [
+          {
+            "start": 22,
+            "end": 29,
+            "entity": "city",
+            "sourceText": "Toronto"
+          }
+        ]
+      },
+      {
+        "utterance": "do I need an umbrella in London",
+        "entities": [
+          {
+            "start": 25,
+            "end": 31,
+            "entity": "city",
+            "sourceText": "London"
+          }
+        ]
+      },
+      {
+        "utterance": "sunny in Berlin tomorrow?",
+        "entities": [
+          {
+            "start": 9,
+            "end": 15,
+            "entity": "city",
+            "sourceText": "Berlin"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the forecast for Madrid this weekend",
+        "entities": [
+          {
+            "start": 24,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Madrid"
+          }
+        ]
+      },
+      {
+        "utterance": "how's the weather in San Francisco today",
+        "entities": [
+          {
+            "start": 21,
+            "end": 34,
+            "entity": "city",
+            "sourceText": "San Francisco"
+          }
+        ]
+      },
+      {
+        "utterance": "temperature forecast for San Francisco",
+        "entities": [
+          {
+            "start": 25,
+            "end": 38,
+            "entity": "city",
+            "sourceText": "San Francisco"
+          }
+        ]
+      },
+      {
+        "utterance": "do I need an umbrella in Dubai",
+        "entities": [
+          {
+            "start": 25,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Dubai"
+          }
+        ]
+      },
+      {
+        "utterance": "humidity levels in Rome today",
+        "entities": [
+          {
+            "start": 19,
+            "end": 23,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "do I need an umbrella in Tokyo",
+        "entities": [
+          {
+            "start": 25,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Tokyo"
+          }
+        ]
+      },
+      {
+        "utterance": "humidity levels in New York today",
+        "entities": [
+          {
+            "start": 19,
+            "end": 27,
+            "entity": "city",
+            "sourceText": "New York"
+          }
+        ]
+      },
+      {
+        "utterance": "will it snow in Rome",
+        "entities": [
+          {
+            "start": 16,
+            "end": 20,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "how's the weather in London today",
+        "entities": [
+          {
+            "start": 21,
+            "end": 27,
+            "entity": "city",
+            "sourceText": "London"
+          }
+        ]
+      },
+      {
+        "utterance": "humidity levels in Berlin today",
+        "entities": [
+          {
+            "start": 19,
+            "end": 25,
+            "entity": "city",
+            "sourceText": "Berlin"
+          }
+        ]
+      },
+      {
+        "utterance": "how's the weather in Toronto today",
+        "entities": [
+          {
+            "start": 21,
+            "end": 28,
+            "entity": "city",
+            "sourceText": "Toronto"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the weather like in Dubai",
+        "entities": [
+          {
+            "start": 27,
+            "end": 32,
+            "entity": "city",
+            "sourceText": "Dubai"
+          }
+        ]
+      },
+      {
+        "utterance": "temperature forecast for Rome",
+        "entities": [
+          {
+            "start": 25,
+            "end": 29,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "is it raining in Tokyo",
+        "entities": [
+          {
+            "start": 17,
+            "end": 22,
+            "entity": "city",
+            "sourceText": "Tokyo"
+          }
+        ]
+      },
+      {
+        "utterance": "sunny in Rome tomorrow?",
+        "entities": [
+          {
+            "start": 9,
+            "end": 13,
+            "entity": "city",
+            "sourceText": "Rome"
+          }
+        ]
+      },
+      {
+        "utterance": "do I need an umbrella in Paris",
+        "entities": [
+          {
+            "start": 25,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Paris"
+          }
+        ]
+      },
+      {
+        "utterance": "sunny in London tomorrow?",
+        "entities": [
+          {
+            "start": 9,
+            "end": 15,
+            "entity": "city",
+            "sourceText": "London"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the forecast for London this weekend",
+        "entities": [
+          {
+            "start": 24,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "London"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the weather like in New York today?",
+        "entities": [
+          {
+            "start": 27,
+            "end": 35,
+            "entity": "city",
+            "sourceText": "New York"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it raining in London right now?",
+        "entities": [
+          {
+            "start": 17,
+            "end": 23,
+            "entity": "city",
+            "sourceText": "London"
+          }
+        ]
+      },
+      {
+        "utterance": "Tell me the forecast for Tokyo tomorrow",
+        "entities": [
+          {
+            "start": 25,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Tokyo"
+          }
+        ]
+      },
+      {
+        "utterance": "How cold is it in Chicago this week?",
+        "entities": [
+          {
+            "start": 18,
+            "end": 25,
+            "entity": "city",
+            "sourceText": "Chicago"
+          }
+        ]
+      },
+      {
+        "utterance": "Will it snow in Moscow next weekend?",
+        "entities": [
+          {
+            "start": 16,
+            "end": 22,
+            "entity": "city",
+            "sourceText": "Moscow"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the temperature in Paris today?",
+        "entities": [
+          {
+            "start": 26,
+            "end": 31,
+            "entity": "city",
+            "sourceText": "Paris"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it sunny in Sydney this afternoon?",
+        "entities": [
+          {
+            "start": 15,
+            "end": 21,
+            "entity": "city",
+            "sourceText": "Sydney"
+          }
+        ]
+      },
+      {
+        "utterance": "How's the weather in Dubai right now?",
+        "entities": [
+          {
+            "start": 21,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Dubai"
+          }
+        ]
+      },
+      {
+        "utterance": "Give me the weather for Berlin this evening",
+        "entities": [
+          {
+            "start": 24,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Berlin"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it windy in Seattle today?",
+        "entities": [
+          {
+            "start": 15,
+            "end": 22,
+            "entity": "city",
+            "sourceText": "Seattle"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the humidity in Miami right now?",
+        "entities": [
+          {
+            "start": 23,
+            "end": 28,
+            "entity": "city",
+            "sourceText": "Miami"
+          }
+        ]
+      },
+      {
+        "utterance": "Will it be cloudy in Toronto tomorrow?",
+        "entities": [
+          {
+            "start": 21,
+            "end": 28,
+            "entity": "city",
+            "sourceText": "Toronto"
+          }
+        ]
+      },
+      {
+        "utterance": "How warm is it in Athens this morning?",
+        "entities": [
+          {
+            "start": 18,
+            "end": 24,
+            "entity": "city",
+            "sourceText": "Athens"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it foggy in San Francisco today?",
+        "entities": [
+          {
+            "start": 15,
+            "end": 28,
+            "entity": "city",
+            "sourceText": "San Francisco"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the weather like in Cairo this week?",
+        "entities": [
+          {
+            "start": 27,
+            "end": 32,
+            "entity": "city",
+            "sourceText": "Cairo"
+          }
+        ]
+      },
+      {
+        "utterance": "Will it rain in Vancouver this evening?",
+        "entities": [
+          {
+            "start": 16,
+            "end": 25,
+            "entity": "city",
+            "sourceText": "Vancouver"
+          }
+        ]
+      },
+      {
+        "utterance": "How's the weather in Mumbai today?",
+        "entities": [
+          {
+            "start": 21,
+            "end": 27,
+            "entity": "city",
+            "sourceText": "Mumbai"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it hot in Bangkok right now?",
+        "entities": [
+          {
+            "start": 13,
+            "end": 20,
+            "entity": "city",
+            "sourceText": "Bangkok"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the forecast for Lisbon tomorrow?",
+        "entities": [
+          {
+            "start": 24,
+            "end": 30,
+            "entity": "city",
+            "sourceText": "Lisbon"
+          }
+        ]
+      },
+      {
+        "utterance": "Will it be sunny in Madrid this weekend?",
+        "entities": [
+          {
+            "start": 20,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Madrid"
+          }
+        ]
+      },
+      {
+        "utterance": "How cold is it in Oslo today?",
+        "entities": [
+          {
+            "start": 18,
+            "end": 22,
+            "entity": "city",
+            "sourceText": "Oslo"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it raining in Amsterdam right now?",
+        "entities": [
+          {
+            "start": 17,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Amsterdam"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the temperature in Jakarta this afternoon?",
+        "entities": [
+          {
+            "start": 26,
+            "end": 33,
+            "entity": "city",
+            "sourceText": "Jakarta"
+          }
+        ]
+      },
+      {
+        "utterance": "Will it snow in Helsinki next week?",
+        "entities": [
+          {
+            "start": 16,
+            "end": 24,
+            "entity": "city",
+            "sourceText": "Helsinki"
+          }
+        ]
+      },
+      {
+        "utterance": "How's the weather in Istanbul today?",
+        "entities": [
+          {
+            "start": 21,
+            "end": 29,
+            "entity": "city",
+            "sourceText": "Istanbul"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it cloudy in Buenos Aires right now?",
+        "entities": [
+          {
+            "start": 16,
+            "end": 28,
+            "entity": "city",
+            "sourceText": "Buenos Aires"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the weather like in Cape Town this morning?",
+        "entities": [
+          {
+            "start": 27,
+            "end": 36,
+            "entity": "city",
+            "sourceText": "Cape Town"
+          }
+        ]
+      },
+      {
+        "utterance": "Will it be windy in Prague tomorrow?",
+        "entities": [
+          {
+            "start": 20,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Prague"
+          }
+        ]
+      },
+      {
+        "utterance": "How warm is it in Auckland today?",
+        "entities": [
+          {
+            "start": 18,
+            "end": 26,
+            "entity": "city",
+            "sourceText": "Auckland"
+          }
+        ]
+      },
+      {
+        "utterance": "Is it sunny in Barcelona this evening?",
+        "entities": [
+          {
+            "start": 15,
+            "end": 24,
+            "entity": "city",
+            "sourceText": "Barcelona"
+          }
+        ]
+      }
+    ],
+    "answers": [
+      "It's currently {condition} in {city} with a temperature of {temp}°C.",
+      "The weather in {city} today is {condition}.",
+      "Expect {condition} in {city}.",
+      "Today in {city}, the temperature will range between {low}°C and {high}°C.",
+      "{city} is experiencing {condition} today.",
+      "Let me check the weather for you!",
+      "Here's the current weather report.",
+      "I'll get the forecast for that city.",
+      "Checking the weather conditions now.",
+      "Here's what the weather looks like."
+    ]
+  },
+  "twitch": {
+    "intents": [
+      {
+        "utterance": "stream schedule of Sodapoppin",
+        "entities": [
+          {
+            "start": 19,
+            "end": 29,
+            "entity": "username",
+            "sourceText": "Sodapoppin"
+          }
+        ]
+      },
+      {
+        "utterance": "is Sodapoppin streaming now",
+        "entities": [
+          {
+            "start": 3,
+            "end": 13,
+            "entity": "username",
+            "sourceText": "Sodapoppin"
+          }
+        ]
+      },
+      {
+        "utterance": "what game is Summit1g playing",
+        "entities": [
+          {
+            "start": 13,
+            "end": 21,
+            "entity": "username",
+            "sourceText": "Summit1g"
+          }
+        ]
+      },
+      {
+        "utterance": "current title of Myth's stream",
+        "entities": [
+          {
+            "start": 17,
+            "end": 21,
+            "entity": "username",
+            "sourceText": "Myth"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for Summit1g",
+        "entities": [
+          {
+            "start": 28,
+            "end": 36,
+            "entity": "username",
+            "sourceText": "Summit1g"
+          }
+        ]
+      },
+      {
+        "utterance": "is DrDisrespect streaming now",
+        "entities": [
+          {
+            "start": 3,
+            "end": 15,
+            "entity": "username",
+            "sourceText": "DrDisrespect"
+          }
+        ]
+      },
+      {
+        "utterance": "stream schedule of Pokimane",
+        "entities": [
+          {
+            "start": 19,
+            "end": 27,
+            "entity": "username",
+            "sourceText": "Pokimane"
+          }
+        ]
+      },
+      {
+        "utterance": "stream schedule of Shroud",
+        "entities": [
+          {
+            "start": 19,
+            "end": 25,
+            "entity": "username",
+            "sourceText": "Shroud"
+          }
+        ]
+      },
+      {
+        "utterance": "what game is DrDisrespect playing",
+        "entities": [
+          {
+            "start": 13,
+            "end": 25,
+            "entity": "username",
+            "sourceText": "DrDisrespect"
+          }
+        ]
+      },
+      {
+        "utterance": "any clips from Sodapoppin today",
+        "entities": [
+          {
+            "start": 15,
+            "end": 25,
+            "entity": "username",
+            "sourceText": "Sodapoppin"
+          }
+        ]
+      },
+      {
+        "utterance": "when is Summit1g going live",
+        "entities": [
+          {
+            "start": 8,
+            "end": 16,
+            "entity": "username",
+            "sourceText": "Summit1g"
+          }
+        ]
+      },
+      {
+        "utterance": "show me xQc's stream",
+        "entities": [
+          {
+            "start": 8,
+            "end": 11,
+            "entity": "username",
+            "sourceText": "xQc"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for Lirik",
+        "entities": [
+          {
+            "start": 28,
+            "end": 33,
+            "entity": "username",
+            "sourceText": "Lirik"
+          }
+        ]
+      },
+      {
+        "utterance": "what game is Myth playing",
+        "entities": [
+          {
+            "start": 13,
+            "end": 17,
+            "entity": "username",
+            "sourceText": "Myth"
+          }
+        ]
+      },
+      {
+        "utterance": "which channel does Myth stream on",
+        "entities": [
+          {
+            "start": 19,
+            "end": 23,
+            "entity": "username",
+            "sourceText": "Myth"
+          }
+        ]
+      },
+      {
+        "utterance": "what game is Asmongold playing",
+        "entities": [
+          {
+            "start": 13,
+            "end": 22,
+            "entity": "username",
+            "sourceText": "Asmongold"
+          }
+        ]
+      },
+      {
+        "utterance": "show me Shroud's stream",
+        "entities": [
+          {
+            "start": 8,
+            "end": 14,
+            "entity": "username",
+            "sourceText": "Shroud"
+          }
+        ]
+      },
+      {
+        "utterance": "current title of Pokimane's stream",
+        "entities": [
+          {
+            "start": 17,
+            "end": 25,
+            "entity": "username",
+            "sourceText": "Pokimane"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for Ninja",
+        "entities": [
+          {
+            "start": 28,
+            "end": 33,
+            "entity": "username",
+            "sourceText": "Ninja"
+          }
+        ]
+      },
+      {
+        "utterance": "what category is Ninja streaming in",
+        "entities": [
+          {
+            "start": 17,
+            "end": 22,
+            "entity": "username",
+            "sourceText": "Ninja"
+          }
+        ]
+      },
+      {
+        "utterance": "which channel does Ninja stream on",
+        "entities": [
+          {
+            "start": 19,
+            "end": 24,
+            "entity": "username",
+            "sourceText": "Ninja"
+          }
+        ]
+      },
+      {
+        "utterance": "when is Myth going live",
+        "entities": [
+          {
+            "start": 8,
+            "end": 12,
+            "entity": "username",
+            "sourceText": "Myth"
+          }
+        ]
+      },
+      {
+        "utterance": "stream schedule of xQc",
+        "entities": [
+          {
+            "start": 19,
+            "end": 22,
+            "entity": "username",
+            "sourceText": "xQc"
+          }
+        ]
+      },
+      {
+        "utterance": "any clips from Lirik today",
+        "entities": [
+          {
+            "start": 15,
+            "end": 20,
+            "entity": "username",
+            "sourceText": "Lirik"
+          }
+        ]
+      },
+      {
+        "utterance": "when is xQc going live",
+        "entities": [
+          {
+            "start": 8,
+            "end": 11,
+            "entity": "username",
+            "sourceText": "xQc"
+          }
+        ]
+      },
+      {
+        "utterance": "when is Sodapoppin going live",
+        "entities": [
+          {
+            "start": 8,
+            "end": 18,
+            "entity": "username",
+            "sourceText": "Sodapoppin"
+          }
+        ]
+      },
+      {
+        "utterance": "what category is xQc streaming in",
+        "entities": [
+          {
+            "start": 17,
+            "end": 20,
+            "entity": "username",
+            "sourceText": "xQc"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for Shroud",
+        "entities": [
+          {
+            "start": 28,
+            "end": 34,
+            "entity": "username",
+            "sourceText": "Shroud"
+          }
+        ]
+      },
+      {
+        "utterance": "current title of Shroud's stream",
+        "entities": [
+          {
+            "start": 17,
+            "end": 23,
+            "entity": "username",
+            "sourceText": "Shroud"
+          }
+        ]
+      },
+      {
+        "utterance": "what category is Shroud streaming in",
+        "entities": [
+          {
+            "start": 17,
+            "end": 23,
+            "entity": "username",
+            "sourceText": "Shroud"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for Pokimane",
+        "entities": [
+          {
+            "start": 28,
+            "end": 36,
+            "entity": "username",
+            "sourceText": "Pokimane"
+          }
+        ]
+      },
+      {
+        "utterance": "stream schedule of DrDisrespect",
+        "entities": [
+          {
+            "start": 19,
+            "end": 31,
+            "entity": "username",
+            "sourceText": "DrDisrespect"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for Asmongold",
+        "entities": [
+          {
+            "start": 28,
+            "end": 37,
+            "entity": "username",
+            "sourceText": "Asmongold"
+          }
+        ]
+      },
+      {
+        "utterance": "what game is Sodapoppin playing",
+        "entities": [
+          {
+            "start": 13,
+            "end": 23,
+            "entity": "username",
+            "sourceText": "Sodapoppin"
+          }
+        ]
+      },
+      {
+        "utterance": "what category is Sodapoppin streaming in",
+        "entities": [
+          {
+            "start": 17,
+            "end": 27,
+            "entity": "username",
+            "sourceText": "Sodapoppin"
+          }
+        ]
+      },
+      {
+        "utterance": "what category is Asmongold streaming in",
+        "entities": [
+          {
+            "start": 17,
+            "end": 26,
+            "entity": "username",
+            "sourceText": "Asmongold"
+          }
+        ]
+      },
+      {
+        "utterance": "what game is Shroud playing",
+        "entities": [
+          {
+            "start": 13,
+            "end": 19,
+            "entity": "username",
+            "sourceText": "Shroud"
+          }
+        ]
+      },
+      {
+        "utterance": "what game is Ninja playing",
+        "entities": [
+          {
+            "start": 13,
+            "end": 18,
+            "entity": "username",
+            "sourceText": "Ninja"
+          }
+        ]
+      },
+      {
+        "utterance": "is Summit1g streaming now",
+        "entities": [
+          {
+            "start": 3,
+            "end": 11,
+            "entity": "username",
+            "sourceText": "Summit1g"
+          }
+        ]
+      },
+      {
+        "utterance": "current title of DrDisrespect's stream",
+        "entities": [
+          {
+            "start": 17,
+            "end": 29,
+            "entity": "username",
+            "sourceText": "DrDisrespect"
+          }
+        ]
+      },
+      {
+        "utterance": "which channel does Summit1g stream on",
+        "entities": [
+          {
+            "start": 19,
+            "end": 27,
+            "entity": "username",
+            "sourceText": "Summit1g"
+          }
+        ]
+      },
+      {
+        "utterance": "current title of Asmongold's stream",
+        "entities": [
+          {
+            "start": 17,
+            "end": 26,
+            "entity": "username",
+            "sourceText": "Asmongold"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for xQc",
+        "entities": [
+          {
+            "start": 28,
+            "end": 31,
+            "entity": "username",
+            "sourceText": "xQc"
+          }
+        ]
+      },
+      {
+        "utterance": "is Lirik streaming now",
+        "entities": [
+          {
+            "start": 3,
+            "end": 8,
+            "entity": "username",
+            "sourceText": "Lirik"
+          }
+        ]
+      },
+      {
+        "utterance": "what's the viewer count for Myth",
+        "entities": [
+          {
+            "start": 28,
+            "end": 32,
+            "entity": "username",
+            "sourceText": "Myth"
+          }
+        ]
+      },
+      {
+        "utterance": "Show me Ninja Twitch stream",
+        "entities": [
+          {
+            "start": 8,
+            "end": 13,
+            "entity": "username",
+            "sourceText": "Ninja"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Ninja streaming on Twitch right now?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 8,
+            "entity": "username",
+            "sourceText": "Ninja"
+          }
+        ]
+      },
+      {
+        "utterance": "What's xQc playing on Twitch today?",
+        "entities": [
+          {
+            "start": 7,
+            "end": 10,
+            "entity": "username",
+            "sourceText": "xQc"
+          }
+        ]
+      },
+      {
+        "utterance": "Tell me about Pokimane's Twitch channel",
+        "entities": [
+          {
+            "start": 14,
+            "end": 22,
+            "entity": "username",
+            "sourceText": "Pokimane"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Shroud live on Twitch right now?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 9,
+            "entity": "username",
+            "sourceText": "Shroud"
+          }
+        ]
+      },
+      {
+        "utterance": "What games does Summit1g play on Twitch?",
+        "entities": [
+          {
+            "start": 16,
+            "end": 24,
+            "entity": "username",
+            "sourceText": "Summit1g"
+          }
+        ]
+      },
+      {
+        "utterance": "Is TimTheTatman streaming today?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 15,
+            "entity": "username",
+            "sourceText": "TimTheTatman"
+          }
+        ]
+      },
+      {
+        "utterance": "Check if DrDisrespect is live on Twitch",
+        "entities": [
+          {
+            "start": 9,
+            "end": 21,
+            "entity": "username",
+            "sourceText": "DrDisrespect"
+          }
+        ]
+      },
+      {
+        "utterance": "What's the schedule for Lirik on Twitch?",
+        "entities": [
+          {
+            "start": 24,
+            "end": 29,
+            "entity": "username",
+            "sourceText": "Lirik"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Myth streaming on Twitch right now?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 7,
+            "entity": "username",
+            "sourceText": "Myth"
+          }
+        ]
+      },
+      {
+        "utterance": "Tell me about Asmongold's Twitch streams",
+        "entities": [
+          {
+            "start": 14,
+            "end": 23,
+            "entity": "username",
+            "sourceText": "Asmongold"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Valkyrae live on Twitch today?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 11,
+            "entity": "username",
+            "sourceText": "Valkyrae"
+          }
+        ]
+      },
+      {
+        "utterance": "What does Nickmercs stream on Twitch?",
+        "entities": [
+          {
+            "start": 10,
+            "end": 19,
+            "entity": "username",
+            "sourceText": "Nickmercs"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Sykkuno streaming right now?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 10,
+            "entity": "username",
+            "sourceText": "Sykkuno"
+          }
+        ]
+      },
+      {
+        "utterance": "Check Ludwig's Twitch channel",
+        "entities": [
+          {
+            "start": 6,
+            "end": 12,
+            "entity": "username",
+            "sourceText": "Ludwig"
+          }
+        ]
+      },
+      {
+        "utterance": "Is HasanAbi live on Twitch?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 11,
+            "entity": "username",
+            "sourceText": "HasanAbi"
+          }
+        ]
+      },
+      {
+        "utterance": "What's Moonmoon playing on Twitch?",
+        "entities": [
+          {
+            "start": 7,
+            "end": 15,
+            "entity": "username",
+            "sourceText": "Moonmoon"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Amouranth streaming today?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 12,
+            "entity": "username",
+            "sourceText": "Amouranth"
+          }
+        ]
+      },
+      {
+        "utterance": "Tell me about Sodapoppin's Twitch content",
+        "entities": [
+          {
+            "start": 14,
+            "end": 24,
+            "entity": "username",
+            "sourceText": "Sodapoppin"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Tfue live on Twitch right now?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 7,
+            "entity": "username",
+            "sourceText": "Tfue"
+          }
+        ]
+      },
+      {
+        "utterance": "What games does DisguisedToast play?",
+        "entities": [
+          {
+            "start": 16,
+            "end": 30,
+            "entity": "username",
+            "sourceText": "DisguisedToast"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Ibai streaming on Twitch?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 7,
+            "entity": "username",
+            "sourceText": "Ibai"
+          }
+        ]
+      },
+      {
+        "utterance": "Check if Auronplay is live",
+        "entities": [
+          {
+            "start": 9,
+            "end": 18,
+            "entity": "username",
+            "sourceText": "Auronplay"
+          }
+        ]
+      },
+      {
+        "utterance": "What's Rubius streaming today?",
+        "entities": [
+          {
+            "start": 7,
+            "end": 13,
+            "entity": "username",
+            "sourceText": "Rubius"
+          }
+        ]
+      },
+      {
+        "utterance": "Is CourageJD live on Twitch?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 12,
+            "entity": "username",
+            "sourceText": "CourageJD"
+          }
+        ]
+      },
+      {
+        "utterance": "Tell me about Sapnap's Twitch channel",
+        "entities": [
+          {
+            "start": 14,
+            "end": 20,
+            "entity": "username",
+            "sourceText": "Sapnap"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Dream streaming on Twitch right now?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 8,
+            "entity": "username",
+            "sourceText": "Dream"
+          }
+        ]
+      },
+      {
+        "utterance": "What does TommyInnit stream on Twitch?",
+        "entities": [
+          {
+            "start": 10,
+            "end": 20,
+            "entity": "username",
+            "sourceText": "TommyInnit"
+          }
+        ]
+      },
+      {
+        "utterance": "Is Ranboo live on Twitch today?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 9,
+            "entity": "username",
+            "sourceText": "Ranboo"
+          }
+        ]
+      },
+      {
+        "utterance": "Check WilburSoot's Twitch schedule",
+        "entities": [
+          {
+            "start": 6,
+            "end": 16,
+            "entity": "username",
+            "sourceText": "WilburSoot"
+          }
+        ]
+      },
+      {
+        "utterance": "Is GeorgeNotFound streaming right now?",
+        "entities": [
+          {
+            "start": 3,
+            "end": 17,
+            "entity": "username",
+            "sourceText": "GeorgeNotFound"
+          }
+        ]
+      }
+    ],
+    "answers": [
+      "{username} is currently live playing {game}.",
+      "{username} is not streaming right now.",
+      "The current stream title for {username} is: {title}.",
+      "You can watch {username}'s stream at twitch.tv/{username}.",
+      "{username} usually streams at {time}.",
+      "Let me check that streamer's status for you!",
+      "Here's the latest on that Twitch channel.",
+      "Checking Twitch for that streamer now.",
+      "I'll find out what's happening on that stream.",
+      "Here's the info on that Twitch streamer."
+    ]
+  },
+  "moderation": {
+    "intents": [
+      {
+        "utterance": "remove all messages from @troublemaker",
+        "entities": [
+          {
+            "start": 25,
+            "end": 38,
+            "entity": "user",
+            "sourceText": "@troublemaker"
+          }
+        ]
+      },
+      {
+        "utterance": "delete last message from @user42",
+        "entities": [
+          {
+            "start": 25,
+            "end": 32,
+            "entity": "user",
+            "sourceText": "@user42"
+          }
+        ]
+      },
+      {
+        "utterance": "kick @spammer123 from the chat",
+        "entities": [
+          {
+            "start": 5,
+            "end": 16,
+            "entity": "user",
+            "sourceText": "@spammer123"
+          }
+        ]
+      },
+      {
+        "utterance": "mute @modbot for 5 minutes",
+        "entities": [
+          {
+            "start": 5,
+            "end": 12,
+            "entity": "user",
+            "sourceText": "@modbot"
+          }
+        ]
+      },
+      {
+        "utterance": "clear chat history for @user42",
+        "entities": [
+          {
+            "start": 23,
+            "end": 30,
+            "entity": "user",
+            "sourceText": "@user42"
+          }
+        ]
+      },
+      {
+        "utterance": "mute @user42 for 5 minutes",
+        "entities": [
+          {
+            "start": 5,
+            "end": 12,
+            "entity": "user",
+            "sourceText": "@user42"
+          }
+        ]
+      },
+      {
+        "utterance": "kick @modbot from the chat",
+        "entities": [
+          {
+            "start": 5,
+            "end": 12,
+            "entity": "user",
+            "sourceText": "@modbot"
+          }
+        ]
+      },
+      {
+        "utterance": "mute @troublemaker for 5 minutes",
+        "entities": [
+          {
+            "start": 5,
+            "end": 18,
+            "entity": "user",
+            "sourceText": "@troublemaker"
+          }
+        ]
+      },
+      {
+        "utterance": "remove all messages from @modbot",
+        "entities": [
+          {
+            "start": 25,
+            "end": 32,
+            "entity": "user",
+            "sourceText": "@modbot"
+          }
+        ]
+      },
+      {
+        "utterance": "kick @user42 from the chat",
+        "entities": [
+          {
+            "start": 5,
+            "end": 12,
+            "entity": "user",
+            "sourceText": "@user42"
+          }
+        ]
+      },
+      {
+        "utterance": "clear chat history for @john_doe",
+        "entities": [
+          {
+            "start": 23,
+            "end": 32,
+            "entity": "user",
+            "sourceText": "@john_doe"
+          }
+        ]
+      },
+      {
+        "utterance": "remove all messages from @spammer123",
+        "entities": [
+          {
+            "start": 25,
+            "end": 36,
+            "entity": "user",
+            "sourceText": "@spammer123"
+          }
+        ]
+      },
+      {
+        "utterance": "kick @troublemaker from the chat",
+        "entities": [
+          {
+            "start": 5,
+            "end": 18,
+            "entity": "user",
+            "sourceText": "@troublemaker"
+          }
+        ]
+      },
+      {
+        "utterance": "mute @john_doe for 5 minutes",
+        "entities": [
+          {
+            "start": 5,
+            "end": 14,
+            "entity": "user",
+            "sourceText": "@john_doe"
+          }
+        ]
+      },
+      {
+        "utterance": "clear chat history for @modbot",
+        "entities": [
+          {
+            "start": 23,
+            "end": 30,
+            "entity": "user",
+            "sourceText": "@modbot"
+          }
+        ]
+      },
+      {
+        "utterance": "kick @john_doe from the chat",
+        "entities": [
+          {
+            "start": 5,
+            "end": 14,
+            "entity": "user",
+            "sourceText": "@john_doe"
+          }
+        ]
+      },
+      {
+        "utterance": "remove all messages from @user42",
+        "entities": [
+          {
+            "start": 25,
+            "end": 32,
+            "entity": "user",
+            "sourceText": "@user42"
+          }
+        ]
+      },
+      {
+        "utterance": "clear chat history for @troublemaker",
+        "entities": [
+          {
+            "start": 23,
+            "end": 36,
+            "entity": "user",
+            "sourceText": "@troublemaker"
+          }
+        ]
+      },
+      {
+        "utterance": "delete last 3 messages",
+        "entities": [
+          {
+            "start": 12,
+            "end": 13,
+            "entity": "amount",
+            "sourceText": "3"
+          }
+        ]
+      },
+      {
+        "utterance": "delete last 1 messages",
+        "entities": [
+          {
+            "start": 12,
+            "end": 13,
+            "entity": "amount",
+            "sourceText": "1"
+          }
+        ]
+      },
+      {
+        "utterance": "purge 5 lines of chat",
+        "entities": [
+          {
+            "start": 6,
+            "end": 7,
+            "entity": "amount",
+            "sourceText": "5"
+          }
+        ]
+      },
+      {
+        "utterance": "remove 15 recent messages",
+        "entities": [
+          {
+            "start": 7,
+            "end": 9,
+            "entity": "amount",
+            "sourceText": "15"
+          }
+        ]
+      },
+      {
+        "utterance": "remove previous 10 messages",
+        "entities": [
+          {
+            "start": 16,
+            "end": 18,
+            "entity": "amount",
+            "sourceText": "10"
+          }
+        ]
+      },
+      {
+        "utterance": "clear past 10 messages",
+        "entities": [
+          {
+            "start": 11,
+            "end": 13,
+            "entity": "amount",
+            "sourceText": "10"
+          }
+        ]
+      },
+      {
+        "utterance": "purge 1 lines of chat",
+        "entities": [
+          {
+            "start": 6,
+            "end": 7,
+            "entity": "amount",
+            "sourceText": "1"
+          }
+        ]
+      },
+      {
+        "utterance": "delete last 10 messages",
+        "entities": [
+          {
+            "start": 12,
+            "end": 14,
+            "entity": "amount",
+            "sourceText": "10"
+          }
+        ]
+      },
+      {
+        "utterance": "remove previous 15 messages",
+        "entities": [
+          {
+            "start": 16,
+            "end": 18,
+            "entity": "amount",
+            "sourceText": "15"
+          }
+        ]
+      },
+      {
+        "utterance": "remove 10 recent messages",
+        "entities": [
+          {
+            "start": 7,
+            "end": 9,
+            "entity": "amount",
+            "sourceText": "10"
+          }
+        ]
+      },
+      {
+        "utterance": "clear past 3 messages",
+        "entities": [
+          {
+            "start": 11,
+            "end": 12,
+            "entity": "amount",
+            "sourceText": "3"
+          }
+        ]
+      },
+      {
+        "utterance": "clear past 1 messages",
+        "entities": [
+          {
+            "start": 11,
+            "end": 12,
+            "entity": "amount",
+            "sourceText": "1"
+          }
+        ]
+      },
+      {
+        "utterance": "purge 10 lines of chat",
+        "entities": [
+          {
+            "start": 6,
+            "end": 8,
+            "entity": "amount",
+            "sourceText": "10"
+          }
+        ]
+      },
+      {
+        "utterance": "remove previous 1 messages",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "1"
+          }
+        ]
+      },
+      {
+        "utterance": "clear past 5 messages",
+        "entities": [
+          {
+            "start": 11,
+            "end": 12,
+            "entity": "amount",
+            "sourceText": "5"
+          }
+        ]
+      },
+      {
+        "utterance": "remove previous 3 messages",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "3"
+          }
+        ]
+      },
+      {
+        "utterance": "delete last 15 messages",
+        "entities": [
+          {
+            "start": 12,
+            "end": 14,
+            "entity": "amount",
+            "sourceText": "15"
+          }
+        ]
+      },
+      {
+        "utterance": "clear past 15 messages",
+        "entities": [
+          {
+            "start": 11,
+            "end": 13,
+            "entity": "amount",
+            "sourceText": "15"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete the last message",
+        "entities": []
+      },
+      {
+        "utterance": "Remove the last 3 messages",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "3"
+          }
+        ]
+      },
+      {
+        "utterance": "Clear the chat",
+        "entities": []
+      },
+      {
+        "utterance": "Delete John's last message",
+        "entities": [
+          {
+            "start": 7,
+            "end": 11,
+            "entity": "user",
+            "sourceText": "John"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove the last 5 messages from Sarah",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "5"
+          },
+          {
+            "start": 32,
+            "end": 37,
+            "entity": "user",
+            "sourceText": "Sarah"
+          }
+        ]
+      },
+      {
+        "utterance": "Ban Mike from the chat",
+        "entities": [
+          {
+            "start": 4,
+            "end": 8,
+            "entity": "user",
+            "sourceText": "Mike"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete all messages from Alex",
+        "entities": [
+          {
+            "start": 25,
+            "end": 29,
+            "entity": "user",
+            "sourceText": "Alex"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove the last 10 posts",
+        "entities": [
+          {
+            "start": 16,
+            "end": 18,
+            "entity": "amount",
+            "sourceText": "10"
+          }
+        ]
+      },
+      {
+        "utterance": "Clear Emma's messages",
+        "entities": [
+          {
+            "start": 6,
+            "end": 10,
+            "entity": "user",
+            "sourceText": "Emma"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete the last 2 messages from Tom",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "2"
+          },
+          {
+            "start": 32,
+            "end": 35,
+            "entity": "user",
+            "sourceText": "Tom"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove all posts by Lisa",
+        "entities": [
+          {
+            "start": 20,
+            "end": 24,
+            "entity": "user",
+            "sourceText": "Lisa"
+          }
+        ]
+      },
+      {
+        "utterance": "Ban David from chatting",
+        "entities": [
+          {
+            "start": 4,
+            "end": 9,
+            "entity": "user",
+            "sourceText": "David"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete the last message from Rachel",
+        "entities": [
+          {
+            "start": 29,
+            "end": 35,
+            "entity": "user",
+            "sourceText": "Rachel"
+          }
+        ]
+      },
+      {
+        "utterance": "Clear the last 4 messages",
+        "entities": [
+          {
+            "start": 15,
+            "end": 16,
+            "entity": "amount",
+            "sourceText": "4"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove James's last 3 posts",
+        "entities": [
+          {
+            "start": 7,
+            "end": 12,
+            "entity": "user",
+            "sourceText": "James"
+          },
+          {
+            "start": 20,
+            "end": 21,
+            "entity": "amount",
+            "sourceText": "3"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete all of Sophie's messages",
+        "entities": [
+          {
+            "start": 14,
+            "end": 20,
+            "entity": "user",
+            "sourceText": "Sophie"
+          }
+        ]
+      },
+      {
+        "utterance": "Ban Olivia from the chat",
+        "entities": [
+          {
+            "start": 4,
+            "end": 10,
+            "entity": "user",
+            "sourceText": "Olivia"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove the last 7 messages",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "7"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete Liam's last message",
+        "entities": [
+          {
+            "start": 7,
+            "end": 11,
+            "entity": "user",
+            "sourceText": "Liam"
+          }
+        ]
+      },
+      {
+        "utterance": "Clear all messages from Noah",
+        "entities": [
+          {
+            "start": 24,
+            "end": 28,
+            "entity": "user",
+            "sourceText": "Noah"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove the last 6 posts from Ava",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "6"
+          },
+          {
+            "start": 29,
+            "end": 32,
+            "entity": "user",
+            "sourceText": "Ava"
+          }
+        ]
+      },
+      {
+        "utterance": "Ban Ethan from the channel",
+        "entities": [
+          {
+            "start": 4,
+            "end": 9,
+            "entity": "user",
+            "sourceText": "Ethan"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete the last 8 messages",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "8"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove all posts by Mia",
+        "entities": [
+          {
+            "start": 20,
+            "end": 23,
+            "entity": "user",
+            "sourceText": "Mia"
+          }
+        ]
+      },
+      {
+        "utterance": "Clear Isabella's messages",
+        "entities": [
+          {
+            "start": 6,
+            "end": 14,
+            "entity": "user",
+            "sourceText": "Isabella"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete the last 3 messages from Lucas",
+        "entities": [
+          {
+            "start": 16,
+            "end": 17,
+            "entity": "amount",
+            "sourceText": "3"
+          },
+          {
+            "start": 32,
+            "end": 37,
+            "entity": "user",
+            "sourceText": "Lucas"
+          }
+        ]
+      },
+      {
+        "utterance": "Ban Charlotte from chatting",
+        "entities": [
+          {
+            "start": 4,
+            "end": 13,
+            "entity": "user",
+            "sourceText": "Charlotte"
+          }
+        ]
+      },
+      {
+        "utterance": "Remove the last message from Amelia",
+        "entities": [
+          {
+            "start": 29,
+            "end": 35,
+            "entity": "user",
+            "sourceText": "Amelia"
+          }
+        ]
+      },
+      {
+        "utterance": "Delete all messages by Harper",
+        "entities": [
+          {
+            "start": 23,
+            "end": 29,
+            "entity": "user",
+            "sourceText": "Harper"
+          }
+        ]
+      },
+      {
+        "utterance": "Clear the last 5 posts",
+        "entities": [
+          {
+            "start": 15,
+            "end": 16,
+            "entity": "amount",
+            "sourceText": "5"
+          }
+        ]
+      }
+    ],
+    "answers": [
+      "Messages removed.",
+      "User has been moderated.",
+      "Chat has been cleared as requested.",
+      "The specified messages were deleted.",
+      "Moderation action executed.",
+      "Moderation action completed.",
+      "Messages have been removed.",
+      "Chat has been updated.",
+      "User action processed.",
+      "Cleared as requested."
+    ]
+  },
+  "ask": {
+    "intents": [
+      {
+        "utterance": "what is a blockchain",
+        "entities": []
+      },
+      {
+        "utterance": "explain how neural networks work",
+        "entities": []
+      },
+      {
+        "utterance": "how does HTTP differ from HTTPS",
+        "entities": []
+      },
+      {
+        "utterance": "what is Docker used for",
+        "entities": []
+      },
+      {
+        "utterance": "how to use Git branches effectively",
+        "entities": []
+      },
+      {
+        "utterance": "how does the internet work",
+        "entities": []
+      },
+      {
+        "utterance": "what is quantum computing",
+        "entities": []
+      },
+      {
+        "utterance": "explain recursion in programming",
+        "entities": []
+      },
+      {
+        "utterance": "difference between AI and ML",
+        "entities": []
+      },
+      {
+        "utterance": "how does DNS work",
+        "entities": []
+      },
+      {
+        "utterance": "what are microservices",
+        "entities": []
+      },
+      {
+        "utterance": "define serverless architecture",
+        "entities": []
+      },
+      {
+        "utterance": "what is an API",
+        "entities": []
+      },
+      {
+        "utterance": "explain REST vs GraphQL",
+        "entities": []
+      },
+      {
+        "utterance": "how does a blockchain transaction get validated",
+        "entities": []
+      },
+      {
+        "utterance": "What is blockchain technology?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain quantum computing",
+        "entities": []
+      },
+      {
+        "utterance": "What is the capital of France?",
+        "entities": []
+      },
+      {
+        "utterance": "How does machine learning work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is the internet of things?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain what a neural network is",
+        "entities": []
+      },
+      {
+        "utterance": "What is the purpose of DNS?",
+        "entities": []
+      },
+      {
+        "utterance": "How does encryption work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is cloud computing?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain the theory of relativity",
+        "entities": []
+      },
+      {
+        "utterance": "What is a database?",
+        "entities": []
+      },
+      {
+        "utterance": "How does GPS work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is artificial intelligence?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain what an API is",
+        "entities": []
+      },
+      {
+        "utterance": "What is the greenhouse effect?",
+        "entities": []
+      },
+      {
+        "utterance": "How does a computer processor work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is virtual reality?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain the concept of big data",
+        "entities": []
+      },
+      {
+        "utterance": "What is a programming language?",
+        "entities": []
+      },
+      {
+        "utterance": "How does blockchain ensure security?",
+        "entities": []
+      },
+      {
+        "utterance": "What is the difference between HTTP and HTTPS?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain what a firewall is",
+        "entities": []
+      },
+      {
+        "utterance": "What is augmented reality?",
+        "entities": []
+      },
+      {
+        "utterance": "How does a router work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is the purpose of RAM in a computer?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain the concept of open source software",
+        "entities": []
+      },
+      {
+        "utterance": "What is a cryptocurrency?",
+        "entities": []
+      },
+      {
+        "utterance": "How does a search engine work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is the function of an operating system?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain what a VPN is",
+        "entities": []
+      },
+      {
+        "utterance": "What is the difference between AI and machine learning?",
+        "entities": []
+      },
+      {
+        "utterance": "How does 5G technology work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is a data warehouse?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain the concept of edge computing",
+        "entities": []
+      },
+      {
+        "utterance": "What is a microchip?",
+        "entities": []
+      },
+      {
+        "utterance": "How does facial recognition work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is the purpose of a compiler?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain what a server is",
+        "entities": []
+      },
+      {
+        "utterance": "What is the difference between a virus and malware?",
+        "entities": []
+      },
+      {
+        "utterance": "How does a blockchain ledger work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is a smart contract?",
+        "entities": []
+      },
+      {
+        "utterance": "Explain the concept of data mining",
+        "entities": []
+      },
+      {
+        "utterance": "What is a distributed system?",
+        "entities": []
+      },
+      {
+        "utterance": "How does a touchscreen work?",
+        "entities": []
+      },
+      {
+        "utterance": "What is the purpose of a GPU?",
+        "entities": []
+      }
+    ],
+    "answers": [
+      "Here's a brief explanation: {answer}",
+      "Let me break it down for you: {answer}",
+      "{answer}",
+      "Sure, here's what I found: {answer}",
+      "This might help: {answer}",
+      "Here's a clear explanation for you.",
+      "Let me break that down for you.",
+      "Here's what you need to know.",
+      "I'll explain it in simple terms.",
+      "Here's the answer to your question."
+    ]
+  }
+}

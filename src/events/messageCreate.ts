@@ -23,8 +23,9 @@ module.exports = {
       const isBotMentioned = mentionedUserIds.includes(Hans.user!.id)
 
       if (
-        (isBotMentioned && !message.mentions.everyone) ||
-        message.content.toLowerCase().startsWith(inDevName)
+        ((isBotMentioned && !message.mentions.everyone) ||
+          message.content.toLowerCase().startsWith(inDevName)) &&
+        message.author.id !== Hans.user!.id
       ) {
         await handleMentionNLPLib(message)
         return

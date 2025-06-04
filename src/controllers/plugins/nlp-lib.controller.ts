@@ -405,6 +405,15 @@ export const handleMentionNLPLib = async (message: Message) => {
       }
     }
 
+    // Moderation commands are not allowed to be executed with low confidence
+    if (commandMapping.command === 'moderation' && commandMapping.confidence < 0.9) {
+      await thinkingMessage.edit(
+        'I do not feel confident enough to execute this command. Please try again with more specific instructions.',
+      )
+
+      return
+    }
+
     await executeSlashCommand(message, commandMapping, userInput, thinkingMessage)
 
     if (nlpInstance.getStats().totalRequests % 10 === 0) {

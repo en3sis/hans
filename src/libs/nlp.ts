@@ -1,6 +1,7 @@
 import { NlpManager } from 'node-nlp'
 import path from 'path'
 import fs from 'fs'
+import { loadTrainingData, getTrainingStats } from '../utils/training-data'
 
 interface TrainingData {
   intents: string[]
@@ -32,7 +33,6 @@ interface UsageStats {
 export class HansNLP {
   private manager: NlpManager
   private isInitialized: boolean
-  private trainingData: Record<string, TrainingData>
   private usageStats: UsageStats
   private modelPath: string
 
@@ -44,237 +44,13 @@ export class HansNLP {
       modelFileName: 'hans-nlp-model.nlp',
     })
     this.isInitialized = false
-    this.trainingData = this.getTrainingData()
-    this.modelPath = path.join(__dirname, '../models/hans-nlp-model.nlp')
     this.usageStats = {
       totalRequests: 0,
       correctClassifications: 0,
       fallbackToAsk: 0,
       commandCounts: { weather: 0, twitch: 0, moderation: 0, ask: 0 },
     }
-  }
-
-  private getTrainingData(): Record<string, TrainingData> {
-    return {
-      weather: {
-        intents: [
-          'weather in Madrid',
-          'what is the temperature in Tokyo',
-          'how is the weather today',
-          'temperature in London',
-          'is it raining in Paris',
-          'climate in New York',
-          'what is the weather like in Berlin',
-          'how hot is it in Miami',
-          'is it sunny in Los Angeles',
-          'weather forecast for Chicago',
-          'current weather in Barcelona',
-          'temperature check for Rome',
-          'weather conditions in Moscow',
-          'is it cold in Stockholm',
-          'weather update for Dublin',
-          'how is the climate in Sydney',
-          'temperature today in Amsterdam',
-          'weather status in Vienna',
-          'is it windy in San Francisco',
-          'weather report for Mumbai',
-          'current temperature in Seoul',
-          'weather in my city',
-          'local weather conditions',
-          'today weather forecast',
-          'check weather outside',
-        ],
-        answers: [
-          'I will check the weather for you',
-          'Getting weather information',
-          'Fetching current weather data',
-        ],
-        entities: [
-          { start: 11, end: 17, entity: 'city', sourceText: 'Madrid' },
-          { start: 31, end: 36, entity: 'city', sourceText: 'Tokyo' },
-          { start: 15, end: 21, entity: 'city', sourceText: 'London' },
-          { start: 20, end: 25, entity: 'city', sourceText: 'Paris' },
-          { start: 14, end: 22, entity: 'city', sourceText: 'New York' },
-        ],
-      },
-      twitch: {
-        intents: [
-          'show ninja twitch',
-          'twitch profile summit1g',
-          'get twitch user shroud',
-          'ninja twitch profile',
-          'check twitch streamer xqc',
-          'twitch channel pokimane',
-          'streamer info tfue',
-          'show me amouranth twitch',
-          'hasanabi twitch stats',
-          'twitch user lirik',
-          'streamer profile asmongold',
-          'check out sodapoppin twitch',
-          'twitch channel myth',
-          'show twitch user timthetatman',
-          'get info on twitch streamer disguisedtoast',
-          'twitch profile drlupo',
-          'check twitch channel nickmercs',
-          'show me twitch user cohhcarnage',
-          'twitch streamer info dakotaz',
-          'get twitch profile kitboga',
-          'show twitch channel mizkif',
-          'twitch user ludwig',
-          'streamer profile valkyrae',
-          'check twitch user pewdiepie',
-          'twitch channel info markiplier',
-          'is riot live?',
-        ],
-        answers: [
-          'I will get the Twitch profile for you',
-          'Fetching Twitch streamer information',
-          'Getting Twitch channel data',
-        ],
-        entities: [
-          { start: 5, end: 10, entity: 'username', sourceText: 'ninja' },
-          { start: 15, end: 23, entity: 'username', sourceText: 'summit1g' },
-          { start: 16, end: 22, entity: 'username', sourceText: 'shroud' },
-          { start: 0, end: 5, entity: 'username', sourceText: 'ninja' },
-          { start: 22, end: 25, entity: 'username', sourceText: 'xqc' },
-        ],
-      },
-      moderation: {
-        intents: [
-          'delete 5 messages',
-          'remove last 10 messages',
-          'purge 3 messages',
-          'clear the last 7 messages',
-          'clean up 15 messages',
-          'delete recent 20 messages',
-          'remove 2 messages',
-          'purge last 50 messages',
-          'clear 8 messages',
-          'clean 12 messages',
-          'delete one message',
-          'remove two messages',
-          'purge three messages',
-          'clear four messages',
-          'delete five messages',
-          'remove six messages',
-          'purge seven messages',
-          'clear eight messages',
-          'delete nine messages',
-          'remove ten messages',
-          'delete 5',
-          'remove 10',
-          'purge 3',
-          'clear 7',
-          'clean 15',
-          'delete 20',
-          'remove 2',
-          'purge 50',
-          'clear 8',
-          'clean 12',
-          'bulk delete messages',
-          'mass delete chat',
-          'cleanup chat history',
-          'clear recent chat',
-          'delete spam messages',
-          'remove last 5 for Sorin',
-          'delete 10 messages from John',
-          'purge 3 messages by Alice',
-          'clear 7 messages from Bob',
-          'remove 15 messages by Mike',
-          'delete messages from Sarah',
-          'purge user messages for Tom',
-          'clear messages by Emma',
-          'remove Alex messages',
-          'delete last 5 from ninja',
-          'remove 10 for summit1g',
-          'purge 20 messages from shroud',
-          'clear messages by pokimane',
-          'delete user spam from trolluser',
-          'remove last messages for username123',
-          'purge recent posts by moderator',
-          'clean up messages from spammer',
-        ],
-        answers: [
-          'I will delete the messages for you',
-          'Purging messages from the channel',
-          'Cleaning up the chat',
-          'Removing messages from the specified user',
-        ],
-        entities: [
-          { start: 7, end: 8, entity: 'amount', sourceText: '5' },
-          { start: 17, end: 19, entity: 'amount', sourceText: '10' },
-          { start: 6, end: 7, entity: 'amount', sourceText: '3' },
-          { start: 15, end: 16, entity: 'amount', sourceText: '7' },
-          { start: 9, end: 11, entity: 'amount', sourceText: '15' },
-          { start: 7, end: 8, entity: 'amount', sourceText: '1' },
-          { start: 7, end: 8, entity: 'amount', sourceText: '2' },
-          { start: 7, end: 8, entity: 'amount', sourceText: '4' },
-          { start: 7, end: 8, entity: 'amount', sourceText: '6' },
-          { start: 7, end: 8, entity: 'amount', sourceText: '8' },
-          { start: 7, end: 8, entity: 'amount', sourceText: '9' },
-          { start: 7, end: 9, entity: 'amount', sourceText: '12' },
-          { start: 7, end: 9, entity: 'amount', sourceText: '20' },
-          { start: 7, end: 9, entity: 'amount', sourceText: '50' },
-          { start: 19, end: 24, entity: 'user', sourceText: 'Sorin' },
-          { start: 24, end: 28, entity: 'user', sourceText: 'John' },
-          { start: 22, end: 27, entity: 'user', sourceText: 'Alice' },
-          { start: 23, end: 26, entity: 'user', sourceText: 'Bob' },
-          { start: 22, end: 26, entity: 'user', sourceText: 'Mike' },
-          { start: 22, end: 27, entity: 'user', sourceText: 'Sarah' },
-          { start: 21, end: 24, entity: 'user', sourceText: 'Tom' },
-          { start: 19, end: 23, entity: 'user', sourceText: 'Emma' },
-          { start: 7, end: 11, entity: 'user', sourceText: 'Alex' },
-          { start: 17, end: 22, entity: 'user', sourceText: 'ninja' },
-          { start: 13, end: 21, entity: 'user', sourceText: 'summit1g' },
-          { start: 25, end: 31, entity: 'user', sourceText: 'shroud' },
-          { start: 19, end: 27, entity: 'user', sourceText: 'pokimane' },
-          { start: 22, end: 31, entity: 'user', sourceText: 'trolluser' },
-          { start: 26, end: 37, entity: 'user', sourceText: 'username123' },
-          { start: 21, end: 30, entity: 'user', sourceText: 'moderator' },
-          { start: 24, end: 31, entity: 'user', sourceText: 'spammer' },
-        ],
-      },
-      ask: {
-        intents: [
-          'what is JavaScript',
-          'explain quantum physics',
-          'how does machine learning work',
-          'tell me about artificial intelligence',
-          'help me understand React',
-          'what is the meaning of life',
-          'how do computers work',
-          'explain blockchain technology',
-          'what is TypeScript',
-          'how does the internet work',
-          'tell me about Node.js',
-          'what is artificial neural networks',
-          'explain database design',
-          'how does encryption work',
-          'what is cloud computing',
-          'explain APIs and REST',
-          'how does Git work',
-          'what is Docker',
-          'explain microservices architecture',
-          'how does authentication work',
-          'what is DevOps',
-          'explain CI/CD pipelines',
-          'how does caching work',
-          'what is GraphQL',
-          'explain web security',
-          'help me with programming',
-          'teach me about coding',
-          'explain software development',
-          'what are design patterns',
-          'how to optimize performance',
-        ],
-        answers: [
-          'I will help answer your question',
-          'Let me explain that for you',
-          'I can help you understand that topic',
-        ],
-        entities: [],
-      },
-    }
+    this.modelPath = path.join(__dirname, '../models/hans-nlp-model.nlp')
   }
 
   async initialize(): Promise<boolean> {
@@ -309,26 +85,38 @@ export class HansNLP {
         console.log('🤖 [NLP TRAINING] No existing model found. Training new model...')
       }
 
-      Object.entries(this.trainingData).forEach(([intent, data]) => {
-        data.intents.forEach((utterance) => {
-          this.manager.addDocument('en', utterance, intent)
+      const trainingData = loadTrainingData()
+      const stats = getTrainingStats(trainingData)
+
+      if (!!process.env.ISDEV) {
+        console.log('📊 [NLP TRAINING] Training data statistics:')
+        console.log(`   Total intents: ${stats.totalIntents}`)
+        console.log(`   Total utterances: ${stats.totalUtterances}`)
+        console.log(`   Total answers: ${stats.totalAnswers}`)
+        console.log(`   Total entities: ${stats.totalEntities}`)
+        console.log('   Utterances per intent:', stats.utterancesPerIntent)
+        console.log('   Entities per intent:', stats.entitiesPerIntent)
+      }
+
+      // Add documents and answers from training data
+      Object.entries(trainingData).forEach(([intent, data]) => {
+        data.intents.forEach((item) => {
+          this.manager.addDocument('en', item.utterance, intent)
+
+          // Add entities if present
+          item.entities.forEach((entity) => {
+            this.manager.addNamedEntityText(
+              entity.entity,
+              entity.sourceText,
+              ['en'],
+              [entity.sourceText],
+            )
+          })
         })
 
         data.answers.forEach((answer) => {
           this.manager.addAnswer('en', intent, answer)
         })
-
-        if (data.entities && data.entities.length > 0) {
-          data.entities.forEach((entity) => {
-            this.manager.addNamedEntityText(
-              'en',
-              entity.entity,
-              entity.sourceText,
-              ['en'],
-              [entity.sourceText.toLowerCase()],
-            )
-          })
-        }
       })
 
       if (!!process.env.ISDEV) {
@@ -403,7 +191,7 @@ export class HansNLP {
       const parameters = this.extractParameters(input, intent, entities)
 
       if (!!process.env.ISDEV) {
-        console.log(`   ✅ Classification successful | Parameters:`, parameters)
+        console.log(`✅ Classification successful | Parameters:`, parameters)
       }
 
       return {
