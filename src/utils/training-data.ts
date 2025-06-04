@@ -26,6 +26,34 @@ export function loadTrainingData(): TrainingData {
   const mergedData: TrainingData = {}
   const dataFiles = [path.join(__dirname, '../data/merged-training-data.json')]
 
+  // Always ensure the dataset is present in build/data if missing or outdated
+  try {
+    const srcPath = path.join(__dirname, '../data/merged-training-data.json')
+    const destDir = path.join(process.cwd(), 'build/data')
+    const destPath = path.join(destDir, 'merged-training-data.json')
+    let shouldCopy = false
+    if (fs.existsSync(srcPath)) {
+      if (!fs.existsSync(destDir)) {
+        fs.mkdirSync(destDir, { recursive: true })
+      }
+      if (!fs.existsSync(destPath)) {
+        shouldCopy = true
+      } else {
+        // Copy if source is newer than destination
+        const srcStat = fs.statSync(srcPath)
+        const destStat = fs.statSync(destPath)
+        if (srcStat.mtimeMs > destStat.mtimeMs) {
+          shouldCopy = true
+        }
+      }
+      if (shouldCopy) {
+        fs.copyFileSync(srcPath, destPath)
+      }
+    }
+  } catch (err) {
+    console.error('Failed to ensure merged-training-data.json in build/data:', err)
+  }
+
   for (const filePath of dataFiles) {
     try {
       if (fs.existsSync(filePath)) {
