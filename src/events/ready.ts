@@ -36,8 +36,8 @@ module.exports = {
 
       // INFO: Set the bot presence to the default one.
       await setPresence(
-        Hans.settings?.activity_type ?? 4,
-        Hans.settings?.activity_name ?? 'Responding to commands ',
+        Hans.settings?.activityType ?? 4,
+        Hans.settings?.activityName ?? 'Responding to commands ',
       )
 
       // INFO: Start the realtime presence, this will listen to the database changes and update the bot presence.

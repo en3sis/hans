@@ -1,56 +1,52 @@
+import { db } from '../libs/drizzle'
+import { configs } from '../db/schema'
 import { setPresence } from '../controllers/bot/config.controller'
-import { registerStandupSchedules } from '../controllers/plugins/standup.controller'
-import { stopSpecificCronJob } from '../controllers/tasks/cron-jobs'
-import { deleteFromCache } from '../libs/node-cache'
-import supabase from '../libs/supabase'
 
+const POLL_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
+
+let lastActivityName: string | null = null
+let lastActivityType: number | null = null
+let pollInterval: NodeJS.Timeout | null = null
+
+/**
+ * Polls the configs table for presence changes and updates the bot's Discord status.
+ * Replaces Supabase realtime with a simple polling mechanism.
+ */
 export const configsRealtime = () => {
-  // Listen for changes in the configs table
-  supabase
-    .channel('bot-configs-realtime')
-    .on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'configs',
-      },
-      async (payload) => {
-        if (!!process.env.ISDEV) {
-          console.log('Guild plugin updated:', payload.new)
-        }
+  const pollForChanges = async () => {
+    try {
+      const result = await db.select().from(configs).limit(1)
+      const config = result[0]
 
-        await setPresence(payload.new.activity_type, payload.new.activity_name)
-      },
-    )
-    .subscribe()
+      if (!config) return
 
-  // Listen for changes in the guilds plugins table and delete the cached data
-  supabase
-    .channel('guilds-plugins-realtime')
-    .on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'guilds_plugins',
-      },
-      async (payload) => {
-        if (!!process.env.ISDEV) {
-          console.log('Guild plugin updated:', payload.new)
-        }
+      const { activityName, activityType } = config
 
-        // INFO: Refresh the cache for the guild plugins
-        deleteFromCache(`guildPlugins:${payload.new.owner}:${payload.new.name}`)
+      // Only update if values changed
+      if (activityName !== lastActivityName || activityType !== lastActivityType) {
+        lastActivityName = activityName
+        lastActivityType = activityType
+        await setPresence(activityType, activityName)
+        console.log(`🔄 Presence updated: ${activityType} - ${activityName}`)
+      }
+    } catch (error) {
+      console.error('❌ configsRealtime poll error:', error)
+    }
+  }
 
-        if (payload.new.name === 'standup') {
-          stopSpecificCronJob(`${payload.new.owner}#standup`)
+  // Initial poll
+  pollForChanges()
 
-          if (payload.new.enabled && payload.new.metadata) {
-            await registerStandupSchedules(payload.new.owner, payload.new.metadata)
-          }
-        }
-      },
-    )
-    .subscribe()
+  // Start polling interval
+  pollInterval = setInterval(pollForChanges, POLL_INTERVAL_MS)
+
+  console.log(`🔄 Presence polling started (every ${POLL_INTERVAL_MS / 1000 / 60} minutes)`)
+}
+
+export const stopConfigsRealtime = () => {
+  if (pollInterval) {
+    clearInterval(pollInterval)
+    pollInterval = null
+    console.log('🔄 Presence polling stopped')
+  }
 }

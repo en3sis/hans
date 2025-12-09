@@ -16,7 +16,9 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["jest"],
+    "types": [
+      "jest"
+    ],
     "paths": {
       // "@/libs/*": ["libs/*"]
       // "@/types/*": ["src/types/*"],
@@ -25,7 +27,17 @@
       // "@/utils/*": ["src/utils/*"]
     }
   },
-  "lib": ["esnext"],
-  "typeRoots": ["./src/", "./node_modules/@types"],
-  "exclude": ["node_modules/", "build/", "tests/**"]
+  "lib": [
+    "esnext"
+  ],
+  "typeRoots": [
+    "./src/",
+    "./node_modules/@types"
+  ],
+  "exclude": [
+    "node_modules/",
+    "build/",
+    "tests/**",
+    "drizzle.config.ts"
+  ]
 }

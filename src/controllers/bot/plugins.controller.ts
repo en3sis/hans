@@ -1,6 +1,8 @@
 import { CommandInteraction } from 'discord.js'
+import { and, eq, inArray } from 'drizzle-orm'
 import { getFromCache, setToCache } from '../../libs/node-cache'
-import supabase from '../../libs/supabase'
+import { db } from '../../libs/drizzle'
+import { guilds, guildsPlugins, plugins } from '../../db/schema'
 import { initialGuildPluginState, pluginsList } from '../../models/plugins.model'
 import {
   GuildPluginData,
@@ -8,7 +10,8 @@ import {
   PluginsThreadsMetadata,
 } from '../../types/plugins'
 import { encrypt } from '../../utils/crypto'
-import { GuildPlugin } from './guilds.controller'
+
+export type GuildPluginRow = typeof guildsPlugins.$inferSelect
 
 /**
  * Inserts a new row in the guilds_plugins table for each plugin in the plugins table.
@@ -17,27 +20,30 @@ import { GuildPlugin } from './guilds.controller'
  */
 export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
   try {
-    const plugins = await supabase.from('plugins').select('*')
+    const allPlugins = await db.select().from(plugins)
 
-    const guildPlugins: Omit<GuildPlugin, 'id' | 'metadata'>[] = plugins.data.map((plugin) => ({
+    const guildPluginsList: Omit<GuildPluginRow, 'id' | 'metadata'>[] = allPlugins.map((plugin) => ({
       owner: guild_id,
       enabled: initialGuildPluginState[plugin.name]?.default_enabled ?? plugin.enabled,
       name: plugin.name,
-      created_at: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     }))
 
     // check if a row with the same plugin name and guild_id exists
-    const { data: existingGuildPlugins } = await supabase
-      .from('guilds_plugins')
-      .select('*')
-      .in(
-        'name',
-        guildPlugins.map((gp) => gp.name),
+    const existingGuildPlugins = await db
+      .select()
+      .from(guildsPlugins)
+      .where(
+        and(
+          inArray(
+            guildsPlugins.name,
+            guildPluginsList.map((gp) => gp.name),
+          ),
+          eq(guildsPlugins.owner, guild_id),
+        ),
       )
-      .eq('owner', guild_id)
 
-    const newGuildPlugins = guildPlugins.filter((gp) => {
-      // check if there is no existing guild-plugin with the same name and guild_id
+    const newGuildPlugins = guildPluginsList.filter((gp) => {
       const existingPlugin = existingGuildPlugins.find(
         (egp) => egp.name === gp.name && egp.owner === guild_id,
       )
@@ -45,7 +51,7 @@ export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
     })
 
     if (newGuildPlugins.length > 0) {
-      await supabase.from('guilds_plugins').upsert(newGuildPlugins)
+      await db.insert(guildsPlugins).values(newGuildPlugins).onConflictDoNothing()
     }
   } catch (error) {
     console.error('❌ ERROR: insertGuildPlugin', error)
@@ -59,14 +65,18 @@ export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
  */
 export const findGuildPlugins = async (guild_id: string) => {
   try {
-    const { data, error } = await supabase
-      .from('guilds')
-      .select('*, guilds_plugins(*, plugins(enabled, description, premium))')
-      .eq('guild_id', guild_id)
+    const result = await db.query.guilds.findFirst({
+      where: eq(guilds.guildId, guild_id),
+      with: {
+        guildsPlugins: {
+          with: {
+            plugin: true,
+          },
+        },
+      },
+    })
 
-    if (error) throw error
-
-    return data
+    return result ? [result] : []
   } catch (error) {
     console.error('❌ ERROR: findGuildPlugins', error)
   }
@@ -90,21 +100,26 @@ export const resolveGuildPlugins = async (
       return cachedData as GuildPluginData
     }
 
-    const { data: guildPluginResult } = await supabase
-      .from('guilds')
-      .select('*, guilds_plugins(*, plugins(enabled, description, premium, name))')
-      .eq('guild_id', guild_id)
-      .single()
+    const guildPluginResult = await db.query.guilds.findFirst({
+      where: eq(guilds.guildId, guild_id),
+      with: {
+        guildsPlugins: {
+          with: {
+            plugin: true,
+          },
+        },
+      },
+    })
 
     if (!guildPluginResult) return
 
-    const guildPlugin = guildPluginResult?.guilds_plugins.find(
-      (ele: GuildPlugin) => ele.name === pluginName,
+    const guildPlugin = guildPluginResult?.guildsPlugins.find(
+      (ele: GuildPluginRow) => ele.name === pluginName,
     )
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const globalPluginSettings: Record<string, any> = guildPlugin?.plugins
+    const globalPluginSettings: Record<string, any> = guildPlugin?.plugin
 
-    if (guildPlugin && guildPlugin.enabled && globalPluginSettings.enabled) {
+    if (guildPlugin && guildPlugin.enabled && globalPluginSettings?.enabled) {
       const pluginData = {
         enabled: guildPlugin?.enabled || false,
         metadata: JSON.parse(JSON.stringify(guildPlugin?.metadata)),
@@ -141,11 +156,10 @@ export const toggleGuildPlugin = async (
   toggle: boolean,
 ): Promise<void> => {
   try {
-    await supabase
-      .from('guilds_plugins')
-      .update({ enabled: toggle })
-      .eq('name', name)
-      .eq('owner', interaction.guildId)
+    await db
+      .update(guildsPlugins)
+      .set({ enabled: toggle })
+      .where(and(eq(guildsPlugins.name, name), eq(guildsPlugins.owner, interaction.guildId)))
 
     await interaction.editReply({
       content: `The plugin ${name} was successfully ${toggle ? 'enabled' : 'disabled'}`,
@@ -159,25 +173,22 @@ export const updateMetadataGuildPlugin = async (metadata: any, name: string, gui
   try {
     console.log('Updating metadata:', JSON.stringify(metadata, null, 2))
 
-    const { data, error } = await supabase
-      .from('guilds_plugins')
-      .update({ metadata })
-      .eq('name', name)
-      .eq('owner', guildId)
-      .select()
+    const result = await db
+      .update(guildsPlugins)
+      .set({ metadata })
+      .where(and(eq(guildsPlugins.name, name), eq(guildsPlugins.owner, guildId)))
+      .returning()
 
-    if (error) throw error
-
-    if (!data || data.length === 0) {
+    if (!result || result.length === 0) {
       throw new Error('No rows were updated')
     }
 
-    console.log('Update successful. Updated data:', JSON.stringify(data, null, 2))
+    console.log('Update successful. Updated data:', JSON.stringify(result, null, 2))
 
-    return data[0]
+    return result[0]
   } catch (error) {
     console.error('❌ ERROR: updateMetadataGuildPlugin(): ', error)
-    throw error // Re-throw the error so the calling function knows the update failed
+    throw error
   }
 }
 
@@ -198,28 +209,24 @@ export const pluginChatGPTSettings = async (
   org: string,
 ) => {
   try {
-    const { data: currentSettings } = await supabase
-      .from('guilds_plugins')
-      .select('*')
-      .eq('name', 'chatGtp')
-      .eq('owner', interaction.guildId)
-      .single()
+    const currentSettings = await db
+      .select()
+      .from(guildsPlugins)
+      .where(and(eq(guildsPlugins.name, 'chatGtp'), eq(guildsPlugins.owner, interaction.guildId)))
+      .limit(1)
 
-    const _metadata = JSON.parse(JSON.stringify(currentSettings?.metadata)) || {}
+    const _metadata = JSON.parse(JSON.stringify(currentSettings[0]?.metadata)) || {}
 
-    const { error } = await supabase
-      .from('guilds_plugins')
-      .update({
+    await db
+      .update(guildsPlugins)
+      .set({
         metadata: {
           ..._metadata,
           api_key: encrypt(api_key),
           org: encrypt(org),
         },
       })
-      .eq('name', 'chatGtp')
-      .eq('owner', interaction.guildId)
-
-    if (error) throw error
+      .where(and(eq(guildsPlugins.name, 'chatGtp'), eq(guildsPlugins.owner, interaction.guildId)))
 
     await interaction.deferReply({
       ephemeral: true,
@@ -240,14 +247,15 @@ export const pluginChatGPTSettings = async (
  */
 export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsThreadsSettings) => {
   try {
-    const { data: guildsPlugins, error } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('name', 'threads')
-      .eq('owner', interaction.guildId)
-      .single()
+    const guildsPluginsResult = await db
+      .select({ metadata: guildsPlugins.metadata })
+      .from(guildsPlugins)
+      .where(and(eq(guildsPlugins.name, 'threads'), eq(guildsPlugins.owner, interaction.guildId)))
+      .limit(1)
 
-    if (error) throw error
+    if (!guildsPluginsResult[0]) {
+      throw new Error('Guild plugin not found')
+    }
 
     let updatedMetadata: {
       channelId: string
@@ -260,8 +268,8 @@ export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsTh
       Object.entries(metadata).filter(([_, value]) => value !== null),
     ) as PluginsThreadsMetadata
 
-    if (guildsPlugins?.metadata) {
-      const metadataArray = guildsPlugins.metadata as PluginsThreadsMetadata[]
+    if (guildsPluginsResult[0]?.metadata) {
+      const metadataArray = guildsPluginsResult[0].metadata as PluginsThreadsMetadata[]
 
       const index = metadataArray.findIndex((item) => item.channelId === metadata.channelId)
 
@@ -277,13 +285,10 @@ export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsTh
     }
 
     // Update the metadata in the database
-    const { error: updateError } = await supabase
-      .from('guilds_plugins')
-      .update({ metadata: updatedMetadata })
-      .eq('name', 'threads')
-      .eq('owner', interaction.guildId)
-
-    if (updateError) throw updateError
+    await db
+      .update(guildsPlugins)
+      .set({ metadata: updatedMetadata })
+      .where(and(eq(guildsPlugins.name, 'threads'), eq(guildsPlugins.owner, interaction.guildId)))
 
     return await interaction.editReply({
       content: `The plugin threads was successfully configured`,

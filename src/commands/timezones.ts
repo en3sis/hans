@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { timezonesController } from '../controllers/plugins/timezones.controller'
 import { logger } from '../utils/debugging'
 
@@ -29,7 +29,7 @@ module.exports = {
     .addSubcommand((command) =>
       command.setName('list').setDescription('Lists all the available timezones'),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       if (!interaction.isChatInputCommand()) return
 

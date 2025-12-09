@@ -1,45 +1,63 @@
 import { CommandInteraction, Message, ThreadChannel, User, TextChannel } from 'discord.js'
-import supabase from '../../libs/supabase'
-import { GuildQuest } from '../../types/plugins'
+import { and, eq, gt } from 'drizzle-orm'
+import { db } from '../../libs/drizzle'
+import { guilds, guildQuests } from '../../db/schema'
 import { DEFAULT_COLOR } from '../../utils/colors'
-import { isStaff } from '../../utils/permissions'
 import { v4 as uuidv4 } from 'uuid'
+
+interface CreateQuestData {
+  title: string
+  description: string
+  question?: string
+  answer?: string
+  mode: string
+  winnersCount?: number
+  reward: string
+  rewardCode?: string
+  channelId: string
+  createdBy: string
+  expirationDate: string
+}
 
 export const createQuest = async (
   interaction: CommandInteraction,
-  questData: Omit<
-    GuildQuest,
-    'id' | 'guild_id' | 'created_at' | 'is_claimed' | 'is_pending_claim' | 'thread_id' | 'winner'
-  >,
+  questData: CreateQuestData,
 ) => {
   try {
-    // Create new quest
-    const { data: guild } = await supabase
-      .from('guilds')
-      .select('id')
-      .eq('guild_id', interaction.guildId)
-      .single()
+    // Get guild from database
+    const guildResult = await db
+      .select({ id: guilds.id })
+      .from(guilds)
+      .where(eq(guilds.guildId, interaction.guildId))
+      .limit(1)
 
-    if (!guild) {
+    if (!guildResult[0]) {
       throw new Error('Guild not found')
     }
 
     const newQuest = {
-      ...questData,
       id: uuidv4(),
-      guild_id: guild.id,
-      created_at: new Date().toISOString(),
-      is_claimed: false,
-      is_pending_claim: false,
+      guildId: guildResult[0].id,
+      title: questData.title,
+      description: questData.description,
+      question: questData.question,
+      answer: questData.answer,
+      mode: questData.mode,
+      winnersCount: questData.winnersCount,
+      reward: questData.reward,
+      rewardCode: questData.rewardCode,
+      channelId: questData.channelId,
+      createdBy: questData.createdBy,
+      expirationDate: questData.expirationDate,
+      isClaimed: false,
+      isPendingClaim: false,
     }
 
     // Insert quest into guild_quests table
-    const { error } = await supabase.from('guild_quests').insert(newQuest)
-
-    if (error) throw error
+    await db.insert(guildQuests).values(newQuest)
 
     // Create thread for the quest
-    const channel = await interaction.guild.channels.fetch(questData.channel_id)
+    const channel = await interaction.guild.channels.fetch(questData.channelId)
     if (!channel?.isTextBased()) throw new Error('Invalid channel')
 
     const questEmbed = {
@@ -60,8 +78,8 @@ export const createQuest = async (
               },
               {
                 name: '👥 Winners',
-                value: `${newQuest.winners_count || 1} lucky winner${
-                  newQuest.winners_count !== 1 ? 's' : ''
+                value: `${newQuest.winnersCount || 1} lucky winner${
+                  newQuest.winnersCount !== 1 ? 's' : ''
                 } will be selected`,
               },
             ]),
@@ -71,7 +89,7 @@ export const createQuest = async (
         },
         {
           name: '⏰ Expires',
-          value: new Date(newQuest.expiration_date).toLocaleString(),
+          value: new Date(newQuest.expirationDate).toLocaleString(),
         },
       ],
       color: DEFAULT_COLOR,
@@ -97,13 +115,13 @@ export const createQuest = async (
     }
 
     // Update quest with thread ID and message ID
-    await supabase
-      .from('guild_quests')
-      .update({
-        thread_id: thread?.id,
-        message_id: questMessage.id,
+    await db
+      .update(guildQuests)
+      .set({
+        threadId: thread?.id,
+        messageId: questMessage.id,
       })
-      .eq('id', newQuest.id)
+      .where(eq(guildQuests.id, newQuest.id))
 
     return thread || questMessage
   } catch (error) {
@@ -117,46 +135,50 @@ export const checkQuestAnswer = async (message: Message) => {
     if (!message.guildId) return
 
     // Get guild ID from database
-    const { data: guild } = await supabase
-      .from('guilds')
-      .select('id')
-      .eq('guild_id', message.guildId)
-      .single()
+    const guildResult = await db
+      .select({ id: guilds.id })
+      .from(guilds)
+      .where(eq(guilds.guildId, message.guildId))
+      .limit(1)
 
-    if (!guild) return
+    if (!guildResult[0]) return
 
     // Get active quests for this guild
-    const { data: quests } = await supabase
-      .from('guild_quests')
-      .select('*')
-      .eq('guild_id', guild.id)
-      .eq('mode', 'quiz')
-      .eq('is_claimed', false)
-      .eq('is_pending_claim', false)
-      .gt('expiration_date', new Date().toISOString())
+    const quests = await db
+      .select()
+      .from(guildQuests)
+      .where(
+        and(
+          eq(guildQuests.guildId, guildResult[0].id),
+          eq(guildQuests.mode, 'quiz'),
+          eq(guildQuests.isClaimed, false),
+          eq(guildQuests.isPendingClaim, false),
+          gt(guildQuests.expirationDate, new Date().toISOString()),
+        ),
+      )
 
     if (!quests?.length) return
 
     // Check if message is in a quest thread
-    const quest = quests.find((q) => q.thread_id === message.channelId)
+    const quest = quests.find((q) => q.threadId === message.channelId)
     if (!quest) return
 
     // Check if answer is correct
     if (quest.answer && message.content.toLowerCase().includes(quest.answer.toLowerCase())) {
-      // Get quest index
-      const { data: questData } = await supabase
-        .from('guild_quests')
-        .select('*')
-        .eq('id', quest.id)
-        .single()
+      // Get quest data
+      const questData = await db
+        .select()
+        .from(guildQuests)
+        .where(eq(guildQuests.id, quest.id))
+        .limit(1)
 
-      if (!questData) return
+      if (!questData[0]) return
 
       // Update quest as pending claim
-      const { error } = await supabase
-        .from('guild_quests')
-        .update({
-          is_pending_claim: true,
+      await db
+        .update(guildQuests)
+        .set({
+          isPendingClaim: true,
           winner: {
             id: message.author.id,
             username: message.author.username,
@@ -164,9 +186,7 @@ export const checkQuestAnswer = async (message: Message) => {
             dm_sent: false,
           },
         })
-        .eq('id', quest.id)
-
-      if (error) throw error
+        .where(eq(guildQuests.id, quest.id))
 
       // Check if user has DMs enabled
       let canReceiveDMs = true
@@ -228,27 +248,30 @@ export const checkQuestAnswer = async (message: Message) => {
 export const claimQuestReward = async (interaction: CommandInteraction) => {
   try {
     // Get guild ID from database
-    const { data: guild } = await supabase
-      .from('guilds')
-      .select('id')
-      .eq('guild_id', interaction.guildId)
-      .single()
+    const guildResult = await db
+      .select({ id: guilds.id })
+      .from(guilds)
+      .where(eq(guilds.guildId, interaction.guildId))
+      .limit(1)
 
-    if (!guild) {
+    if (!guildResult[0]) {
       return {
         success: false,
         message: 'Guild not found.',
       }
     }
 
-    // Get quest data
-    const { data: quest } = await supabase
-      .from('guild_quests')
-      .select('*')
-      .eq('guild_id', guild.id)
-      .eq('is_pending_claim', true)
-      .eq('winner->id', interaction.user.id)
-      .single()
+    // Get quest data - find pending claim where winner id matches user
+    const questResults = await db
+      .select()
+      .from(guildQuests)
+      .where(and(eq(guildQuests.guildId, guildResult[0].id), eq(guildQuests.isPendingClaim, true)))
+
+    // Find quest where winner.id matches user
+    const quest = questResults.find((q) => {
+      const winner = q.winner as { id?: string } | null
+      return winner?.id === interaction.user.id
+    })
 
     if (!quest) {
       return {
@@ -271,13 +294,13 @@ export const claimQuestReward = async (interaction: CommandInteraction) => {
 export const sendQuestReward = async (guildId: string, questId: string, user: User) => {
   try {
     // Get guild ID from database
-    const { data: guild } = await supabase
-      .from('guilds')
-      .select('id')
-      .eq('guild_id', guildId)
-      .single()
+    const guildResult = await db
+      .select({ id: guilds.id })
+      .from(guilds)
+      .where(eq(guilds.guildId, guildId))
+      .limit(1)
 
-    if (!guild) {
+    if (!guildResult[0]) {
       return {
         success: false,
         message: 'Guild not found.',
@@ -285,19 +308,20 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
     }
 
     // Get quest data
-    const { data: quest } = await supabase
-      .from('guild_quests')
-      .select('*')
-      .eq('guild_id', guild.id)
-      .eq('id', questId)
-      .single()
+    const questResult = await db
+      .select()
+      .from(guildQuests)
+      .where(and(eq(guildQuests.guildId, guildResult[0].id), eq(guildQuests.id, questId)))
+      .limit(1)
 
-    if (!quest) {
+    if (!questResult[0]) {
       return {
         success: false,
         message: 'Quest not found.',
       }
     }
+
+    const quest = questResult[0]
 
     // Send DM to winner
     await user.send({
@@ -312,7 +336,7 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
             },
             {
               name: 'Reward Code',
-              value: quest.reward_code || 'No code provided for this reward.',
+              value: quest.rewardCode || 'No code provided for this reward.',
             },
           ],
           color: DEFAULT_COLOR,
@@ -321,44 +345,36 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
     })
 
     // Update quest as claimed
-    const { error } = await supabase
-      .from('guild_quests')
-      .update({
-        is_claimed: true,
-        is_pending_claim: false,
+    await db
+      .update(guildQuests)
+      .set({
+        isClaimed: true,
+        isPendingClaim: false,
         winner: {
-          ...quest.winner,
+          ...(quest.winner as object),
           dm_sent: true,
           dm_failed: false,
         },
       })
-      .eq('id', quest.id)
-
-    if (error) throw error
+      .where(eq(guildQuests.id, quest.id))
 
     return { success: true, message: 'Reward sent successfully' }
   } catch (error) {
     console.error('Failed to send DM to winner:', error)
 
     // Update quest to mark DM as failed
-    const { data: questData } = await supabase
-      .from('guild_quests')
-      .select('*')
-      .eq('id', questId)
-      .single()
+    const questData = await db.select().from(guildQuests).where(eq(guildQuests.id, questId)).limit(1)
 
-    if (questData) {
-      const { error: updateError } = await supabase
-        .from('guild_quests')
-        .update({
+    if (questData[0]) {
+      await db
+        .update(guildQuests)
+        .set({
           winner: {
-            ...questData.winner,
+            ...(questData[0].winner as object),
             dm_failed: true,
           },
         })
-        .eq('id', questId)
-
-      if (updateError) console.error('Failed to update quest:', updateError)
+        .where(eq(guildQuests.id, questId))
     }
 
     return {
@@ -371,20 +387,19 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
 export const getActiveQuests = async (guildId: string) => {
   try {
     // Get guild ID from database
-    const { data: guild } = await supabase
-      .from('guilds')
-      .select('id')
-      .eq('guild_id', guildId)
-      .single()
+    const guildResult = await db
+      .select({ id: guilds.id })
+      .from(guilds)
+      .where(eq(guilds.guildId, guildId))
+      .limit(1)
 
-    if (!guild) return []
+    if (!guildResult[0]) return []
 
-    const { data: quests } = await supabase
-      .from('guild_quests')
-      .select('*')
-      .eq('guild_id', guild.id)
-      .eq('is_claimed', false)
-      .order('created_at', { ascending: false })
+    const quests = await db
+      .select()
+      .from(guildQuests)
+      .where(and(eq(guildQuests.guildId, guildResult[0].id), eq(guildQuests.isClaimed, false)))
+      .orderBy(guildQuests.createdAt)
 
     return quests || []
   } catch (error) {
@@ -396,22 +411,21 @@ export const getActiveQuests = async (guildId: string) => {
 export const getQuestById = async (guildId: string, questId: string) => {
   try {
     // Get guild ID from database
-    const { data: guild } = await supabase
-      .from('guilds')
-      .select('id')
-      .eq('guild_id', guildId)
-      .single()
+    const guildResult = await db
+      .select({ id: guilds.id })
+      .from(guilds)
+      .where(eq(guilds.guildId, guildId))
+      .limit(1)
 
-    if (!guild) return null
+    if (!guildResult[0]) return null
 
-    const { data: quest } = await supabase
-      .from('guild_quests')
-      .select('*')
-      .eq('guild_id', guild.id)
-      .eq('id', questId)
-      .single()
+    const questResult = await db
+      .select()
+      .from(guildQuests)
+      .where(and(eq(guildQuests.guildId, guildResult[0].id), eq(guildQuests.id, questId)))
+      .limit(1)
 
-    return quest
+    return questResult[0] ?? null
   } catch (error) {
     console.error('Error getting quest by ID:', error)
     return null
@@ -433,13 +447,13 @@ export const drawQuestWinners = async (
     }
 
     // Get guild ID from database
-    const { data: guild } = await supabase
-      .from('guilds')
-      .select('id')
-      .eq('guild_id', interaction.guildId)
-      .single()
+    const guildResult = await db
+      .select({ id: guilds.id })
+      .from(guilds)
+      .where(eq(guilds.guildId, interaction.guildId))
+      .limit(1)
 
-    if (!guild) {
+    if (!guildResult[0]) {
       return {
         success: false,
         message: 'Guild not found.',
@@ -447,19 +461,20 @@ export const drawQuestWinners = async (
     }
 
     // Get quest data
-    const { data: quest } = await supabase
-      .from('guild_quests')
-      .select('*')
-      .eq('guild_id', guild.id)
-      .eq('id', questId)
-      .single()
+    const questResult = await db
+      .select()
+      .from(guildQuests)
+      .where(and(eq(guildQuests.guildId, guildResult[0].id), eq(guildQuests.id, questId)))
+      .limit(1)
 
-    if (!quest) {
+    if (!questResult[0]) {
       return {
         success: false,
         message: 'Quest not found.',
       }
     }
+
+    const quest = questResult[0]
 
     if (quest.mode !== 'raffle') {
       return {
@@ -468,7 +483,7 @@ export const drawQuestWinners = async (
       }
     }
 
-    if (quest.is_claimed || quest.is_pending_claim) {
+    if (quest.isClaimed || quest.isPendingClaim) {
       return {
         success: false,
         message: 'This quest has already been claimed or is pending claim.',
@@ -476,12 +491,12 @@ export const drawQuestWinners = async (
     }
 
     // Get the quest message
-    const channel = await interaction.guild.channels.fetch(quest.channel_id)
+    const channel = await interaction.guild.channels.fetch(quest.channelId)
     if (!channel?.isTextBased()) {
       return { success: false, message: 'Invalid channel' }
     }
 
-    const message = await channel.messages.fetch(quest.message_id)
+    const message = await channel.messages.fetch(quest.messageId)
     if (!message) {
       return { success: false, message: 'Quest message not found' }
     }
@@ -501,12 +516,12 @@ export const drawQuestWinners = async (
     }
 
     // Randomly select winners
-    const winnersCount = Math.min(quest.winners_count || 1, participants.length)
-    const winners: typeof quest.winners = []
+    const winnersCount = Math.min(quest.winnersCount || 1, participants.length)
+    const winners: any[] = []
 
     // Split reward codes if they exist
-    const rewardCodes = quest.reward_code
-      ? quest.reward_code.split(',').map((code) => code.trim())
+    const rewardCodes = quest.rewardCode
+      ? quest.rewardCode.split(',').map((code) => code.trim())
       : []
 
     for (let i = 0; i < winnersCount; i++) {
@@ -522,18 +537,16 @@ export const drawQuestWinners = async (
     }
 
     // Update quest with winners
-    const { error } = await supabase
-      .from('guild_quests')
-      .update({
-        is_pending_claim: true,
+    await db
+      .update(guildQuests)
+      .set({
+        isPendingClaim: true,
         winners: winners,
       })
-      .eq('id', quest.id)
-
-    if (error) throw error
+      .where(eq(guildQuests.id, quest.id))
 
     // Send winner announcement and DMs if reward codes exist
-    const thread = quest.thread_id ? await interaction.guild.channels.fetch(quest.thread_id) : null
+    const thread = quest.threadId ? await interaction.guild.channels.fetch(quest.threadId) : null
 
     const winnerMentions = winners.map((w) => `<@${w.id}>`).join(', ')
     const announcementEmbed = {

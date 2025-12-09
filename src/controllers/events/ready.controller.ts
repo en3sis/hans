@@ -11,9 +11,9 @@ export const notifyPulse = async (Hans: Client) => {
     const lastCommit = await githubAPI('repos/en3sis/hans/commits')
     const config = Hans.settings
 
-    if (!config.notify_channel_id) return
+    if (!config.notifyChannelId) return
 
-    const channel = Hans.channels.cache.get(config.notify_channel_id) as TextChannel
+    const channel = Hans.channels.cache.get(config.notifyChannelId) as TextChannel
 
     const author = {
       name: `${lastCommit[0].commit.author.name}`,

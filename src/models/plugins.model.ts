@@ -1,11 +1,10 @@
-import { Database } from '../types/database.types'
+import { plugins } from '../db/schema'
 
-export type Plugins = Database['public']['Tables']['plugins']['Row']
-export type GuildPlugins = Database['public']['Tables']['guilds_plugins']['Row']
+export type Plugins = typeof plugins.$inferSelect
 export type GenericPluginParts = Omit<Plugins, 'id' | 'name'>
 
 const genericStructure: GenericPluginParts = {
-  created_at: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
   premium: false,
   enabled: true,
   category: 'miscellaneous',

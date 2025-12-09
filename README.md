@@ -33,16 +33,34 @@ The list of commands & plugins can be found [here 🔗](https://github.com/en3si
 
 Before running any command, run `npm install && cp .env.template .env`, and fill in all the env variables needed. To create your application, visit [Discord's Developer Portal](https://discord.com/developers/docs/intro)
 
-> 🪬 **IMPORTANT**: A Supabase instance is needed for the bot to work. A free cluster should be more than enough (even for small bots & communities) for development.
+### Database Setup
 
-### Supabase Local Development.
+Hans uses PostgreSQL with [Drizzle ORM](https://orm.drizzle.team/).
 
-Supabase is used for storing the bot's configs, guilds, and users.
+**Local development** uses Supabase local (includes PostgreSQL):
 
-You can work with `supabase local`, follow the instructions [here 🔗](https://supabase.io/docs/guides/local-development).
-Once you run `supabase start` the local Supabase will be populated with the latest schema (have a look at the `supabase/seed.template.sql` file for more configuration)
+```bash
+supabase start
+```
 
-More information related to working with Supabase local development can be found [📹 here 🔗](https://www.youtube.com/watch?v=N0Wb85m3YMI)
+**Production** uses a self-hosted PostgreSQL container via `docker-compose.yaml`.
+
+Set `DATABASE_URL` in your `.env`:
+
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/hans_db
+```
+
+#### Drizzle Commands
+
+| Command            | Description                   |
+| ------------------ | ----------------------------- |
+| `yarn db:push`     | Push schema to database (dev) |
+| `yarn db:generate` | Generate migration files      |
+| `yarn db:migrate`  | Run migrations                |
+| `yarn db:studio`   | Open Drizzle Studio GUI       |
+
+To pull schema from existing database: `npx drizzle-kit pull`
 
 ## 👩🏼‍💻 Development
 
@@ -56,7 +74,7 @@ It will start a development server with `ts-node` and `nodemon` for live-reload.
 
 All commands (under `src/commands`) are built with the [Slash Command](https://discordjs.guide/interactions/slash-commands.html) interaction.
 
-> 🪬 **IMPORTANT**: before developing commands, make sure you invite the bot to your server and the entry in Supabase `configs -> bot_guild_id` is your guild_id.
+> 🪬 **IMPORTANT**: before developing commands, make sure you invite the bot to your server and set `BOT_GUILD_ID` in your `.env` file.
 
 All commands under the main folder are available globally (it will take a second to have them available) while the ones under `bots-playground/` are guild-specific and are instantly deployed, use this folder for debugging & development purposes.
 
@@ -102,16 +120,3 @@ To generate the application's build.
 ### `npm start`
 
 It will run the bot with the production environment.
-
-### With Kubernetes (WIP)
-
-> 💢 NOTE: This is a WIP, it's not fully tested yet, things are missing. Please feel free to contribute.
-
-It's also possible to deploy the bot to a Kubernetes cluster, the necessary files are in the `k8s` folder.
-
-**Steps**:
-
-1. You'll need your K8S cluster, ofc ;P
-2. Create the namespace `kubectl apply -f k8s/namespace.yaml`
-3. Run `cp k8s/secrets.template.yaml k8s/secrets.yaml`, fill it up and apply the secrets `kubectl apply -f k8s/secrets.yaml`
-4. Deploy the workload `kubectl apply -f k8s/deployment.yaml`

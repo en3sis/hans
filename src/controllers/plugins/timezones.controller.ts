@@ -1,7 +1,9 @@
 import { formatDistance } from 'date-fns'
 import { ChatInputCommandInteraction, Colors } from 'discord.js'
+import { and, eq, inArray } from 'drizzle-orm'
 import { TIMEZONES_LIST } from '../../data/timezones'
-import supabase from '../../libs/supabase'
+import { db } from '../../libs/drizzle'
+import { usersSettings } from '../../db/schema'
 import { extractHours, getTimeZonesTime } from '../../utils/dates'
 import { TIME_ZONES_REGEX } from '../../utils/regex'
 
@@ -25,31 +27,28 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
       }
 
       // Check if user already has a timezone set
-      const { data } = await supabase
-        .from('users_settings')
-        .select('*')
-        .eq('user_id', interaction.user.id)
-        .eq('type', 'timezone')
-        .single()
+      const existingData = await db
+        .select()
+        .from(usersSettings)
+        .where(and(eq(usersSettings.userId, interaction.user.id), eq(usersSettings.type, 'timezone')))
+        .limit(1)
 
       // If not, insert it, otherwise update it
-      if (!data) {
-        await supabase
-          .from('users_settings')
-          .insert({
-            user_id: interaction.user.id,
-            type: 'timezone',
-            metadata: { timezone },
-          })
-          .select()
+      if (!existingData[0]) {
+        await db.insert(usersSettings).values({
+          userId: interaction.user.id,
+          type: 'timezone',
+          metadata: { timezone },
+        })
       } else {
-        await supabase
-          .from('users_settings')
-          .update({
+        await db
+          .update(usersSettings)
+          .set({
             metadata: { timezone },
           })
-          .eq('user_id', interaction.user.id)
-          .eq('type', 'timezone')
+          .where(
+            and(eq(usersSettings.userId, interaction.user.id), eq(usersSettings.type, 'timezone')),
+          )
       }
 
       interaction.editReply({
@@ -62,11 +61,11 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
       })
     } else if (command === 'unset') {
       // Deletes the user's timezone configuration from the database
-      await supabase
-        .from('users_settings')
-        .delete()
-        .eq('user_id', interaction.user.id)
-        .eq('type', 'timezone')
+      await db
+        .delete(usersSettings)
+        .where(
+          and(eq(usersSettings.userId, interaction.user.id), eq(usersSettings.type, 'timezone')),
+        )
 
       await interaction.editReply({ content: 'Your timezone has been unset.' })
     } else if (command === 'diff') {
@@ -75,13 +74,13 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
       const authorUser = interaction.user
 
       // Check if both users have a timezone set
-      const { data } = await supabase
-        .from('users_settings')
-        .select('*')
-        .in('user_id', [targetUser.id, authorUser.id])
+      const data = await db
+        .select()
+        .from(usersSettings)
+        .where(inArray(usersSettings.userId, [targetUser.id, authorUser.id]))
 
-      const targetUserData = data.filter((d) => d.user_id === targetUser.id)[0]
-      const authorUserData = data.filter((d) => d.user_id === authorUser.id)[0]
+      const targetUserData = data.filter((d) => d.userId === targetUser.id)[0]
+      const authorUserData = data.filter((d) => d.userId === authorUser.id)[0]
 
       // If both users have a timezone set, compare them
       if (data[0] && data[1]) {

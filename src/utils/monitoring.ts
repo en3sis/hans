@@ -4,7 +4,7 @@ import { Hans } from '..'
 export const reportErrorToMonitoring = async ({ embeds }) => {
   try {
     const monitoringChannel = Hans.channels.cache.get(
-      Hans.settings?.monitoring_channel_id,
+      Hans.settings?.monitoringChannelId,
     ) as TextChannel
 
     if (!monitoringChannel) return

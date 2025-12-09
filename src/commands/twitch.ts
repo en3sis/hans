@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { twitchController } from '../controllers/plugins/twitch.controller'
 import { logger } from '../utils/debugging'
 
@@ -11,7 +11,7 @@ module.exports = {
     .addStringOption((string) =>
       string.setName('username').setDescription('Twitch username').setRequired(true),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       const username = interaction.options.get('username').value as string
 

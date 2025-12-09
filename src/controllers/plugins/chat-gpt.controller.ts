@@ -1,10 +1,12 @@
-import { CommandInteraction } from 'discord.js'
-import supabase from '../../libs/supabase'
+import { ChatInputCommandInteraction } from 'discord.js'
+import { and, eq } from 'drizzle-orm'
+import { db } from '../../libs/drizzle'
+import { guildsPlugins } from '../../db/schema'
 import { GuildPluginChatGTPMetadata } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { CHATGPT_COMMANDS_USAGE_DAILY } from '../../utils/constants'
 import { decrypt } from '../../utils/crypto'
-import { GuildPlugin } from '../bot/guilds.controller'
+import { GuildPluginRow } from '../bot/plugins.controller'
 import OpenAI from 'openai'
 
 interface IOpenAIRequestSettings {
@@ -59,10 +61,10 @@ export const sendPrompt = async ({
       messages: [
         {
           role: 'system',
-          content: `You are Hans, your all-knowing assistant. 
-          Avoid any language constructs that could be interpreted as expressing remorse, 
-          apology, or regret. Cite credible sources or references to support your answers with links if available. 
-          Current date: ${new Date().toLocaleDateString()}. 
+          content: `You are Hans, your all-knowing assistant.
+          Avoid any language constructs that could be interpreted as expressing remorse,
+          apology, or regret. Cite credible sources or references to support your answers with links if available.
+          Current date: ${new Date().toLocaleDateString()}.
           For code or commands, use markdown code blocks with the right syntax (e.g., \`\`\`javascript for JS, \`\`\`python for Python). Use Discord-friendly markdown formatting (bold, italics, code blocks)
           When providing measurements, always include both metric and imperial units in this format:
           Always provide the metric unit first, followed by the imperial unit in parentheses.
@@ -89,8 +91,8 @@ export const sendPrompt = async ({
 }
 
 export const chatGptCommandHandler = async (
-  interaction: CommandInteraction,
-  guild: GuildPlugin & { premium: boolean },
+  interaction: ChatInputCommandInteraction,
+  guild: GuildPluginRow & { premium: boolean },
   guildPlugin: PluginMetadata,
   usage?: number,
 ) => {
@@ -139,28 +141,25 @@ export const chatGptCommandHandler = async (
 export const chatGptUsage = async (
   guildPlugin: PluginMetadata,
   guild_id: string,
-): Promise<GuildPlugin> => {
+): Promise<GuildPluginRow> => {
   try {
-    const { data: currentSettings } = await supabase
-      .from('guilds_plugins')
-      .select('*')
-      .eq('name', 'chatGtp')
-      .eq('owner', guild_id)
-      .single()
+    const currentSettings = await db
+      .select()
+      .from(guildsPlugins)
+      .where(and(eq(guildsPlugins.name, 'chatGtp'), eq(guildsPlugins.owner, guild_id)))
+      .limit(1)
 
-    const _metadata = JSON.parse(JSON.stringify(currentSettings?.metadata)) || {}
+    const _metadata = JSON.parse(JSON.stringify(currentSettings[0]?.metadata)) || {}
 
     const usage = guildPlugin === null ? CHATGPT_COMMANDS_USAGE_DAILY - 1 : guildPlugin.usage - 1
 
-    const { data } = await supabase
-      .from('guilds_plugins')
-      .update({ metadata: { ..._metadata, usage } })
-      .eq('owner', guild_id)
-      .eq('name', 'chatGtp')
-      .select()
-      .single()
+    const result = await db
+      .update(guildsPlugins)
+      .set({ metadata: { ..._metadata, usage } })
+      .where(and(eq(guildsPlugins.owner, guild_id), eq(guildsPlugins.name, 'chatGtp')))
+      .returning()
 
-    return data
+    return result[0]
   } catch (error) {
     console.error('❌ chatGptUsage(): ', error)
     throw Error(error.message)

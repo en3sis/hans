@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { purgeMessages } from '../controllers/plugins/moderation.controller'
 import { logger } from '../utils/debugging'
 
@@ -23,7 +23,7 @@ module.exports = {
             ),
         ),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       if (!interaction.memberPermissions.has(['Administrator']))
         return interaction.editReply({

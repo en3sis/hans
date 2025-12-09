@@ -14,7 +14,7 @@ module.exports = {
         embeds: [
           {
             title: '📨 Hans support',
-            description: `Please feel free to join Hans Discord server for support. \n[🔗 Discord Server](${Hans.settings.perma_invite})`,
+            description: `Please feel free to join Hans Discord server for support. \n[🔗 Discord Server](${Hans.settings.permaInvite})`,
             fields: [
               {
                 name: '💢 Any issues?',

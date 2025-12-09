@@ -1,11 +1,12 @@
 import { Client, Guild } from 'discord.js'
-import supabase from '../../libs/supabase'
-import { Database } from '../../types/database.types'
+import { eq } from 'drizzle-orm'
+import { db } from '../../libs/drizzle'
+import { guilds } from '../../db/schema'
 import { Hans } from './../../index'
 import { insertGuildPlugin, resolveGuildPlugins } from './plugins.controller'
 
-export type GuildSettings = Database['public']['Tables']['guilds']['Row']
-export type GuildPlugin = Database['public']['Tables']['guilds_plugins']['Row']
+export type GuildSettings = typeof guilds.$inferSelect
+export type GuildPlugin = typeof guilds.$inferSelect
 
 /** Fetches guild in the DB, if found, sets it as a cache for CACHE_TTL and returns it.
  * @param guildId string with the Guild ID
@@ -13,15 +14,9 @@ export type GuildPlugin = Database['public']['Tables']['guilds_plugins']['Row']
  */
 export const findOneGuild = async (guildId: string) => {
   try {
-    const { data, error } = await supabase
-      .from('guilds')
-      .select('*')
-      .eq('guild_id', guildId)
-      .single()
+    const result = await db.select().from(guilds).where(eq(guilds.guildId, guildId)).limit(1)
 
-    if (error) throw error
-
-    return data
+    return result[0] ?? null
   } catch (error) {
     console.error('❌ ERROR: findOneGuild(): ', error)
   }
@@ -32,37 +27,41 @@ export const findOneGuild = async (guildId: string) => {
  */
 export const insertAllGuilds = async (Hans: Client) => {
   try {
-    const guilds: Omit<GuildSettings, 'id' | 'premium'>[] = Hans.guilds.cache.map((guild) => ({
+    const guildsList = Hans.guilds.cache.map((guild) => ({
       name: guild.name,
       avatar: guild.icon,
-      created_at: new Date().toISOString(),
-      guild_id: guild.id,
+      createdAt: new Date().toISOString(),
+      guildId: guild.id,
     }))
 
-    const { data, error } = await supabase
-      .from('guilds')
-      .upsert(guilds, {
-        onConflict: 'guild_id',
-      })
-      .select()
+    const insertedGuilds: GuildSettings[] = []
 
-    // Set the guild plugins to the default values.
-    if (data)
-      guilds.forEach(async (guild) => {
+    for (const guild of guildsList) {
+      const result = await db
+        .insert(guilds)
+        .values(guild)
+        .onConflictDoUpdate({
+          target: guilds.guildId,
+          set: {
+            name: guild.name,
+            avatar: guild.avatar,
+          },
+        })
+        .returning()
+
+      if (result[0]) {
+        insertedGuilds.push(result[0])
         try {
-          await insertGuildPlugin(guild.guild_id)
+          await insertGuildPlugin(guild.guildId)
         } catch (error) {
           console.error('❌ ERROR: insertAllGuilds(): ', error)
         }
-      })
-
-    if (error) {
-      throw error
+      }
     }
 
-    console.info(`🪯  Initial ${data.length} guilds inserted/updated`)
+    console.info(`🪯  Initial ${insertedGuilds.length} guilds inserted/updated`)
 
-    return data
+    return insertedGuilds
   } catch (error) {
     console.error('❌ ERROR: insertAllGuilds(): ', error)
   }
@@ -74,22 +73,23 @@ export const insertAllGuilds = async (Hans: Client) => {
  */
 export const insetOneGuild = async (guild: Guild) => {
   try {
-    const _guild: Omit<GuildSettings, 'id'> = {
+    const guildData = {
       avatar: guild.icon,
-      created_at: new Date().toISOString(),
-      guild_id: guild.id,
+      createdAt: new Date().toISOString(),
+      guildId: guild.id,
       name: guild.name,
       premium: false,
     }
 
-    const { data, error } = await supabase.from('guilds').upsert(_guild)
-
-    if (error) throw error
+    await db.insert(guilds).values(guildData).onConflictDoUpdate({
+      target: guilds.guildId,
+      set: guildData,
+    })
 
     // Set the guild plugins to the default values
     await insertGuildPlugin(guild.id)
 
-    return data
+    return guildData
   } catch (error) {
     console.error('❌ ERROR: insetOneGuild: ', error)
   }
@@ -101,11 +101,9 @@ export const insetOneGuild = async (guild: Guild) => {
  */
 export const removeOneGuild = async (guild: Guild) => {
   try {
-    const { data, error } = await supabase.from('guilds').delete().eq('guild_id', guild.id).single()
+    const result = await db.delete(guilds).where(eq(guilds.guildId, guild.id)).returning()
 
-    if (error) throw error
-
-    return data
+    return result[0] ?? null
   } catch (error) {
     console.error('❌ ERROR: insetOneGuild: ', error)
   }

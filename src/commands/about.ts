@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction, GuildMember } from 'discord.js'
+import { ChatInputCommandInteraction, GuildMember } from 'discord.js'
 import { getUserInformation } from '../controllers/engagement/user-info.controller'
 import { logger } from '../utils/debugging'
 import { extractUser } from '../utils/users'
@@ -13,7 +13,7 @@ module.exports = {
     .addUserOption((option) =>
       option.setName('user').setDescription('@username or ID').setRequired(true),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       const user = interaction.options.get('user')?.value as string
 

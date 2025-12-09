@@ -1,10 +1,10 @@
-import { CommandInteraction, TextChannel } from 'discord.js'
+import { ChatInputCommandInteraction, TextChannel } from 'discord.js'
 import { Hans } from '../..'
 import { inference } from '../../libs/huggingface'
 import { MESSAGE_ID_REGEX } from '../../utils/regex'
 import { resolveGuildPlugins } from '../bot/plugins.controller'
 
-export const summarizeController = async (interaction: CommandInteraction) => {
+export const summarizeController = async (interaction: ChatInputCommandInteraction) => {
   try {
     if (!process.env.HUGGINGFACE_API_KEY) {
       await interaction.editReply('Command could not be executed at this moment.')

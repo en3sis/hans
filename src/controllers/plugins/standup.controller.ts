@@ -1,8 +1,10 @@
 import { CommandInteraction, TextChannel } from 'discord.js'
 import * as cron from 'cron'
+import { eq } from 'drizzle-orm'
 import { StandupScheduleMetadata } from '../../types/plugins'
 import { updateMetadataGuildPlugin } from '../bot/plugins.controller'
-import supabase from '../../libs/supabase'
+import { db } from '../../libs/drizzle'
+import { guildsPlugins } from '../../db/schema'
 import { scheduledTasks } from '../tasks/cron-jobs'
 import { Hans } from '../..'
 
@@ -11,29 +13,25 @@ export const standupPluginController = async (
   newSchedule: StandupScheduleMetadata,
 ) => {
   try {
-    const { data: guildPlugin } = await supabase
-      .from('guilds_plugins')
-      .select('metadata')
-      .eq('owner', interaction.guildId)
-      .eq('name', 'standup')
-      .single()
+    const guildPluginResult = await db
+      .select({ metadata: guildsPlugins.metadata })
+      .from(guildsPlugins)
+      .where(eq(guildsPlugins.owner, interaction.guildId))
+      .limit(1)
 
     let currentSchedules: StandupScheduleMetadata[] = []
 
-    if (guildPlugin?.metadata && Array.isArray(guildPlugin.metadata)) {
-      currentSchedules = guildPlugin.metadata as StandupScheduleMetadata[]
+    if (guildPluginResult[0]?.metadata && Array.isArray(guildPluginResult[0].metadata)) {
+      currentSchedules = guildPluginResult[0].metadata as StandupScheduleMetadata[]
     }
 
-    // Check if the schedule already exists
     const existingScheduleIndex = currentSchedules.findIndex(
       (schedule) => schedule.channelId === newSchedule.channelId,
     )
 
     if (existingScheduleIndex !== -1) {
-      // Update existing schedule
       currentSchedules[existingScheduleIndex] = newSchedule
     } else {
-      // Add new schedule
       currentSchedules.push(newSchedule)
     }
 
@@ -55,7 +53,6 @@ export const standupPluginController = async (
 
     try {
       await updateMetadataGuildPlugin(updatedMetadata, 'standup', interaction.guildId)
-
       await registerStandupSchedules(interaction.guildId, updatedMetadata)
 
       const scheduleInfo = updatedMetadata
@@ -85,7 +82,6 @@ export const registerStandupSchedules = async (
   schedules: StandupScheduleMetadata[],
 ) => {
   try {
-    // Stop existing schedules for this guild
     Object.keys(scheduledTasks).forEach((key) => {
       if (key.startsWith(`${guildId}#standup`)) {
         scheduledTasks[key].stop()
@@ -130,12 +126,10 @@ export const registerStandupSchedules = async (
 
 export const initStadupsSchedules = async () => {
   try {
-    const { error, data } = await supabase
-      .from('guilds_plugins')
-      .select('owner, metadata, enabled')
-      .eq('name', 'standup')
-
-    if (error) throw error
+    const data = await db
+      .select({ owner: guildsPlugins.owner, metadata: guildsPlugins.metadata, enabled: guildsPlugins.enabled })
+      .from(guildsPlugins)
+      .where(eq(guildsPlugins.name, 'standup'))
 
     data.forEach(async (standupGuildPlugin) => {
       if (!standupGuildPlugin.metadata || !standupGuildPlugin.enabled) return

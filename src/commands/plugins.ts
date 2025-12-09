@@ -1,15 +1,15 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import {
-  pluginChatGPTSettings,
-  pluginThreadsSettings,
-  pluginsListNames,
-  toggleGuildPlugin,
+    pluginChatGPTSettings,
+    pluginThreadsSettings,
+    pluginsListNames,
+    toggleGuildPlugin,
 } from '../controllers/bot/plugins.controller'
 import { guildActivitySetChannel } from '../controllers/plugins/guild-activity.controller'
+import { standupPluginController } from '../controllers/plugins/standup.controller'
 import { verifyGuildPluginSettings } from '../controllers/plugins/verify.controller'
 import { logger } from '../utils/debugging'
-import { standupPluginController } from '../controllers/plugins/standup.controller'
 
 const list = pluginsListNames()
 
@@ -136,7 +136,7 @@ module.exports = {
           option.setName('role').setDescription('Role to mention in the message, example: @here'),
         ),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       if (!interaction.memberPermissions.has(['Administrator']))
         return interaction.editReply({

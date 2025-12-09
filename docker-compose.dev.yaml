@@ -1,4 +1,24 @@
 services:
+  postgres:
+    container_name: postgres-hans
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: hans
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hans_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U hans -d hans_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - line
+
   redis:
     container_name: redis-hans
     image: redis/redis-stack:6.2.6-v8
@@ -6,8 +26,11 @@ services:
       - 8888:8001
     volumes:
       - redis_data:/data
+    networks:
+      - line
 
 volumes:
+  postgres_data:
   redis_data:
 
 networks:

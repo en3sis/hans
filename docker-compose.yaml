@@ -10,6 +10,30 @@ services:
       - .env
     environment:
       NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - line
+
+  postgres:
+    container_name: postgres-hans
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hans}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-hans_db}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U hans -d hans_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - line
 
@@ -22,6 +46,7 @@ services:
       - line
 
 volumes:
+  postgres_data:
   redis_data:
 
 networks:

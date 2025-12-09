@@ -189,12 +189,12 @@ module.exports = {
             question,
             answer,
             mode,
-            winners_count: mode === 'raffle' ? winnersCount : undefined,
+            winnersCount: mode === 'raffle' ? winnersCount : undefined,
             reward: rewardDescription,
-            reward_code: rewardCode || rewardDescription,
-            channel_id: channel.id,
-            created_by: interaction.user.id,
-            expiration_date: expirationDate.toISOString(),
+            rewardCode: rewardCode || rewardDescription,
+            channelId: channel.id,
+            createdBy: interaction.user.id,
+            expirationDate: expirationDate.toISOString(),
           })
 
           await interaction.editReply({
@@ -216,7 +216,7 @@ module.exports = {
           const questList = quests
             .map((quest) => {
               const expiresIn = Math.ceil(
-                (new Date(quest.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+                (new Date(quest.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
               )
               return `- **${quest.title}** (ID: \`${quest.id}\`) - Expires in ${expiresIn} days`
             })
@@ -245,14 +245,14 @@ module.exports = {
             break
           }
 
-          const channel = await interaction.guild.channels.fetch(quest.channel_id)
-          const thread = quest.thread_id
-            ? await interaction.guild.channels.fetch(quest.thread_id)
+          const channel = await interaction.guild.channels.fetch(quest.channelId)
+          const thread = quest.threadId
+            ? await interaction.guild.channels.fetch(quest.threadId)
             : null
 
-          const statusText = quest.is_claimed
+          const statusText = quest.isClaimed
             ? '✅ Completed'
-            : quest.is_pending_claim
+            : quest.isPendingClaim
               ? '🟡 Pending Claim'
               : '🔵 Active'
 
@@ -279,21 +279,21 @@ module.exports = {
                   },
                   {
                     name: 'Expires',
-                    value: new Date(quest.expiration_date).toLocaleString(),
+                    value: new Date(quest.expirationDate).toLocaleString(),
                     inline: true,
                   },
                   {
                     name: 'Created By',
-                    value: `<@${quest.created_by}>`,
+                    value: `<@${quest.createdBy}>`,
                     inline: true,
                   },
                   {
                     name: 'Winner',
-                    value: quest.winner ? `<@${quest.winner.id}>` : 'None yet',
+                    value: quest.winner ? `<@${(quest.winner as { id: string }).id}>` : 'None yet',
                     inline: true,
                   },
                 ],
-                color: quest.is_claimed ? 0x00ff00 : quest.is_pending_claim ? 0xffcc00 : 0x0099ff,
+                color: quest.isClaimed ? 0x00ff00 : quest.isPendingClaim ? 0xffcc00 : 0x0099ff,
               },
             ],
           })
@@ -342,14 +342,14 @@ module.exports = {
             break
           }
 
-          if (new Date(quest.expiration_date) > new Date()) {
+          if (new Date(quest.expirationDate) > new Date()) {
             await interaction.editReply({
               content: 'This quest has not expired yet.',
             })
             break
           }
 
-          if (quest.winners?.length) {
+          if ((quest.winners as unknown[])?.length) {
             await interaction.editReply({
               content: 'Winners have already been drawn for this quest.',
             })
