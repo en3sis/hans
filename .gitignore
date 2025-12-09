@@ -18,3 +18,4 @@ build/
 package-lock.json
 /plans
 drizzle.config.js
+/backup
