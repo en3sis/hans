@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
-import postgres from 'postgres'
 import path from 'path'
+import postgres from 'postgres'
 
 const runMigrations = async () => {
   const connectionString =
@@ -11,7 +11,7 @@ const runMigrations = async () => {
 
   const migrationClient = postgres(connectionString, {
     max: 1,
-    onnotice: false, // Silence PostgreSQL NOTICE messages
+    onnotice: () => {}, // Silence PostgreSQL NOTICE messages
   })
   const db = drizzle(migrationClient)
 
