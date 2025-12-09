@@ -1,53 +1,56 @@
 services:
   bot:
-    build:
-      context: .
-      args:
-        M1: 'false'
-    image: hans:latest
+    image: en3sis/hans:latest
+    container_name: hans-bot
     restart: always
     env_file:
       - .env
     environment:
       NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-hans}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-hans_db}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - line
+      - hans-network
 
   postgres:
-    container_name: postgres-hans
-    image: postgres:16-alpine
+    image: postgres:17-alpine
+    container_name: hans-postgres
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-hans}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:-hans_db}
       PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U hans -d hans_db']
-      interval: 10s
-      timeout: 5s
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-hans} -d ${POSTGRES_DB:-hans_db}']
+      interval: 2s
+      timeout: 10s
       retries: 5
     networks:
-      - line
+      - hans-network
 
   redis:
-    container_name: redis
-    image: redis/redis-stack-server:6.2.6-v8
+    image: redis/redis-stack-server:7.4.0-v8
+    container_name: hans-redis
+    restart: always
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 2s
+      timeout: 10s
+      retries: 5
     networks:
-      - line
+      - hans-network
 
 volumes:
   postgres_data:
   redis_data:
 
 networks:
-  line:
+  hans-network:
+    driver: bridge

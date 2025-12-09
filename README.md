@@ -37,38 +37,29 @@ Before running any command, run `npm install && cp .env.template .env`, and fill
 
 Hans uses PostgreSQL with [Drizzle ORM](https://orm.drizzle.team/).
 
-**Local development** uses Supabase local (includes PostgreSQL):
-
-```bash
-supabase start
-```
-
-**Production** uses a self-hosted PostgreSQL container via `docker-compose.yaml`.
+`yarn dev` automatically starts PostgreSQL via Docker and runs migrations.
 
 Set `DATABASE_URL` in your `.env`:
-
 ```
-DATABASE_URL=postgresql://user:password@localhost:5432/hans_db
+DATABASE_URL=postgresql://hans:password@localhost:5432/hans_db
 ```
 
 #### Drizzle Commands
 
-| Command            | Description                   |
-| ------------------ | ----------------------------- |
-| `yarn db:push`     | Push schema to database (dev) |
-| `yarn db:generate` | Generate migration files      |
-| `yarn db:migrate`  | Run migrations                |
-| `yarn db:studio`   | Open Drizzle Studio GUI       |
-
-To pull schema from existing database: `npx drizzle-kit pull`
+| Command | Description |
+|---------|-------------|
+| `yarn db:migrate` | Run migrations |
+| `yarn db:push` | Push schema to database (dev) |
+| `yarn db:studio` | Open Drizzle Studio GUI |
+| `npx drizzle-kit pull` | Pull schema from existing database |
 
 ## 👩🏼‍💻 Development
 
 Once the `Prepare environment` section is done, you can follow along with the development.
 
-### `npm run dev`
+### `yarn dev`
 
-It will start a development server with `ts-node` and `nodemon` for live-reload. A bot Invite link will be displayed in the console.
+Starts PostgreSQL container, runs migrations, and launches the bot with `nodemon` for live-reload. A bot invite link will be displayed in the console.
 
 ### Slash commands
 
@@ -84,13 +75,12 @@ To deploy the commands: `npm run slashDev` or `npm run slash` in production.
 
 ## 🧪 Unit Tests
 
-For testing, we use Mocha with TS.
+Tests use Jest. All tests are under the `/tests` directory.
 
-All the tests are under the `/tests` directory. Right now they're none or a few, we should add more test coverage for command controllers.
-
-### `npm run test`
-
-Will run all the tests.
+```bash
+yarn test                           # Run all tests
+yarn test -- --testPathPattern=foo  # Run single test
+```
 
 ---
 

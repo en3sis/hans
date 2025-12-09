@@ -12,7 +12,7 @@ import { reportErrorToMonitoring } from '../utils/monitoring'
 import { scheduleCronJobs } from '../controllers/tasks/cron-jobs'
 
 module.exports = {
-  name: 'ready',
+  name: 'clientReady',
   once: true,
   enabled: true,
   async execute(Hans: Client) {

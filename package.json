@@ -11,8 +11,8 @@
   "license": "MIT",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node build/utils/deploy-commands.js && node build/index.js",
-    "dev": "docker-compose -f docker-compose.dev.yaml up -d && yarn db:migrate && ISDEV=true nodemon hans",
+    "start": "node build/utils/migrate.js && node build/utils/deploy-commands.js && node build/index.js",
+    "dev": "docker-compose -f docker-compose.dev.yaml up -d --wait && yarn db:migrate && ISDEV=true nodemon hans",
     "build": "tsc --project ./",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

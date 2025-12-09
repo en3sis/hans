@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: postgres-hans
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     environment:
       POSTGRES_USER: hans
       POSTGRES_PASSWORD: password
@@ -21,11 +21,17 @@ services:
 
   redis:
     container_name: redis-hans
-    image: redis/redis-stack:6.2.6-v8
+    image: redis/redis-stack:7.4.0-v8
     ports:
+      - 6379:6379
       - 8888:8001
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - line
 
