@@ -3,6 +3,7 @@ import { db } from '../../libs/drizzle'
 import { guilds, guildsPlugins } from '../../db/schema'
 import type { AuthenticatedRequest } from '../middleware/auth'
 import { verifyGuildAccess } from '../utils/discord'
+import { getPluginSchema, isPluginConfigurable } from '../../models/plugin-schemas'
 
 interface UpdatePluginBody {
   enabled?: boolean
@@ -10,6 +11,35 @@ interface UpdatePluginBody {
 }
 
 export const handlePluginsRoutes = {
+  /**
+   * GET /api/v1/plugins/:pluginName/schema
+   * Returns the JSON Schema for a plugin's configuration
+   */
+  async getSchema(_req: AuthenticatedRequest, params: Record<string, string>): Promise<Response> {
+    const { pluginName } = params
+
+    const schema = getPluginSchema(pluginName)
+
+    if (!schema) {
+      return new Response(JSON.stringify({ error: 'Plugin not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    return new Response(
+      JSON.stringify({
+        name: pluginName,
+        schema,
+        configurable: isPluginConfigurable(pluginName),
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
+  },
+
   /**
    * PATCH /api/v1/guilds/:guildId/plugins/:pluginName
    * Update plugin settings (enabled, metadata)

@@ -58,8 +58,11 @@ const routes: Route[] = [
   // Guild routes (auth required)
   createRoute('GET', '/api/v1/guilds', handleGuildsRoutes.list, true),
   createRoute('GET', '/api/v1/guilds/:guildId', handleGuildsRoutes.get, true),
+  createRoute('GET', '/api/v1/guilds/:guildId/channels', handleGuildsRoutes.getChannels, true),
+  createRoute('GET', '/api/v1/guilds/:guildId/roles', handleGuildsRoutes.getRoles, true),
 
   // Plugin routes (auth required)
+  createRoute('GET', '/api/v1/plugins/:pluginName/schema', handlePluginsRoutes.getSchema, true),
   createRoute('PATCH', '/api/v1/guilds/:guildId/plugins/:pluginName', handlePluginsRoutes.update, true),
 ]
 

@@ -1,8 +1,10 @@
 import { eq } from 'drizzle-orm'
+import { ChannelType } from 'discord.js'
 import { db } from '../../libs/drizzle'
 import { guilds, guildsPlugins, plugins } from '../../db/schema'
 import type { AuthenticatedRequest } from '../middleware/auth'
 import { fetchUserGuilds, filterManageableGuilds, verifyGuildAccess } from '../utils/discord'
+import { Hans } from '../../index'
 
 export const handleGuildsRoutes = {
   /**
@@ -113,5 +115,95 @@ export const handleGuildsRoutes = {
         headers: { 'Content-Type': 'application/json' },
       },
     )
+  },
+
+  /**
+   * GET /api/v1/guilds/:guildId/channels
+   * Returns text channels from bot's cache
+   */
+  async getChannels(req: AuthenticatedRequest, params: Record<string, string>): Promise<Response> {
+    const { guildId } = params
+
+    // Verify user has access to this guild
+    const { hasAccess } = await verifyGuildAccess(req.accessToken, guildId)
+
+    if (!hasAccess) {
+      return new Response(JSON.stringify({ error: 'Access denied' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Get guild from bot's cache
+    const guild = Hans.guilds.cache.get(guildId)
+
+    if (!guild) {
+      return new Response(JSON.stringify({ error: 'Bot is not in this guild' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Get text channels from cache
+    const channels = guild.channels.cache
+      .filter((channel) => channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement)
+      .map((channel) => ({
+        id: channel.id,
+        name: channel.name,
+        type: channel.type,
+        parentId: channel.parentId,
+        position: channel.position,
+      }))
+      .sort((a, b) => a.position - b.position)
+
+    return new Response(JSON.stringify({ channels }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  },
+
+  /**
+   * GET /api/v1/guilds/:guildId/roles
+   * Returns roles from bot's cache
+   */
+  async getRoles(req: AuthenticatedRequest, params: Record<string, string>): Promise<Response> {
+    const { guildId } = params
+
+    // Verify user has access to this guild
+    const { hasAccess } = await verifyGuildAccess(req.accessToken, guildId)
+
+    if (!hasAccess) {
+      return new Response(JSON.stringify({ error: 'Access denied' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Get guild from bot's cache
+    const guild = Hans.guilds.cache.get(guildId)
+
+    if (!guild) {
+      return new Response(JSON.stringify({ error: 'Bot is not in this guild' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Get roles from cache (exclude @everyone role)
+    const roles = guild.roles.cache
+      .filter((role) => role.id !== guildId) // @everyone has same ID as guild
+      .map((role) => ({
+        id: role.id,
+        name: role.name,
+        color: role.hexColor,
+        position: role.position,
+        managed: role.managed, // Bot/integration managed roles
+      }))
+      .sort((a, b) => b.position - a.position) // Higher position first
+
+    return new Response(JSON.stringify({ roles }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
   },
 }
