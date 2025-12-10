@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import { reportErrorToMonitoring } from './utils/monitoring'
 import { ProjectValidator } from './utils/pre-validation'
+import './types/libs'
 
 /** =============================================================================
  * 🛠 Initial configuration

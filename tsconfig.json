@@ -17,7 +17,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "types": [
-      "jest"
+      "jest",
+      "node"
     ],
     "paths": {
       // "@/libs/*": ["libs/*"]

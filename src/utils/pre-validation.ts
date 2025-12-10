@@ -18,10 +18,9 @@ export class ProjectValidator {
     return (
       process.env.DISCORD_TOKEN &&
       process.env.DISCORD_CLIENT_ID &&
-      process.env.SUPABASE_URL &&
-      process.env.SUPABASE_SERVICE_ROL &&
       process.env.CRYPTO_KEY &&
-      process.env.CRYPTO_IV
+      process.env.CRYPTO_IV &&
+      process.env.DATABASE_URL
     )
   }
 }

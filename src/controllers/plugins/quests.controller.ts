@@ -1,9 +1,9 @@
+import { randomUUID } from 'crypto'
 import { CommandInteraction, Message, ThreadChannel, User, TextChannel } from 'discord.js'
 import { and, eq, gt } from 'drizzle-orm'
 import { db } from '../../libs/drizzle'
 import { guilds, guildQuests } from '../../db/schema'
 import { DEFAULT_COLOR } from '../../utils/colors'
-import { v4 as uuidv4 } from 'uuid'
 
 interface CreateQuestData {
   title: string
@@ -36,7 +36,7 @@ export const createQuest = async (
     }
 
     const newQuest = {
-      id: uuidv4(),
+      id: randomUUID(),
       guildId: guildResult[0].id,
       title: questData.title,
       description: questData.description,
