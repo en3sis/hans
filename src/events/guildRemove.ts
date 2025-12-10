@@ -1,7 +1,7 @@
 import { Client, Guild } from 'discord.js'
 import { removeOneGuild } from '../controllers/bot/guilds.controller'
 
-module.exports = {
+export default {
   name: 'guildRemove',
   once: false,
   enabled: true,

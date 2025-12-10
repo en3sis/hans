@@ -5,7 +5,7 @@ import { logger } from '../utils/debugging'
 import { extractUser } from '../utils/users'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
-module.exports = {
+export default {
   ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('about')

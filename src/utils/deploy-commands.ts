@@ -5,7 +5,12 @@ import { Routes } from 'discord-api-types/v9'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import { getBotConfiguration, insertConfiguration } from '../controllers/bot/config.controller'
+
+// ESM __dirname equivalent
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 dotenv.config({ path: process.cwd() + '/.env' })
 
@@ -53,28 +58,22 @@ const fetchCommands = async ({
 }: {
   folderPath: string
 }): Promise<SlashCommandBuilder[]> => {
-  return new Promise((resolve, reject) => {
-    try {
-      // Slash commands definitions
-      const commands: SlashCommandBuilder[] = []
+  const commands: SlashCommandBuilder[] = []
 
-      // Fetch command files
-      const commandsFiles = fs
-        .readdirSync(path.join(path.resolve(__dirname), `../commands${folderPath}`))
-        .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
+  // Fetch command files
+  const commandsPath = path.join(__dirname, `../commands${folderPath}`)
+  const commandsFiles = fs
+    .readdirSync(commandsPath)
+    .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
-      for (const file of commandsFiles) {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-        const command = require(`${(path.resolve(__dirname), `../commands${folderPath}/${file}`)}`)
-        commands.push(command.data.toJSON())
-      }
+  for (const file of commandsFiles) {
+    const filePath = path.join(commandsPath, file)
+    const commandModule = await import(filePath)
+    const command = commandModule.default || commandModule
+    commands.push(command.data.toJSON())
+  }
 
-      return resolve(commands)
-    } catch (error) {
-      reject(error.message)
-      console.log('❌ ERROR: fetchCommands(): ', error)
-    }
-  })
+  return commands
 }
 
 ;(async () => {

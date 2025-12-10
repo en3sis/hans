@@ -11,7 +11,7 @@ import { configsRealtime } from '../realtime/presence.realtime'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 import { scheduleCronJobs } from '../controllers/tasks/cron-jobs'
 
-module.exports = {
+export default {
   name: 'clientReady',
   once: true,
   enabled: true,

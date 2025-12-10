@@ -2,8 +2,8 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "rootDir": "./src",
     // "baseUrl": "./src",
     "target": "es6",
@@ -17,7 +17,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "types": [
-      "jest",
+      "bun",
       "node"
     ],
     "paths": {
@@ -39,6 +39,8 @@
     "node_modules/",
     "build/",
     "tests/**",
+    "demo/**",
+    "hans-app/**",
     "drizzle.config.ts"
   ]
 }

@@ -9,26 +9,26 @@
     "url": "https://github.com/en3sis/hans"
   },
   "license": "MIT",
+  "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node build/utils/migrate.js && node build/utils/deploy-commands.js && node build/index.js",
-    "dev": "docker-compose -f docker-compose.dev.yaml up -d --wait && yarn db:migrate && ISDEV=true nodemon hans",
+    "start": "bun run build/utils/migrate.js && bun run build/utils/deploy-commands.js && bun run build/index.js",
+    "dev": "docker-compose -f docker-compose.dev.yaml up -d --wait && bun run db:migrate && ISDEV=true bun --watch src/index.ts",
     "build": "tsc --project ./",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "build_dev": "rm -rf ./build && tsc --project ./",
+    "build:dev": "rm -rf ./build && tsc --project ./",
     "lint": "eslint . --fix",
-    "format": "npx prettier --write '**/*.ts'",
-    "slash": "yarn build && node build/utils/deploy-commands.js",
-    "slash:dev": "export ISDEV=true && yarn build_dev && node build/utils/deploy-commands.js",
-    "test": "jest --setupFiles dotenv/config"
+    "format": "bunx prettier --write '**/*.ts'",
+    "slash": "bun run build && bun run build/utils/deploy-commands.js",
+    "slash:dev": "ISDEV=true bun run build:dev && bun run build/utils/deploy-commands.js",
+    "test": "bun test"
   },
   "devDependencies": {
     "@discordjs/rest": "^2.0.1",
-    "@jest/globals": "^30.2.0",
-    "@types/jest": "^30.0.0",
+    "@types/bun": "latest",
     "@types/lodash": "^4.14.202",
     "@types/node": "^24.10.2",
     "@types/node-cron": "^3.0.11",
@@ -39,8 +39,6 @@
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
-    "jest": "^30.2.0",
-    "nodemon": "^3.0.3",
     "prettier": "^3.0.3",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
@@ -63,7 +61,6 @@
     "redis": "^5.10.0",
     "sentiment": "^5.0.2",
     "socket.io-client": "^4.5.1",
-    "ts-jest": "^29.1.1",
     "uuid": "^13.0.0"
   }
 }

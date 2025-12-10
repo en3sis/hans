@@ -3,7 +3,7 @@ import { ChatInputCommandInteraction } from 'discord.js'
 import { timezonesController } from '../controllers/plugins/timezones.controller'
 import { logger } from '../utils/debugging'
 
-module.exports = {
+export default {
   ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('timezone')

@@ -5,40 +5,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Development (starts PostgreSQL container + runs migrations + nodemon)
-yarn dev
+# Development (starts PostgreSQL container + runs migrations + watch mode)
+bun run dev
 
 # Build
-yarn build
+bun run build
 
 # Deploy slash commands
-yarn slash:dev    # Development (guild-specific, instant)
-yarn slash        # Production (global, ~1 second delay)
+bun run slash:dev    # Development (guild-specific, instant)
+bun run slash        # Production (global, ~1 second delay)
 
 # Database (Drizzle ORM)
-yarn db:migrate   # Run migrations
-yarn db:push      # Push schema to database (dev)
-yarn db:studio    # Open Drizzle Studio GUI
-npx drizzle-kit pull  # Pull schema from existing database (NEVER auto-generate)
+bun run db:migrate   # Run migrations
+bun run db:push      # Push schema to database (dev)
+bun run db:studio    # Open Drizzle Studio GUI
+bunx drizzle-kit pull  # Pull schema from existing database (NEVER auto-generate)
 
 # Tests
-yarn test                           # Run all tests
-yarn test -- --testPathPattern=foo  # Run single test
+bun test                    # Run all tests
+bun test --filter=foo       # Run single test
 
 # Lint & Format
-yarn lint
-yarn format
+bun run lint
+bun run format
 ```
 
 ## Architecture
 
-Hans is a Discord bot built with Discord.js and TypeScript, using a plugin-based architecture.
+Hans is a Discord bot built with Discord.js and TypeScript, using a plugin-based architecture. It runs on Bun runtime.
 
 ### Core Flow
 
-1. **Entry point** (`src/index.ts`): Creates Discord client, loads commands from `src/commands/`, registers event handlers from `src/events/`
+1. **Entry point** (`src/index.ts`): Creates Discord client, loads commands from `src/commands/`, registers event handlers from `src/events/`, starts the API server
 2. **Ready event** (`src/events/ready.ts`): On bot startup, inserts config/plugins to DB, syncs guilds, sets presence, starts cron jobs
 3. **Interaction handler** (`src/events/interactionCreate.ts`): Routes slash commands to their handlers, handles buttons/modals
+4. **API server** (`src/api/`): Bun HTTP server for dashboard management (port 3009)
 
 ### Key Directories
 
@@ -49,6 +50,16 @@ Hans is a Discord bot built with Discord.js and TypeScript, using a plugin-based
 - `src/events/` - Discord.js event handlers
 - `src/models/` - Plugin definitions and initial states
 - `src/types/` - TypeScript type definitions
+- `src/api/` - REST API for web dashboard
+
+### API Server
+
+The bot includes a REST API (Bun.serve) for the web dashboard at `hans-app/`:
+
+- `GET /api/v1/health` - Health check
+- `GET /api/v1/guilds` - List user's manageable guilds (requires Discord OAuth token)
+- `GET /api/v1/guilds/:id` - Get guild details + plugins
+- `PATCH /api/v1/guilds/:id/plugins/:name` - Update plugin settings
 
 ### Plugin System
 
@@ -81,5 +92,7 @@ module.exports = {
 ## Environment Variables
 
 Required: `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, `DATABASE_URL`, `BOT_GUILD_ID`
+
+API server: `API_PORT` (default 3009), `API_CORS_ORIGIN` (comma-separated origins)
 
 Optional plugins: `OPENAI_API_KEY`, `WEATHER_API`, `TWITCH_CLIENT/SECRET`, `HUGGINGFACE_API_KEY`

@@ -14,7 +14,7 @@ import {
 } from '../controllers/plugins/quests.controller'
 import { logger } from '../utils/debugging'
 
-module.exports = {
+export default {
   ephemeral: true,
   data: new SlashCommandBuilder()
     .setName('quests')

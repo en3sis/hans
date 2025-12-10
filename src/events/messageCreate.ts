@@ -2,7 +2,7 @@ import { Client, Message } from 'discord.js'
 import { threadAutoCreate } from '../controllers/plugins/threads.controller'
 import { checkQuestAnswer } from '../controllers/plugins/quests.controller'
 
-module.exports = {
+export default {
   name: 'messageCreate',
   once: false,
   enabled: true,

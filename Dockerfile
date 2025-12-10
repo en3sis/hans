@@ -1,32 +1,34 @@
 # Install dependencies only when needed
-FROM node:22-alpine AS deps
+FROM oven/bun:1 AS deps
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json bun.lockb* yarn.lock* ./
+RUN bun install --frozen-lockfile
 
 # Rebuild the source code only when needed
-FROM node:22-alpine AS builder
+FROM oven/bun:1 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN yarn build
+RUN bun run build
 
 # Production image, copy all the files and run
-FROM node:22-alpine AS runner
+FROM oven/bun:1 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN addgroup -S nodejs && adduser -S -G nodejs nonroot
+RUN addgroup --system nodejs && adduser --system --ingroup nodejs nonroot
 
 COPY --from=builder --chown=nonroot:nodejs /app/build ./build
 COPY --from=builder --chown=nonroot:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nonroot:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=nonroot:nodejs /app/src/db/migrations ./build/db/migrations
-COPY --from=deps /app/yarn.lock ./
 
 USER nonroot
 
-CMD ["yarn", "start"]
+# Expose both Discord bot (no port) and API server
+EXPOSE 3009
+
+CMD ["bun", "run", "start"]
