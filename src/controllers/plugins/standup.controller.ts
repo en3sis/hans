@@ -1,74 +1,11 @@
 import * as cron from 'cron'
-import { CommandInteraction, TextChannel } from 'discord.js'
-import { and, eq } from 'drizzle-orm'
+import { TextChannel } from 'discord.js'
+import { eq } from 'drizzle-orm'
 import { Hans } from '../..'
 import { db } from '../../db/client'
 import { guildsPlugins } from '../../db/schema'
 import { StandupScheduleMetadata } from '../../types/plugins'
-import { updateMetadataGuildPlugin } from '../bot/plugins.controller'
 import { scheduledTasks } from '../tasks/cron-jobs'
-
-export const standupPluginController = async (
-  interaction: CommandInteraction,
-  newSchedule: StandupScheduleMetadata,
-) => {
-  try {
-    const current = await db.query.guildsPlugins.findFirst({
-      where: and(
-        eq(guildsPlugins.owner, interaction.guildId!),
-        eq(guildsPlugins.name, 'standup'),
-      ),
-    })
-
-    let currentSchedules: StandupScheduleMetadata[] = []
-    if (Array.isArray(current?.metadata)) {
-      currentSchedules = current.metadata as unknown as StandupScheduleMetadata[]
-    }
-
-    const existingIdx = currentSchedules.findIndex((s) => s.channelId === newSchedule.channelId)
-    if (existingIdx !== -1) {
-      currentSchedules[existingIdx] = newSchedule
-    } else {
-      currentSchedules.push(newSchedule)
-    }
-
-    const updatedMetadata = currentSchedules.map((schedule) => {
-      const { expression } = schedule
-      const _expression = expression.startsWith('0 ') ? expression : `0 ${expression} * * 1-5`
-      const isValidExpression = RegExp(/^0 [0-9,]+ \* \* 1-5$/).test(_expression)
-
-      if (!isValidExpression) {
-        throw new Error(
-          `Invalid cron expression: ${expression}, please provide a 24h format (eg: 9, 12, 15)`,
-        )
-      }
-
-      return { ...schedule, expression: _expression }
-    })
-
-    try {
-      await updateMetadataGuildPlugin(updatedMetadata, 'standup', interaction.guildId!)
-      await registerStandupSchedules(interaction.guildId!, updatedMetadata)
-
-      const scheduleInfo = updatedMetadata
-        .map(
-          (schedule) =>
-            `<#${schedule.channelId}> at **${schedule.expression.split(' ')[1]}h** mentioning ${schedule.role || 'no role'}`,
-        )
-        .join('\n')
-
-      await interaction.editReply({
-        content: `Updated Standup Notifications:\n${scheduleInfo}\n\nYou can disable it by running /plugins toggle standup false`,
-      })
-    } catch (updateError) {
-      console.error('Error updating metadata:', updateError)
-      throw new Error('Failed to update standup schedules. Please try again.')
-    }
-  } catch (error) {
-    console.error('❌ ERROR: standupPluginController(): ', error)
-    await interaction.editReply({ content: `An error occurred: ${error.message}` })
-  }
-}
 
 export const registerStandupSchedules = async (
   guildId: string,

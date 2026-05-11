@@ -1,52 +1,26 @@
 import { Client, Message, TextChannel } from 'discord.js'
-import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
-import { NO_INTENT } from '../utils/constants'
+import { getPluginConfig } from '../controllers/bot/plugins.controller'
+import { postEditLog } from '../controllers/plugins/audit-log'
 
 module.exports = {
   name: 'messageUpdate',
   once: false,
-  enabled: false,
+  enabled: true,
   async execute(Hans: Client, oldMessage: Message, newMessage: Message) {
     try {
-      if (newMessage.author.bot && oldMessage.author.bot) return
+      if (newMessage.author?.bot || oldMessage.author?.bot) return
+      if (!newMessage.guildId) return
+      if (oldMessage.content === newMessage.content) return
 
-      const resolved = await resolveGuildPlugins(oldMessage.guildId!, 'messageUpdate')
-      if (!resolved) return
-      const { enabled, metadata } = resolved
+      const cfg = await getPluginConfig(newMessage.guildId, 'serverMessagesLogs')
+      if (!cfg?.enabled || !cfg.metadata?.channelId) return
 
-      if (!enabled) return
-      const channel = Hans.channels.cache.get(metadata.logChannelId) as TextChannel
+      const channel = Hans.channels.cache.get(cfg.metadata.channelId) as TextChannel | undefined
+      if (!channel) return
 
-      if (oldMessage.content === newMessage.content || !channel) return
-
-      channel.send({
-        embeds: [
-          {
-            author: {
-              name: `${newMessage.author.username}#${newMessage.author.discriminator}`,
-              icon_url: newMessage.author.displayAvatarURL() ?? undefined,
-            },
-            description: `Message edited in <#${newMessage.channel.id}> by <@${newMessage.author.id}> [Jump to message](${newMessage.url}) `,
-            fields: [
-              {
-                name: 'Before:',
-                value: oldMessage.content || NO_INTENT,
-              },
-              {
-                name: 'After:',
-                value: newMessage.content ?? '',
-              },
-            ],
-            footer: {
-              icon_url: newMessage.guild!.iconURL() ?? undefined,
-              text: `${newMessage.guild!.name}`,
-            },
-            color: 0x3165ae,
-          },
-        ],
-      })
+      await postEditLog(channel, oldMessage, newMessage)
     } catch (error) {
-      console.log('error: ', error)
+      console.error('❌ messageUpdate(): ', error)
     }
   },
 }

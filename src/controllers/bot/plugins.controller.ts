@@ -1,5 +1,4 @@
 import { and, eq } from 'drizzle-orm'
-import { CommandInteraction } from 'discord.js'
 import { db } from '../../db/client'
 import { guilds, guildsPlugins, plugins } from '../../db/schema'
 import { deleteFromCache, getFromCache, setToCache } from '../../libs/node-cache'
@@ -9,20 +8,21 @@ import {
   PluginName,
   isPluginName,
 } from '../../models/plugins.model'
-import {
-  GuildPluginData,
-  PluginMetadataMap,
-  PluginsThreadsMetadata,
-  PluginsThreadsSettings,
-} from '../../types/plugins'
-import { encrypt } from '../../utils/crypto'
+import { GuildPluginData, PluginMetadataMap } from '../../types/plugins'
 import { registerStandupSchedules } from '../plugins/standup.controller'
 import { stopSpecificCronJob } from '../tasks/cron-jobs'
 
 const cacheKey = (guildId: string, plugin: string) => `guilds_plugins:${guildId}:${plugin}`
 
-/** After any write to guilds_plugins: invalidate cache, re-register standup cron if relevant. */
-const onGuildPluginChanged = async (guildId: string, pluginName: string) => {
+/**
+ * Side-effect hook to run after any write to guilds_plugins. Always
+ * invalidates the read cache; re-registers cron jobs for plugins that
+ * have scheduled tasks tied to their metadata (e.g. standup).
+ *
+ * Exported so the panel system and any other writer can reuse the same
+ * post-write semantics — DO NOT bypass this when updating metadata.
+ */
+export const onGuildPluginChanged = async (guildId: string, pluginName: string) => {
   deleteFromCache(cacheKey(guildId, pluginName))
   if (pluginName === 'standup') {
     stopSpecificCronJob(`${guildId}#standup`)
@@ -178,26 +178,6 @@ export const getPluginConfig = async <K extends PluginName>(
   }
 }
 
-export const toggleGuildPlugin = async (
-  interaction: CommandInteraction,
-  name: string,
-  toggle: boolean,
-): Promise<void> => {
-  try {
-    await db
-      .update(guildsPlugins)
-      .set({ enabled: toggle })
-      .where(and(eq(guildsPlugins.name, name), eq(guildsPlugins.owner, interaction.guildId!)))
-    await onGuildPluginChanged(interaction.guildId!, name)
-
-    await interaction.editReply({
-      content: `The plugin ${name} was successfully ${toggle ? 'enabled' : 'disabled'}`,
-    })
-  } catch (error) {
-    console.log('❌ ERROR: toggleGuildPlugin(): ', error)
-  }
-}
-
 export const updateMetadataGuildPlugin = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata: any,
@@ -227,85 +207,3 @@ export const updateMetadataGuildPlugin = async (
 
 export const pluginsListNames = (): Array<{ name: string; value: string }> =>
   PLUGIN_NAMES.map((name) => ({ name, value: name }))
-
-// =+=+=+ Chat GPT Plugin =+=+=+
-export const pluginChatGPTSettings = async (
-  interaction: CommandInteraction,
-  api_key: string,
-  org: string,
-) => {
-  try {
-    const current = await db.query.guildsPlugins.findFirst({
-      where: and(
-        eq(guildsPlugins.name, 'chatGtp'),
-        eq(guildsPlugins.owner, interaction.guildId!),
-      ),
-    })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const _metadata = (current?.metadata as any) || {}
-
-    await db
-      .update(guildsPlugins)
-      .set({
-        metadata: { ..._metadata, api_key: encrypt(api_key), org: encrypt(org) },
-      })
-      .where(
-        and(eq(guildsPlugins.name, 'chatGtp'), eq(guildsPlugins.owner, interaction.guildId!)),
-      )
-    await onGuildPluginChanged(interaction.guildId!, 'chatGtp')
-
-    await interaction.deferReply({ ephemeral: true })
-    return await interaction.editReply({
-      content: `The plugin chat-gpt was successfully configured, you can now run the /ask command`,
-    })
-  } catch (error) {
-    console.log('❌ ERROR: pluginChatGPTSettings(): ', error)
-  }
-}
-
-// =+=+=+ Threads Plugin =+=+=+
-export const pluginThreadsSettings = async ({ interaction, metadata }: PluginsThreadsSettings) => {
-  try {
-    const current = await db.query.guildsPlugins.findFirst({
-      where: and(
-        eq(guildsPlugins.name, 'threads'),
-        eq(guildsPlugins.owner, interaction.guildId!),
-      ),
-    })
-
-    const filteredMetadata = Object.fromEntries(
-      Object.entries(metadata).filter(([, value]) => value !== null),
-    ) as PluginsThreadsMetadata
-
-    let updatedMetadata: PluginsThreadsMetadata[]
-    if (current?.metadata) {
-      const arr = current.metadata as PluginsThreadsMetadata[]
-      const idx = arr.findIndex((item) => item.channelId === metadata.channelId)
-      if (idx !== -1) {
-        arr[idx] = { ...arr[idx], ...filteredMetadata }
-        updatedMetadata = arr
-      } else {
-        updatedMetadata = [...arr, filteredMetadata]
-      }
-    } else {
-      updatedMetadata = [filteredMetadata]
-    }
-
-    await db
-      .update(guildsPlugins)
-      .set({ metadata: updatedMetadata })
-      .where(
-        and(eq(guildsPlugins.name, 'threads'), eq(guildsPlugins.owner, interaction.guildId!)),
-      )
-    await onGuildPluginChanged(interaction.guildId!, 'threads')
-
-    return await interaction.editReply({
-      content: `The plugin threads was successfully configured`,
-    })
-  } catch (error) {
-    console.log('❌ ERROR: pluginThreadsSettings(): ', error)
-    return await interaction.editReply({
-      content: `There was an error configuring the plugin for the current channel`,
-    })
-  }
-}

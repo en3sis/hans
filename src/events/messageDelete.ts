@@ -1,47 +1,25 @@
 import { Client, Message, TextChannel } from 'discord.js'
-
-import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
-import { NO_INTENT } from '../utils/constants'
+import { getPluginConfig } from '../controllers/bot/plugins.controller'
+import { postDeleteLog } from '../controllers/plugins/audit-log'
 
 module.exports = {
   name: 'messageDelete',
-  once: true,
+  once: false,
   enabled: true,
   async execute(Hans: Client, message: Message) {
     try {
-      const resolved = await resolveGuildPlugins(message.guild!.id, 'messageDelete')
-      if (!resolved) return
-      const { metadata, enabled } = resolved
+      if (!message.guildId) return
+      if (message.author?.bot) return
 
-      if (!enabled) return
-      const channel = Hans.channels.cache.get(metadata.logChannelId) as TextChannel
+      const cfg = await getPluginConfig(message.guildId, 'serverMessagesLogs')
+      if (!cfg?.enabled || !cfg.metadata?.channelId) return
 
+      const channel = Hans.channels.cache.get(cfg.metadata.channelId) as TextChannel | undefined
       if (!channel) return
 
-      channel.send({
-        embeds: [
-          {
-            author: {
-              name: `${message.author?.username || NO_INTENT}#${
-                message.author?.discriminator || NO_INTENT
-              }`,
-              icon_url: message.author?.displayAvatarURL() || undefined,
-            },
-            description: `Message deleted in <#${message.channel.id}> by <@${
-              message.author?.id || NO_INTENT
-            }> [Jump to message](${message.url}) `,
-            fields: [
-              {
-                name: 'Deleted message:',
-                value: message.content! || NO_INTENT,
-              },
-            ],
-            color: 0xa8102d,
-          },
-        ],
-      })
+      await postDeleteLog(channel, message)
     } catch (error) {
-      console.log('❌ ERROR: error: ', error)
+      console.error('❌ messageDelete(): ', error)
     }
   },
 }

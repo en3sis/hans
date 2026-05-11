@@ -2,6 +2,11 @@ import { Client, Interaction, InteractionType } from 'discord.js'
 import { verifyModal, verifyModalSubmit } from '../controllers/plugins/verify.controller'
 import { db } from '../db/client'
 import { commandUsage } from '../db/schema'
+import { isPanelCustomId, routePanelInteraction } from '../services/plugin-panels'
+import {
+  handleQuestInteraction,
+  isQuestInteraction,
+} from '../services/plugin-panels/quests-flow'
 import { ERROR_COLOR } from '../utils/colors'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 
@@ -12,6 +17,29 @@ module.exports = {
   async execute(Hans: Client, interaction: Interaction) {
     if (!interaction) {
       throw new Error('Invalid interaction received')
+    }
+
+    // Plugin-panel components and modals (buttons + selects + modal submits
+    // with our `pn:` custom_id namespace). Returns true if handled.
+    if (
+      (interaction.isButton() ||
+        interaction.isAnySelectMenu() ||
+        interaction.isModalSubmit()) &&
+      isPanelCustomId(interaction.customId)
+    ) {
+      const handled = await routePanelInteraction(interaction)
+      if (handled) return
+    }
+
+    // Quests sub-system (sibling to the panel; `quest:*` custom_ids).
+    if (
+      (interaction.isButton() ||
+        interaction.isAnySelectMenu() ||
+        interaction.isModalSubmit()) &&
+      isQuestInteraction(interaction.customId)
+    ) {
+      const handled = await handleQuestInteraction(interaction)
+      if (handled) return
     }
 
     // Handle button interactions
@@ -30,9 +58,15 @@ module.exports = {
 
     if (!command) return
 
-    await interaction.deferReply({
-      ephemeral: command?.ephemeral ?? false,
-    })
+    // Commands that send v2-components or showModal() must NOT be deferred —
+    // the IS_COMPONENTS_V2 flag cannot be added after deferReply, and showModal
+    // requires a fresh, unreplied interaction. Such commands opt out via
+    // `defer: false` on their exported module.
+    if (command?.defer !== false) {
+      await interaction.deferReply({
+        ephemeral: command?.ephemeral ?? false,
+      })
+    }
 
     if (!!process.env.ISDEV) {
       // Enables the developer to see details in the console.

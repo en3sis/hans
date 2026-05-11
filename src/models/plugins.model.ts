@@ -34,6 +34,10 @@ export type PluginCategory =
   | 'engagement'
 
 export interface PluginDefinition {
+  /** Human-readable name shown in the panel & list view. */
+  label: string
+  /** Single emoji rendered before the label. */
+  icon: string
   description: string
   category: PluginCategory
   enabled: boolean
@@ -44,7 +48,9 @@ export interface PluginDefinition {
 
 export const PLUGIN_REGISTRY = {
   serverMembersActivity: {
-    description: 'Notifies to a specific channel when a new member joins/leaves the server.',
+    label: 'Join / Leave Notifications',
+    icon: '🚪',
+    description: 'Posts a message in a channel whenever a member joins or leaves.',
     category: 'server',
     enabled: true,
     premium: false,
@@ -52,7 +58,9 @@ export const PLUGIN_REGISTRY = {
     cacheable: true,
   },
   serverMessagesLogs: {
-    description: 'Logs messages those are deleted or edited into a specific channel.',
+    label: 'Message Audit Log',
+    icon: '📝',
+    description: 'Logs edited and deleted messages to a channel.',
     category: 'moderation',
     enabled: true,
     premium: false,
@@ -60,16 +68,19 @@ export const PLUGIN_REGISTRY = {
     cacheable: true,
   },
   removeLinks: {
-    description:
-      'Removes any links posted in a channel, with the option to allow specific roles or links to be posted.',
+    label: 'Link Removal',
+    icon: '🔗',
+    description: 'Auto-removes links unless the channel, URL or role is allowed.',
     category: 'moderation',
-    enabled: false,
+    enabled: true,
     premium: false,
     defaultEnabled: false,
     cacheable: true,
   },
   chatGtp: {
-    description: 'Enables a conversation with ChatGPT, an AI chatbot.',
+    label: 'ChatGPT',
+    icon: '🤖',
+    description: 'Conversational AI powered by your own OpenAI key.',
     category: 'productivity',
     enabled: true,
     premium: true,
@@ -78,49 +89,30 @@ export const PLUGIN_REGISTRY = {
     // call; caching would serve stale counts.
     cacheable: false,
   },
-  summarize: {
-    description: 'Summarizes a text or discord message using the facebook/bart-large-cnn model.',
-    category: 'miscellaneous',
-    enabled: true,
-    premium: false,
-    defaultEnabled: false,
-    cacheable: true,
-  },
   twitch: {
-    description: 'Shows information about a twitch streamer.',
+    label: 'Twitch Lookup',
+    icon: '📺',
+    description: 'Pulls a Twitch streamer’s public profile and stream status.',
     category: 'entertainment',
     enabled: true,
     premium: false,
     defaultEnabled: true,
     cacheable: true,
   },
-  textClassification: {
-    description: 'Classifies a text, informs moderation if the sentiment is negative.',
-    category: 'miscellaneous',
-    enabled: false,
-    premium: false,
-    defaultEnabled: false,
-    cacheable: true,
-  },
   threads: {
-    description: 'Allows for the automatic creation of threads in a specific channel.',
+    label: 'Auto-Threads',
+    icon: '🧵',
+    description: 'Auto-creates a thread on every message in selected channels.',
     category: 'server',
     enabled: true,
     premium: false,
     defaultEnabled: true,
     cacheable: true,
   },
-  events: {
-    description:
-      'Provides quick Add to calendar links for Google & Outlook for the events you are subscribed to',
-    category: 'productivity',
-    enabled: true,
-    premium: false,
-    defaultEnabled: true,
-    cacheable: true,
-  },
   verify: {
-    description: 'Verifies that the user is human.',
+    label: 'Captcha Verification',
+    icon: '🛡️',
+    description: 'Gates new members behind an emoji captcha before granting a role.',
     category: 'moderation',
     enabled: true,
     premium: false,
@@ -128,7 +120,9 @@ export const PLUGIN_REGISTRY = {
     cacheable: true,
   },
   standup: {
-    description: 'Notifies the members to post their standup.',
+    label: 'Standups',
+    icon: '📣',
+    description: 'Posts scheduled standup prompts and opens a thread for replies.',
     category: 'productivity',
     enabled: true,
     premium: false,
@@ -136,8 +130,9 @@ export const PLUGIN_REGISTRY = {
     cacheable: true,
   },
   quests: {
-    description:
-      'Allows admins to create quest events where users can win rewards by answering questions correctly.',
+    label: 'Quests & Raffles',
+    icon: '🏆',
+    description: 'Run quiz or raffle events where members win rewards.',
     category: 'engagement',
     enabled: true,
     premium: false,

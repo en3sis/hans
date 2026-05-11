@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, Message, TextChannel } from 'discord.js'
-import { sentimentAnalysis } from '../../libs/sentiment'
-import { sentimentUrgencyTable } from '../../utils/colors'
+import { RemoveLinksMetadata } from '../../types/plugins'
 
 export const purgeMessages = async (interaction: ChatInputCommandInteraction) => {
   try {
@@ -31,80 +30,62 @@ export const purgeMessages = async (interaction: ChatInputCommandInteraction) =>
   }
 }
 
-export const removeLinks = async (
-  message: Message,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  allowedLinks: string[],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  allowedRoles: string[],
-) => {
-  if (message.member!.permissions.has(['Administrator', 'DeafenMembers'])) return
+// Match URLs in a message body. Catches https?://… and bare www.something.
+const URL_PATTERN =
+  /\b((?:https?:\/\/|www\.)[^\s<>"']+|[a-z0-9-]+(?:\.[a-z0-9-]+)+\/[^\s<>"']*)/gi
 
-  const expression =
-    /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
-  const regex = new RegExp(expression)
-
-  if (message.content.match(regex) !== null) {
-    await message.delete()
+/** Compile an allow-pattern line into a regex. */
+const compileAllowed = (line: string): RegExp | null => {
+  const trimmed = line.trim()
+  if (!trimmed || trimmed.startsWith('#')) return null
+  try {
+    // Lines that look like regex (start with anchor or contain regex
+    // metacharacters) are used as-is; everything else is treated as a
+    // bare hostname suffix (e.g. github.com matches gist.github.com).
+    const looksLikeRegex = /[\^$*+?()[\]{}|\\]/.test(trimmed)
+    if (looksLikeRegex) return new RegExp(trimmed, 'i')
+    const escaped = trimmed.replace(/\./g, '\\.')
+    return new RegExp(`(?:^|//|\\.)${escaped}(?:[/:?#]|$)`, 'i')
+  } catch {
+    return null
   }
 }
 
 /**
- * @param message Message
- * @param notificationChannel DiscordJS TextChannel
- * @returns
+ * Delete a message that contains links unless: (a) author has elevated
+ * permissions or any bypass role, or (b) every URL in the message
+ * matches an entry in `allowedUrls`.
  */
-export const sentimentAnalysisFn = async (
+export const removeLinks = async (
   message: Message,
-  notificationChannel: string,
-  reactToPositive: boolean,
-) => {
-  const score = await sentimentAnalysis(message.content)
+  metadata: RemoveLinksMetadata | null | undefined,
+): Promise<void> => {
+  if (!message.member) return
+  if (
+    message.member.permissions.has(['Administrator']) ||
+    message.member.permissions.has(['ManageMessages'])
+  ) {
+    return
+  }
 
-  if (score.score >= 10 && reactToPositive) {
-    message.react('🥰')
-  } else if (score.score <= -8) {
-    const channel = message.guild!.channels.cache.get(notificationChannel) as TextChannel
+  const bypassRoles = metadata?.allowedRoles ?? []
+  if (bypassRoles.some((id) => message.member!.roles.cache.has(id))) return
 
-    return channel.send({
-      embeds: [
-        {
-          author: {
-            name: message.author.username,
-            icon_url: message.author.avatarURL() ?? undefined,
-          },
-          title: `Message:`,
-          description: `${message.content} \n\n Go to message: [click here](${message.url})`,
-          fields: [
-            {
-              name: '🔎 score',
-              value: `${score.score}`,
-              inline: true,
-            },
-            {
-              name: '🔻 negatives',
-              value: `${JSON.stringify(score.negative)}`,
-              inline: true,
-            },
-            {
-              name: '⬆️ positives',
-              value: `${JSON.stringify(score.positive)}`,
-              inline: true,
-            },
-            {
-              name: '🦹‍♂️ Author ID',
-              value: `${message.author.id}`,
-              inline: true,
-            },
-            {
-              name: '🧑‍⚖️  Suggestions',
-              value: `User should: ${sentimentUrgencyTable(score.score)[0]}`,
-              inline: true,
-            },
-          ],
-          color: sentimentUrgencyTable(score.score)[1] as number,
-        },
-      ],
-    })
+  const urls = message.content.match(URL_PATTERN)
+  if (!urls || urls.length === 0) return
+
+  const allowed = (metadata?.allowedUrls ?? '')
+    .split('\n')
+    .map(compileAllowed)
+    .filter((re): re is RegExp => re !== null)
+
+  const everyUrlAllowed = urls.every((url) => allowed.some((re) => re.test(url)))
+  if (everyUrlAllowed) return
+
+  try {
+    await message.delete()
+  } catch (err) {
+    console.error('❌ removeLinks: failed to delete message:', err)
   }
 }
+

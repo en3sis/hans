@@ -5,6 +5,7 @@ import { db } from '../../db/client'
 import { guilds, guildQuests } from '../../db/schema'
 import { GuildQuest } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
+import { getPluginConfig } from '../bot/plugins.controller'
 
 const guildPkByGuildId = async (guildId: string): Promise<number | null> => {
   const row = await db.query.guilds.findFirst({
@@ -82,7 +83,15 @@ export const createQuest = async (
       footer: { text: `Quest ID: ${newQuest.id}` },
     }
 
-    const questMessage = await channel.send({ embeds: [questEmbed] })
+    // Optional: mention a notification role configured in /plugins → Quests.
+    const questsCfg = await getPluginConfig(interaction.guildId!, 'quests')
+    const notifyRoleId = questsCfg?.enabled ? questsCfg.metadata?.notifyRoleId : undefined
+
+    const questMessage = await channel.send({
+      content: notifyRoleId ? `<@&${notifyRoleId}>` : undefined,
+      embeds: [questEmbed],
+      allowedMentions: notifyRoleId ? { roles: [notifyRoleId] } : { roles: [] },
+    })
     if (questData.mode === 'raffle') await questMessage.react('🎉')
 
     let thread: ThreadChannel | null = null

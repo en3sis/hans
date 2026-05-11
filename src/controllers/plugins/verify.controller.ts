@@ -1,46 +1,15 @@
 import {
   ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  ChatInputCommandInteraction,
   GuildMember,
   Interaction,
   InteractionType,
   ModalBuilder,
   ModalSubmitInteraction,
-  TextChannel,
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js'
 import { Hans } from '../..'
 import { deleteFromCache, getFromCache, setToCache } from '../../libs/node-cache'
-import { updateMetadataGuildPlugin } from '../bot/plugins.controller'
-
-export const verifyGuildPluginSettings = async (interaction: ChatInputCommandInteraction) => {
-  const role = interaction.options.get('role')?.value as string
-
-  const guildRole = interaction.guild!.roles.cache.get(role)
-
-  await updateMetadataGuildPlugin({ role }, 'verify', interaction.guildId!, true)
-
-  const button = new ButtonBuilder()
-    .setCustomId('open_verify_modal')
-    .setLabel('Verify')
-    .setStyle(ButtonStyle.Primary)
-
-  // Send the button to a channel
-  await (interaction.channel as TextChannel).send({
-    content: `
-    ## 🤖 Captcha Verification
-Please click the button below to verify that you are human.
-    `,
-    components: [new ActionRowBuilder<ButtonBuilder>().addComponents(button)],
-  })
-
-  await interaction.editReply({
-    content: `Verify plugin settings updated. All verified users will receive the ${guildRole} role.`,
-  })
-}
 
 export const verifyModal = async (interaction: Interaction) => {
   try {

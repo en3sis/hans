@@ -23,11 +23,30 @@ export type ChatGptMetadata = {
 
 export type VerifyMetadata = {
   enabled?: boolean
-  roleId?: string
+  /** Role assigned to members who pass the captcha. */
+  role?: string
+  /** Channel where the captcha button is posted (Post captcha message). */
+  channelId?: string
 }
 
 export type ServerActivityMetadata = {
   channelId?: string
+}
+
+export type QuestsMetadata = {
+  /** Channel suggested by default when creating quests (not yet wired into /quests). */
+  defaultChannelId?: string
+  /** Role mentioned in the quest message when a new quest is posted. */
+  notifyRoleId?: string
+  /** Additional roles allowed to manage quests (advisory until wired into /quests perms). */
+  moderatorRoles?: string[]
+}
+
+export type RemoveLinksMetadata = {
+  /** Newline-separated list of regex patterns OR bare hostnames (e.g. github.com). */
+  allowedUrls?: string
+  /** Role IDs that bypass the filter. */
+  allowedRoles?: string[]
 }
 
 /**
@@ -38,16 +57,13 @@ export type ServerActivityMetadata = {
 export interface PluginMetadataMap {
   serverMembersActivity: ServerActivityMetadata
   serverMessagesLogs: ServerActivityMetadata
-  removeLinks: Record<string, never>
+  removeLinks: RemoveLinksMetadata
   chatGtp: ChatGptMetadata
-  summarize: Record<string, never>
   twitch: Record<string, never>
-  textClassification: Record<string, never>
   threads: PluginsThreadsMetadata[]
-  events: Record<string, never>
   verify: VerifyMetadata
   standup: StandupScheduleMetadata[]
-  quests: { settings?: Record<string, unknown> }
+  quests: QuestsMetadata
 }
 
 export type PluginsThreadsSettings = {

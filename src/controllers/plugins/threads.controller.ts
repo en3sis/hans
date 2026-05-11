@@ -1,37 +1,30 @@
 import { Message, NewsChannel, StartThreadOptions, TextChannel, ThreadChannel } from 'discord.js'
-import { GuildPluginData, PluginsThreadsMetadata } from '../../types/plugins'
+import { PluginsThreadsMetadata } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { isStaff } from '../../utils/permissions'
 
 export const threadAutoCreate = async (
   message: Message,
-  config: GuildPluginData & { metadata: PluginsThreadsMetadata },
-) => {
+  items: PluginsThreadsMetadata[] | null | undefined,
+): Promise<void> => {
   try {
-    if (!config.metadata) return
+    if (!items || items.length === 0) return
     if (message.hasThread) return
 
-    const pluginData = config?.metadata.find(
-      (m: PluginsThreadsMetadata) => m.channelId === message.channelId,
-    )
+    const match = items.find((m) => m.channelId === message.channelId)
+    if (!match) return
 
-    // If the plugin is not configured for this channel, skip
-    if (!pluginData || !pluginData.channelId) return
-
-    const { title, autoMessage, channelId, enabled } = pluginData
-
-    if (channelId !== message.channelId || !enabled) return
+    const channel = message.channel
+    if (!(channel instanceof TextChannel) && !(channel instanceof NewsChannel)) return
 
     const authorUser = message.author
     const authorMember = message.member
-    const channel = message.channel
-
-    if (!(channel instanceof TextChannel) && !(channel instanceof NewsChannel)) return
-
     const authorName =
       authorMember === null || authorMember.nickname === null
         ? authorUser.username
         : authorMember.nickname
+
+    const { title, autoMessage } = match
 
     const settings: StartThreadOptions = {
       name: `${title || 'New thread'} | ${authorName}`,
@@ -42,22 +35,24 @@ export const threadAutoCreate = async (
 
     const thread = await message.startThread(settings)
 
-    // Send a message to the thread after 2 seconds if configured to do so.
-    setTimeout(async () => {
-      if (!autoMessage) return
-      await thread.send({
-        embeds: [
-          {
-            title: 'Thread Auto Message',
-            description: autoMessage,
-            color: DEFAULT_COLOR,
-          },
-        ],
-      })
-    }, 2000)
+    // Send the welcome message inside the new thread, if configured.
+    if (autoMessage) {
+      setTimeout(() => {
+        thread
+          .send({
+            embeds: [
+              {
+                title: 'Thread Auto Message',
+                description: autoMessage,
+                color: DEFAULT_COLOR,
+              },
+            ],
+          })
+          .catch((err) => console.error('💢 threadAutoCreate: failed to send autoMessage:', err))
+      }, 2000)
+    }
   } catch (error) {
-    console.log('💢 ERROR: threadAutoCreate(): ', error)
-    throw Error(error.message)
+    console.error('💢 ERROR: threadAutoCreate(): ', error)
   }
 }
 

@@ -77,6 +77,7 @@ const fetchCommands = async ({
   })
 }
 
+
 ;(async () => {
   // Registry slash commands global & per guild
   try {
@@ -89,7 +90,10 @@ const fetchCommands = async ({
     if (!config) return console.log('Row with the configuration for Hans not found')
 
     if (process.env.ISDEV === 'true') {
-      // Deploys to your development guild, those commands will be deployed instantly
+      // Deploys the playground folder to the dev guild — guild-scoped so
+      // changes appear in Discord instantly. Production commands live in
+      // `src/commands/` and ship globally via `yarn slash`; promote a dev
+      // command to production by moving its file there manually.
       await registryCommands({
         folderName: config.bot_dev_folder ?? '',
         id: config.bot_guild_id,
