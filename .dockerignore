@@ -1,10 +1,20 @@
-# .env
+.env
+.env.*
+!.env.template
 .todo
 /dist
 /k8s/*-secrets.yaml
 /k8s/*-secrets.dev.yaml
 /k8s/*-kubeconfig.yaml
 /src/controllers/_development/*.ts
-/node_modules/
 /src/config.ts
 build/
+node_modules/
+data/
+.git/
+.github/
+.vscode/
+.idea/
+*.log
+.DS_Store
+supabase/

@@ -1,5 +1,7 @@
 import { Client, Interaction, InteractionType } from 'discord.js'
 import { verifyModal, verifyModalSubmit } from '../controllers/plugins/verify.controller'
+import { db } from '../db/client'
+import { commandUsage } from '../db/schema'
 import { ERROR_COLOR } from '../utils/colors'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 
@@ -41,9 +43,12 @@ module.exports = {
       )
     }
 
+    const startedAt = Date.now()
+    let success = true
     try {
       await command.execute(interaction)
     } catch (error) {
+      success = false
       console.error({
         message: `❌ ERROR: interactionCreate(): ${error.message}`,
       })
@@ -65,6 +70,23 @@ module.exports = {
       })
 
       await reportErrorToMonitoring({ embeds: _embed })
+    } finally {
+      const feature_name = interaction.isChatInputCommand()
+        ? interaction.options.getSubcommand(false)
+        : null
+      db.insert(commandUsage)
+        .values({
+          guild_id: interaction.guildId,
+          command_name: interaction.commandName,
+          feature_name,
+          source: 'slash',
+          success,
+          duration_ms: Date.now() - startedAt,
+        })
+        .catch((err: unknown) => {
+          const msg = err instanceof Error ? err.message : String(err)
+          console.error(`❌ command_usage log failed: ${msg}`)
+        })
     }
   },
 }

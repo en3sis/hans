@@ -15,13 +15,13 @@ module.exports = {
     try {
       const text = interaction.options.get('text')!.value as string
 
-      await interaction.channel.send(
+      await (interaction.channel as any)!.send(
         text
           .split('')
           .map((letter, i) => (i % 2 == 0 ? letter.toUpperCase() : letter.toLowerCase()))
           .join(''),
       )
-      await interaction.channel.send('<:mock:1016362569088376924>')
+      await (interaction.channel as any)!.send('<:mock:1016362569088376924>')
 
       await interaction.editReply({ content: 'Done :P' })
     } catch (error) {

@@ -11,7 +11,7 @@ export const notifyPulse = async (Hans: Client) => {
     const lastCommit = await githubAPI('repos/en3sis/hans/commits')
     const config = Hans.settings
 
-    if (!config.notify_channel_id) return
+    if (!config?.notify_channel_id) return
 
     const channel = Hans.channels.cache.get(config.notify_channel_id) as TextChannel
 
@@ -28,7 +28,7 @@ export const notifyPulse = async (Hans: Client) => {
           description: `
           **💬 Last commit message**:
           ${lastCommit[0].commit.message}`,
-          title: `✅  ${Hans.user.username} is now online!`,
+          title: `✅  ${Hans.user!.username} is now online!`,
           fields: [
             {
               name: '🖥 Memory usage',

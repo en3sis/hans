@@ -19,9 +19,9 @@ import { updateMetadataGuildPlugin } from '../bot/plugins.controller'
 export const verifyGuildPluginSettings = async (interaction: ChatInputCommandInteraction) => {
   const role = interaction.options.get('role')?.value as string
 
-  const guildRole = interaction.guild.roles.cache.get(role)
+  const guildRole = interaction.guild!.roles.cache.get(role)
 
-  await updateMetadataGuildPlugin({ role }, 'verify', interaction.guildId)
+  await updateMetadataGuildPlugin({ role }, 'verify', interaction.guildId!)
 
   const button = new ButtonBuilder()
     .setCustomId('open_verify_modal')
@@ -112,8 +112,8 @@ export const verifyModalSubmit = async (interaction: ModalSubmitInteraction) => 
         const member = interaction.member
 
         if (member instanceof GuildMember) {
-          const guildPluginSettings = await Hans.guildPluginSettings(interaction.guildId, 'verify')
-          const guildRole = interaction.guild?.roles.cache.get(guildPluginSettings.metadata.role)
+          const guildPluginSettings = await Hans.guildPluginSettings(interaction.guildId!, 'verify')
+          const guildRole = interaction.guild?.roles.cache.get(guildPluginSettings!.metadata.role)
 
           if (guildRole) {
             await member.roles

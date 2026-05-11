@@ -2,7 +2,6 @@ import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-import supabase from './libs/supabase'
 import { reportErrorToMonitoring } from './utils/monitoring'
 import { ProjectValidator } from './utils/pre-validation'
 
@@ -26,7 +25,6 @@ export const Hans = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 })
 
-Hans.supabase = supabase
 /** =============================================================================
  * 🎉 Command handlers
   ============================================================================== */

@@ -1,0 +1,36 @@
+# Dev stack: only Postgres. Migrations run from the host via
+# `yarn db:migrate` (drizzle-kit). The bot also runs on the host via
+# `yarn dev` (nodemon) so edits trigger fast reloads.
+#
+# DEV CREDENTIALS ARE HARDCODED on purpose:
+#   postgres://hans:devpass@localhost:5432/hans_db
+#
+# Usage (via package.json):
+#   yarn db:up         start db + apply migrations
+#   yarn db:down       stop db (volume kept)
+#   yarn db:reset      wipe volume + re-up + re-migrate
+#   yarn db:psql       open a psql shell
+#   yarn db:studio     open Drizzle Studio in your browser
+#   yarn db:generate   create a new migration after editing schema.ts
+#   yarn dev           db:up && nodemon
+
+services:
+  db:
+    container_name: hans-db-dev
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: hans_db
+      POSTGRES_USER: hans
+      POSTGRES_PASSWORD: devpass
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg-dev-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U hans -d hans_db']
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  pg-dev-data:

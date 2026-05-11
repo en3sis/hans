@@ -133,7 +133,7 @@ module.exports = {
     // Check permissions for admin commands
     if (
       ['create', 'info'].includes(subcommand) &&
-      !interaction.memberPermissions.has(PermissionFlagsBits.ManageGuild)
+      !interaction.memberPermissions!.has(PermissionFlagsBits.ManageGuild)
     ) {
       try {
         await interaction.reply({
@@ -153,8 +153,8 @@ module.exports = {
           const mode = interaction.options.getString('mode', true) as 'quiz' | 'raffle'
           const title = interaction.options.getString('title', true)
           const description = interaction.options.getString('description', true)
-          const question = interaction.options.getString('question')
-          const answer = interaction.options.getString('answer')
+          const question = interaction.options.getString('question') ?? undefined
+          const answer = interaction.options.getString('answer') ?? undefined
           const winnersCount = interaction.options.getInteger('winners_count') || 1
           const rewardDescription = interaction.options.getString('reward_description', true)
           const rewardCode = interaction.options.getString('reward_code')
@@ -204,7 +204,7 @@ module.exports = {
         }
 
         case 'list': {
-          const quests = await getActiveQuests(interaction.guildId)
+          const quests = await getActiveQuests(interaction.guildId!)
 
           if (quests.length === 0) {
             await interaction.editReply({
@@ -236,7 +236,7 @@ module.exports = {
 
         case 'info': {
           const questId = interaction.options.getString('quest_id', true)
-          const quest = await getQuestById(interaction.guildId, questId)
+          const quest = await getQuestById(interaction.guildId!, questId)
 
           if (!quest) {
             await interaction.editReply({
@@ -245,9 +245,9 @@ module.exports = {
             break
           }
 
-          const channel = await interaction.guild.channels.fetch(quest.channel_id)
+          const channel = await interaction.guild!.channels.fetch(quest.channel_id)
           const thread = quest.thread_id
-            ? await interaction.guild.channels.fetch(quest.thread_id)
+            ? await interaction.guild!.channels.fetch(quest.thread_id)
             : null
 
           const statusText = quest.is_claimed
@@ -326,7 +326,7 @@ module.exports = {
 
         case 'draw_winners': {
           const questId = interaction.options.getString('quest_id', true)
-          const quest = await getQuestById(interaction.guildId, questId)
+          const quest = await getQuestById(interaction.guildId!, questId)
 
           if (!quest) {
             await interaction.editReply({

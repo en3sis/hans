@@ -1,0 +1,284 @@
+# Infrastructure
+
+Production architecture for Hans: a Postgres 17 database container plus
+a stateless Discord bot container. Schema is defined in TypeScript with
+**Drizzle ORM** (`src/db/schema.ts`); migrations are generated with
+`drizzle-kit` and applied by a one-shot `migrate` service that reuses
+the bot image. The GitHub Actions deploy workflow is the only thing
+that touches the host — it pushes the infrastructure files and runs
+`deploy.sh` there.
+
+```
+infrastructure/
+├── README.md
+├── docker/
+│   ├── Dockerfile        # multi-stage bot image (no native build)
+│   └── entrypoint.sh     # registers slash commands, then exec's bot
+├── compose/
+│   └── docker-compose.yaml
+└── ops/
+    ├── deploy.sh
+    ├── rollback.sh
+    └── backup.sh         # pg_dump wrapper
+```
+
+## Architecture
+
+```
+       ┌─────────────────────────────────────┐
+       │ Discord Gateway                     │
+       └────────────────┬────────────────────┘
+                        │
+       ┌────────────────▼──────────┐
+       │ bot (stateless)           │   en3sis/hans:nightly
+       │   • discord.js client     │   no volumes
+       │   • Drizzle ORM via pg    │   restart: always
+       └────────────────┬──────────┘
+                        │ pg over docker network
+       ┌────────────────▼──────────┐         ▲
+       │ db (stateful)             │   ─ ─ ─ │ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+       │   • postgres:17-alpine    │         │ tailscale serve --tcp 5432
+       │   • bind mount ./data/pg  │         │  (only the tailnet — never the public internet)
+       │   • bound 127.0.0.1:5432  │         │
+       └───────────────────────────┘         ▼
+                                       ┌──────────────────┐
+                                       │ your laptop      │
+                                       │  yarn db:migrate │
+                                       │  yarn db:studio  │
+                                       │  psql, etc.      │
+                                       └──────────────────┘
+```
+
+Two services in compose, full stop: `db` and `bot`. The bot has **no
+durable state**. All persistent data lives in `db`'s bind mount at
+`./data/pg`. Backups (pg_dump archives) sit alongside at `./data/backups`.
+
+**Migrations are an admin task, not part of the deploy.** You apply
+them from your laptop via Tailscale, against the prod Postgres URL.
+The deploy pipeline only pulls/restarts the bot container.
+
+## Host layout
+
+```
+/home/deploy/hans/
+├── .env                       # production secrets — set once, never overwritten
+├── data/
+│   ├── pg/                    # postgres data directory (bind-mounted)
+│   └── backups/               # pg_dump archives
+└── infrastructure/            # synced from repo by the deploy workflow
+    ├── compose/docker-compose.yaml
+    └── ops/{deploy,rollback,backup}.sh
+```
+
+Migrations don't need to be synced to the host — they ride inside the
+bot image (`/app/drizzle/`) and the `migrate` service applies them.
+
+## One-time host setup
+
+```bash
+# 1. Install docker + compose plugin
+curl -fsSL https://get.docker.com | sh
+apt install -y docker-compose-plugin
+
+# 2. Non-root deploy user
+adduser --system --group --shell /bin/bash deploy
+usermod -aG docker deploy
+
+# 3. Add the GitHub deploy public key to ~deploy/.ssh/authorized_keys
+
+# 4. Create the deploy dir + .env
+su - deploy
+mkdir -p ~/hans && cd ~/hans
+vi .env       # copy from repo's .env.template, fill in real secrets
+```
+
+Then either run the workflow (auto on push) or trigger `workflow_dispatch`.
+
+## GitHub repo secrets
+
+| Secret | Purpose |
+| --- | --- |
+| `HETZNER_HOST` | IP or hostname |
+| `HETZNER_USER` | SSH user (e.g. `deploy`) |
+| `HETZNER_SSH_KEY` | Private key authorized on the host |
+| `HETZNER_DEPLOY_PATH` | Absolute path (e.g. `/home/deploy/hans`) |
+| `HETZNER_SSH_PORT` | Optional, defaults to 22 |
+| `DOCKER_USERNAME`, `DOCKER_PASSWORD` | Already used by image-build workflows |
+
+## How a deploy flows
+
+```
+GitHub Actions runner
+│
+├─ checkout repo
+│
+├─ scp-action  ──►  HETZNER_DEPLOY_PATH/infrastructure/   (compose + scripts)
+│
+└─ ssh-action  ──►  cd $DEPLOY_PATH && ./infrastructure/ops/deploy.sh
+                    │
+                    ├─ pg_dump current db
+                    ├─ docker compose pull
+                    └─ docker compose up -d  (db + bot only)
+                          ↓
+                          db starts → healthy
+                          ↓
+                          bot starts → registers slash commands → connected
+```
+
+The deploy never touches the schema. If your change includes a
+migration, you apply it separately from your laptop — see
+**Migrations** below for the order of operations.
+
+## Migrations
+
+Schema and migrations are managed with [Drizzle ORM](https://orm.drizzle.team/).
+
+**Schema** is defined in TypeScript at [`src/db/schema.ts`](../src/db/schema.ts).
+That file is the single source of truth — column types, constraints,
+indexes, and FK relationships all live there.
+
+**Migrations** are auto-generated by `drizzle-kit` into `drizzle/`:
+
+```
+drizzle/
+├── 0000_init.sql
+├── 0001_xxx.sql        # generated by `yarn db:generate`
+└── meta/_journal.json  # tracking metadata
+```
+
+### Workflow
+
+```bash
+# 1. Edit src/db/schema.ts
+# 2. Generate a migration
+yarn db:generate
+#    → drizzle/NNNN_<auto_name>.sql
+
+# 3. Apply locally
+yarn db:migrate
+
+# 4. Test, commit, push
+git add src/db drizzle && git commit -m "schema: ..."
+git push                       # CI builds the new bot image
+
+# 5. Apply to prod (over Tailscale — see below)
+DATABASE_URL=postgres://hans:****@hans-prod.<tailnet>.ts.net:5432/hans \
+  yarn db:migrate:remote
+
+# 6. Deploy the new bot image
+#    (auto-triggered by the GH Actions workflow after CI succeeds,
+#     or run ./infrastructure/ops/deploy.sh on the host manually)
+```
+
+**Order matters.** Apply schema-additive migrations BEFORE rolling
+out new bot code (so the old bot keeps working while new code is
+being deployed). Apply destructive migrations (drop column, etc.)
+AFTER the bot rollout, once you've confirmed no code references
+the removed column.
+
+### Why this stays 1:1
+
+Migrations are guaranteed to be byte-identical across environments:
+
+1. The same `drizzle/` files are committed to git — your laptop and
+   prod both apply them from the same source.
+2. Drizzle's tracking table (`drizzle.__drizzle_migrations`) stores
+   each applied migration's content hash. If your local file differs
+   from what's recorded on the remote DB, the migrator refuses to
+   proceed instead of silently desyncing.
+3. The migrator is idempotent — applying against an already-up-to-date
+   DB is a no-op (`✨ Up to date`).
+
+### Applying / checking the remote DB
+
+```bash
+# Check status against a DB (uses DATABASE_URL from .env, or override)
+yarn db:status                                           # local
+DATABASE_URL=postgres://hans:****@host/hans yarn db:status   # any target
+
+# Apply pending migrations to prod, run inside the prod docker network
+# via SSH — no need to expose Postgres on the host.
+HETZNER_HOST=1.2.3.4 yarn db:migrate:remote
+
+# (For ad-hoc psql / Drizzle Studio against prod: SSH tunnel)
+ssh -L 5432:localhost:5432 deploy@host
+# in another terminal:
+DATABASE_URL=postgres://hans:****@localhost:5432/hans yarn db:studio
+```
+
+The `yarn db:migrate:remote` wrapper SSHes to the Hetzner box and runs
+`docker compose run --rm migrate` against the running prod stack. It
+uses the same image as `bot` (`migrate` is the same container running
+a different command), so the migration files are byte-for-byte
+identical to what was deployed.
+
+Drizzle doesn't ship a built-in `down` migrator. For ad-hoc rollbacks,
+restore from a `pg_dump` backup (see Rollback section below) — that's
+both safer and what you'd want in a real incident anyway.
+
+The `db:studio` script also opens [Drizzle Studio](https://orm.drizzle.team/drizzle-studio/overview)
+locally for a visual schema + data browser:
+
+```bash
+yarn db:studio    # opens https://local.drizzle.studio
+```
+
+## Manual deploy
+
+```bash
+ssh deploy@<host>
+cd ~/hans
+./infrastructure/ops/deploy.sh                  # latest nightly
+IMAGE_TAG=v2.2.0 ./infrastructure/ops/deploy.sh # pinned tag
+```
+
+## Rollback (data restore)
+
+```bash
+ssh deploy@<host>
+cd ~/hans
+./infrastructure/ops/rollback.sh                                  # latest dump
+./infrastructure/ops/rollback.sh ./data/backups/hans-<ts>.dump    # specific
+```
+
+Stops the bot (db stays up), runs `pg_restore --clean --if-exists`
+to drop existing objects and restore from the dump, then restarts the
+bot.
+
+## Backups
+
+`pg_dump`-driven, custom format (`-Fc`), gzip-compressed level 9.
+Auto-runs before every deploy; trigger manually with:
+
+```bash
+ssh deploy@<host>
+cd ~/hans
+./infrastructure/ops/backup.sh
+```
+
+Retention defaults to 14 dumps (env `RETENTION=N ./backup.sh` to
+override). They live in `./data/backups/`.
+
+Off-host backups (recommended) — example cron:
+
+```cron
+# every hour, ship newest dump off-box
+17 * * * * rsync -a /home/deploy/hans/data/backups/ user@backup-host:/path/
+```
+
+## Reviewing data
+
+The Postgres CLI is available inside the db container:
+
+```bash
+docker exec -it hans-db psql -U hans -d hans
+```
+
+Locally, point any tool that speaks Postgres (psql, TablePlus, pgAdmin,
+DBeaver) at `postgres://hans:****@<host>:5432/hans` after opening the
+port or using SSH tunnel:
+
+```bash
+ssh -L 5432:localhost:5432 deploy@<host>
+# then connect to localhost:5432 from your laptop
+```

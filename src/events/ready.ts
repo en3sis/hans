@@ -7,9 +7,8 @@ import {
 } from '../controllers/bot/config.controller'
 import { insertAllGuilds } from '../controllers/bot/guilds.controller'
 import { notifyPulse } from '../controllers/events/ready.controller'
-import { configsRealtime } from '../realtime/presence.realtime'
-import { reportErrorToMonitoring } from '../utils/monitoring'
 import { scheduleCronJobs } from '../controllers/tasks/cron-jobs'
+import { reportErrorToMonitoring } from '../utils/monitoring'
 
 module.exports = {
   name: 'ready',
@@ -17,7 +16,7 @@ module.exports = {
   enabled: true,
   async execute(Hans: Client) {
     try {
-      console.log(`👾  ${Hans.user.username} is ready`)
+      console.log(`👾  ${Hans.user?.username} is ready`)
       console.log(
         `🔗  Bot invite link: https://discord.com/api/oauth2/authorize?client_id=${process.env
           .DISCORD_CLIENT_ID!}&permissions=0&scope=bot%20applications.commands`,
@@ -40,12 +39,9 @@ module.exports = {
         Hans.settings?.activity_name ?? 'Responding to commands ',
       )
 
-      // INFO: Start the realtime presence, this will listen to the database changes and update the bot presence.
-      configsRealtime()
-
       // INFO: Schedule cron jobs.
       await scheduleCronJobs()
-    } catch (error) {
+    } catch (error: any) {
       console.log('❌ ERROR: ready(): ', error)
 
       await reportErrorToMonitoring({

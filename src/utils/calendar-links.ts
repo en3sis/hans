@@ -3,7 +3,7 @@ import { GuildScheduledEvent } from 'discord.js'
 export const generateCalendarLinks = (event: GuildScheduledEvent, type: 'google' | 'outlook') => {
   const eventChannelLink = generateEventChannelLink(event)
   const formatGoogleDate = (date: Date) => date.toISOString().replace(/-|:|\.\d{3}/g, '')
-  const startTime = new Date(event.scheduledStartTimestamp)
+  const startTime = new Date(event.scheduledStartTimestamp ?? 0)
   let endTime: Date
 
   if (event.scheduledEndTimestamp) {
@@ -17,7 +17,7 @@ export const generateCalendarLinks = (event: GuildScheduledEvent, type: 'google'
       event.name,
     )}&dates=${formatGoogleDate(startTime)}/${formatGoogleDate(
       endTime,
-    )}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(
+    )}&details=${encodeURIComponent(event.description ?? '')}&location=${encodeURIComponent(
       eventChannelLink,
     )}`
   } else {
@@ -26,7 +26,7 @@ export const generateCalendarLinks = (event: GuildScheduledEvent, type: 'google'
       startTime.toISOString(),
     )}&enddt=${encodeURIComponent(endTime.toISOString())}&subject=${encodeURIComponent(
       event.name,
-    )}&body=${encodeURIComponent(event.description)}&location=${encodeURIComponent(
+    )}&body=${encodeURIComponent(event.description ?? '')}&location=${encodeURIComponent(
       eventChannelLink,
     )}&allday=false&uid=${encodeURIComponent(event.id)}`
   }

@@ -24,7 +24,7 @@ module.exports = {
 
       const _member = extractUser(user)
 
-      const member: GuildMember = interaction.guild.members.cache.get(_member)
+      const member: GuildMember = interaction.guild!.members.cache.get(_member)!
 
       const createsEmbed = getUserInformation(member)
       return await interaction.editReply({ embeds: [createsEmbed] })

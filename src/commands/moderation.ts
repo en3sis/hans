@@ -25,7 +25,7 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
-      if (!interaction.memberPermissions.has(['Administrator']))
+      if (!interaction.memberPermissions!.has(['Administrator']))
         return interaction.editReply({
           content: 'You do not have permission to use this command',
         })

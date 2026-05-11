@@ -91,7 +91,7 @@ const fetchCommands = async ({
     if (process.env.ISDEV === 'true') {
       // Deploys to your development guild, those commands will be deployed instantly
       await registryCommands({
-        folderName: config.bot_dev_folder,
+        folderName: config.bot_dev_folder ?? '',
         id: config.bot_guild_id,
       }).then((response) =>
         console.log(`🏗  DEV: guildCommands(${config.bot_dev_folder}) => `, response),

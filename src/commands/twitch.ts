@@ -13,7 +13,7 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     try {
-      const username = interaction.options.get('username').value as string
+      const username = interaction.options.get('username')!.value as string
 
       const embeds = await twitchController(username)
 

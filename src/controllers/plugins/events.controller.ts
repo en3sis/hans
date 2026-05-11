@@ -8,7 +8,7 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
     const author = interaction.user
 
     const guildEvents = (
-      await Hans.guilds.cache.get(interaction.guildId).scheduledEvents.fetch()
+      await Hans.guilds.cache.get(interaction.guildId!)!.scheduledEvents.fetch()
     ).map((e) => e)
 
     if (!guildEvents.length)
@@ -25,7 +25,7 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
       })
 
     const eventPromises = guildEvents.map(async (event) => {
-      if (!event || !event.isActive || event.userCount <= 0) return null
+      if (!event || !event.isActive || (event.userCount ?? 0) <= 0) return null
 
       // INFO: Set a 300ms timeout to reduce the change of hitting the rate-limit
       await new Promise((resolve) => setTimeout(resolve, 300))
@@ -39,8 +39,8 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
     const event = await Promise.all(eventPromises)
 
     const subscribedEvents = event
-      .filter((e) => e.subscribers.includes(author.id))
-      .sort((a, b) => a.scheduledStartTimestamp - b.scheduledStartTimestamp)
+      .filter((e) => e !== null && e.subscribers.includes(author.id))
+      .sort((a, b) => (a!.scheduledStartTimestamp ?? 0) - (b!.scheduledStartTimestamp ?? 0))
 
     const links: {
       name: string
@@ -49,13 +49,14 @@ export const getUserEvents = async (interaction: CommandInteraction) => {
     }[] = []
 
     subscribedEvents.forEach((_event) => {
-      const event = guildEvents.find((e) => e.id === _event.id)
+      const event = guildEvents.find((e) => e.id === _event!.id)
+      if (!event) return
       const googleLink = generateCalendarLinks(event, 'google')
       const outlookLink = generateCalendarLinks(event, 'outlook')
 
       links.push({
         name: event.name,
-        startingIn: formatDistance(event.scheduledStartTimestamp, new Date()),
+        startingIn: formatDistance(event.scheduledStartTimestamp ?? 0, new Date()),
         value: [googleLink, outlookLink],
       })
     })

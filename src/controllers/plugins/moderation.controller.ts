@@ -4,9 +4,9 @@ import { sentimentUrgencyTable } from '../../utils/colors'
 
 export const purgeMessages = async (interaction: CommandInteraction) => {
   try {
-    const amount = interaction.options.get('n').value as number
+    const amount = interaction.options.get('n')!.value as number
 
-    if (!interaction.memberPermissions.has(['Administrator']))
+    if (!interaction.memberPermissions!.has(['Administrator']))
       return interaction.editReply({
         content: 'You do not have permission to use this command',
       })
@@ -17,11 +17,11 @@ export const purgeMessages = async (interaction: CommandInteraction) => {
       })
     }
 
-    const fetched = await interaction.channel.messages.fetch({
+    const fetched = await (interaction.channel as TextChannel)!.messages.fetch({
       limit: amount,
     })
 
-    await interaction.channel.bulkDelete(fetched).catch(async (err) => {
+    await (interaction.channel as TextChannel)!.bulkDelete(fetched).catch(async (err: any) => {
       await interaction.editReply({ content: err.message })
     })
 
@@ -38,7 +38,7 @@ export const removeLinks = async (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowedRoles: string[],
 ) => {
-  if (message.member.permissions.has(['Administrator', 'DeafenMembers'])) return
+  if (message.member!.permissions.has(['Administrator', 'DeafenMembers'])) return
 
   const expression =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
@@ -64,14 +64,14 @@ export const sentimentAnalysisFn = async (
   if (score.score >= 10 && reactToPositive) {
     message.react('🥰')
   } else if (score.score <= -8) {
-    const channel = message.guild.channels.cache.get(notificationChannel) as TextChannel
+    const channel = message.guild!.channels.cache.get(notificationChannel) as TextChannel
 
     return channel.send({
       embeds: [
         {
           author: {
             name: message.author.username,
-            icon_url: message.author.avatarURL(),
+            icon_url: message.author.avatarURL() ?? undefined,
           },
           title: `Message:`,
           description: `${message.content} \n\n Go to message: [click here](${message.url})`,

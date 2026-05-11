@@ -1,10 +1,11 @@
 import { TextChannel } from 'discord.js'
 import { Hans } from '..'
 
-export const reportErrorToMonitoring = async ({ embeds }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const reportErrorToMonitoring = async ({ embeds }: { embeds: any }) => {
   try {
     const monitoringChannel = Hans.channels.cache.get(
-      Hans.settings?.monitoring_channel_id,
+      Hans.settings?.monitoring_channel_id ?? '',
     ) as TextChannel
 
     if (!monitoringChannel) return
