@@ -11,7 +11,7 @@
 # by content hash, so local and remote stay byte-for-byte identical.
 #
 # Usage:
-#   DATABASE_URL=postgres://hans:****@hans-prod.tailnet-name.ts.net:5432/hans \
+#   DATABASE_URL=postgres://hans:****@hans-prod.tailnet-name.ts.net:5432/hans_db \
 #     yarn db:migrate:remote
 #
 # Or set it once in your shell rc / direnv and just run:
@@ -23,7 +23,7 @@ if [ -z "${DATABASE_URL:-}" ]; then
   echo "❌ DATABASE_URL is required."
   echo
   echo "Example (Tailscale):"
-  echo "  DATABASE_URL=postgres://hans:****@hans-prod.tailnet-name.ts.net:5432/hans \\"
+  echo "  DATABASE_URL=postgres://hans:****@hans-prod.tailnet-name.ts.net:5432/hans_db \\"
   echo "    yarn db:migrate:remote"
   echo
   echo "Tip: yarn db:status to preview what would be applied without changing anything."

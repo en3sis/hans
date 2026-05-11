@@ -21,7 +21,7 @@ export const verifyGuildPluginSettings = async (interaction: ChatInputCommandInt
 
   const guildRole = interaction.guild!.roles.cache.get(role)
 
-  await updateMetadataGuildPlugin({ role }, 'verify', interaction.guildId!)
+  await updateMetadataGuildPlugin({ role }, 'verify', interaction.guildId!, true)
 
   const button = new ButtonBuilder()
     .setCustomId('open_verify_modal')
@@ -113,7 +113,16 @@ export const verifyModalSubmit = async (interaction: ModalSubmitInteraction) => 
 
         if (member instanceof GuildMember) {
           const guildPluginSettings = await Hans.guildPluginSettings(interaction.guildId!, 'verify')
-          const guildRole = interaction.guild?.roles.cache.get(guildPluginSettings!.metadata.role)
+          const roleId = guildPluginSettings?.metadata?.role
+          if (!roleId) {
+            await interaction.followUp({
+              content:
+                'Verify plugin is not configured for this server. Ask an admin to run `/verify enable role:<role>`.',
+              ephemeral: true,
+            })
+            return
+          }
+          const guildRole = interaction.guild?.roles.cache.get(roleId)
 
           if (guildRole) {
             await member.roles

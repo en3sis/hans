@@ -154,12 +154,20 @@ export const toggleGuildPlugin = async (
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateMetadataGuildPlugin = async (metadata: any, name: string, guildId: string) => {
+export const updateMetadataGuildPlugin = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata: any,
+  name: string,
+  guildId: string,
+  enable?: boolean,
+) => {
   try {
+    const patch: { metadata: unknown; enabled?: boolean } = { metadata }
+    if (enable !== undefined) patch.enabled = enable
+
     const result = await db
       .update(guildsPlugins)
-      .set({ metadata })
+      .set(patch)
       .where(and(eq(guildsPlugins.name, name), eq(guildsPlugins.owner, guildId)))
       .returning()
 

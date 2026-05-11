@@ -15,13 +15,13 @@
 
 Hans is built with a modular architecture that makes it easy to add and remove functionality on the fly, empowering you to create a bot tailored to your community's needs.
 
-Built with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), and lots of ❤️
+Built with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), [Postgres 17](https://www.postgresql.org/), [Drizzle ORM](https://orm.drizzle.team/), and lots of ❤️
 
 ## Invite to server
 
 Bring Hans to your Discord server and start using his available features immediately [here 🔗](https://discord.com/oauth2/authorize?client_id=403523619222847488). It uses the latest `hans:nightly` image with the latest features.
 
-The list of commands & plugins can be found [here 🔗](https://github.com/en3sis/hans/wiki/Commands-&-Plugins)
+The list of commands & plugins can be found [here 🔗](https://github.com/en3sis/hans/wiki/Commands-&-Plugins).
 
 ## Developing Hans
 
@@ -31,74 +31,98 @@ The list of commands & plugins can be found [here 🔗](https://github.com/en3si
 
 ### 🔅 Prepare environment
 
-Before running any command, run `npm install && cp .env.template .env`, and fill in all the env variables needed. To create your application, visit [Discord's Developer Portal](https://discord.com/developers/docs/intro)
+```bash
+yarn install
+cp .env.template .env
+# fill in DISCORD_TOKEN, DISCORD_CLIENT_ID, CRYPTO_KEY, CRYPTO_IV, BOT_GUILD_ID
+```
 
-> 🪬 **IMPORTANT**: A Supabase instance is needed for the bot to work. A free cluster should be more than enough (even for small bots & communities) for development.
+To create your Discord application, visit the [Developer Portal](https://discord.com/developers/docs/intro).
 
-### Supabase Local Development.
+Docker is required for local development — the dev script spins up a
+local Postgres 17 container automatically.
 
-Supabase is used for storing the bot's configs, guilds, and users.
+### 💾 Database
 
-You can work with `supabase local`, follow the instructions [here 🔗](https://supabase.io/docs/guides/local-development).
-Once you run `supabase start` the local Supabase will be populated with the latest schema (have a look at the `supabase/seed.template.sql` file for more configuration)
+Hans uses **Postgres 17** with [Drizzle ORM](https://orm.drizzle.team/).
+Schema is defined in TypeScript at [`src/db/schema.ts`](src/db/schema.ts)
+and migrations are auto-generated into `drizzle/`.
 
-More information related to working with Supabase local development can be found [📹 here 🔗](https://www.youtube.com/watch?v=N0Wb85m3YMI)
+```bash
+yarn db:up         # start the dev Postgres + apply migrations
+yarn db:psql       # psql into the dev DB
+yarn db:studio     # open Drizzle Studio at https://local.drizzle.studio
+yarn db:down       # stop the dev DB (data preserved)
+yarn db:reset      # wipe and recreate from scratch
+```
+
+When you change the schema:
+
+```bash
+# 1. Edit src/db/schema.ts
+# 2. Generate a migration
+yarn db:generate
+# 3. Apply it locally
+yarn db:migrate
+# 4. Commit src/db/schema.ts and the new drizzle/ file
+```
+
+Production migrations are applied separately from your laptop over
+Tailscale — see [infrastructure/README.md](infrastructure/README.md#migrations).
 
 ## 👩🏼‍💻 Development
 
-Once the `Prepare environment` section is done, you can follow along with the development.
+### `yarn dev`
 
-### `npm run dev`
-
-It will start a development server with `ts-node` and `nodemon` for live-reload. A bot Invite link will be displayed in the console.
+Starts the dev Postgres container (if not running), applies migrations,
+then launches the bot with `nodemon` for live-reload. Invite link prints
+to the console on first boot.
 
 ### Slash commands
 
 All commands (under `src/commands`) are built with the [Slash Command](https://discordjs.guide/interactions/slash-commands.html) interaction.
 
-> 🪬 **IMPORTANT**: before developing commands, make sure you invite the bot to your server and the entry in Supabase `configs -> bot_guild_id` is your guild_id.
+> 🪬 **IMPORTANT**: before developing commands, make sure you invite the bot to your server and that there is a row in the `configs` table whose `bot_guild_id` matches your guild ID. The bot creates this on first connect; otherwise insert one with `yarn db:psql`.
 
-All commands under the main folder are available globally (it will take a second to have them available) while the ones under `bots-playground/` are guild-specific and are instantly deployed, use this folder for debugging & development purposes.
+Commands under the main folder are registered globally (takes a moment
+to propagate). Commands under `bots-playground/` are guild-specific and
+deploy instantly — use that folder for debugging.
 
-To deploy the commands: `npm run slashDev` or `npm run slash` in production.
+To redeploy commands: `yarn slash:dev` for dev, `yarn slash` for production.
 
 ---
 
-## 🧪 Unit Tests
+## 🧪 Tests
 
-For testing, we use Mocha with TS.
+```bash
+yarn test          # runs Jest against ./tests
+```
 
-All the tests are under the `/tests` directory. Right now they're none or a few, we should add more test coverage for command controllers.
-
-### `npm run test`
-
-Will run all the tests.
+Test coverage is light — contributions welcome, especially around
+command controllers.
 
 ---
 
 ## 🏗 Production
 
-We have multiple environments for deploying your bot.
+Production runs on a single Hetzner VPS as two Docker containers
+(`db` + `bot`) managed by docker compose. Deploys are manual: SSH to
+the box and run `./infrastructure/ops/deploy.sh`. Schema migrations
+are applied from your laptop over Tailscale.
 
-### With Docker
+The full production playbook — host setup, deploy flow, Tailscale
+configuration, backups, rollback, and the one-time data-migration
+procedure — lives in [infrastructure/README.md](infrastructure/README.md).
 
-You can either use the pre-built Docker image from DockerHub at `en3sis/hans:latest` or build your own locally using the command `docker build -t en3sis/hans .`
+### Run the bot image standalone
 
-To run the container, use the command `docker run --env-file .env --name hans -d --restart=always en3sis/hans:latest` while making sure that the `.env` file is in the same directory as the command and contains all the necessary environment variables for the bot to function properly.
-You can also run it with `docker-compose` using the command `docker-compose up -d --build bot`.
+If you just want to run the bot against your own Postgres:
 
-> Note: for M1 Macs, you'll need to use `docker-compose build --build-arg M1=true` before running the `docker-compose up -d`.
+```bash
+docker run --env-file .env --name hans -d --restart=always \
+  en3sis/hans:nightly
+```
 
-### Locally
-
-You can also run the bot locally using the following commands:
-
-> 🪬 **IMPORTANT**: Follow the `Prepare environment` section.
-
-### `npm run build`
-
-To generate the application's build.
-
-### `npm start`
-
-It will run the bot with the production environment.
+`.env` must include a `DATABASE_URL` reachable from the container. You
+are responsible for applying schema migrations against that DB before
+the bot connects (`DATABASE_URL=... yarn db:migrate`).

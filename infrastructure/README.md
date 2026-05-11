@@ -180,7 +180,7 @@ git add src/db drizzle && git commit -m "schema: ..."
 git push                       # CI builds the new bot image
 
 # 5. Apply to prod (over Tailscale — see below)
-DATABASE_URL=postgres://hans:****@hans-prod.<tailnet>.ts.net:5432/hans \
+DATABASE_URL=postgres://hans:****@hans-prod.<tailnet>.ts.net:5432/hans_db \
   yarn db:migrate:remote
 
 # 6. Deploy the new bot image
@@ -212,15 +212,15 @@ Migrations are guaranteed to be byte-identical across environments:
 ```bash
 # Check status against a DB (uses DATABASE_URL from .env, or override)
 yarn db:status                                                              # local
-DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans \
+DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db \
   yarn db:status                                                            # prod
 
 # Apply pending migrations to prod over Tailscale
-DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans \
+DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db \
   yarn db:migrate:remote
 
 # Ad-hoc psql / Drizzle Studio against prod — same tailnet URL
-DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans \
+DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db \
   yarn db:studio
 ```
 
@@ -305,43 +305,81 @@ From your laptop, point any tool that speaks Postgres (psql, TablePlus,
 pgAdmin, DBeaver) at the tailnet URL — no SSH tunnel needed:
 
 ```bash
-psql "postgres://hans:****@hans.<tailnet>.ts.net:5432/hans"
+psql "postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db"
 ```
 
-## Initial data migration (Supabase → new Postgres)
+## Initial data migration (legacy DB → new Postgres)
 
 One-time procedure to seed the new Postgres container with data from
-the old Supabase database. Run from your laptop.
+a legacy database. Run from your laptop.
+
+> ⚠️ **The bot must NOT be running during this procedure.** On first
+> boot the bot seeds default rows into `guilds_plugins` with
+> `metadata: null`. Those rows then collide with the real rows from
+> the dump and `pg_restore --data-only` silently skips them (it logs
+> errors but exits 0), leaving you with empty metadata. Bring the bot
+> up only after the sanity check passes.
 
 ```bash
-# 1. Dump the Supabase DB (custom format, data + schema)
+# 1. Dump the legacy DB (custom format)
 pg_dump --no-owner --no-acl --format=custom --compress=9 \
-  "postgres://postgres:****@<supabase-host>:5432/postgres" \
-  > hans-supabase.dump
+  "postgres://postgres:****@<legacy-host>:5432/postgres" \
+  > hans-legacy.dump
 
-# 2. Bring up only the db container on the VPS
+# 2. Bring up ONLY the db container on the VPS (bot stays down)
 ssh deploy@<host> "cd ~/hans && docker compose \
   -f infrastructure/compose/docker-compose.yaml --project-directory . \
   up -d db"
 
 # 3. Apply the Drizzle schema (creates empty tables) over Tailscale
-DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans \
+DATABASE_URL=postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db \
   yarn db:migrate
 
-# 4. Load Supabase rows into the new schema — also over Tailscale
-pg_restore --data-only --no-owner --no-acl \
-  -d "postgres://hans:****@hans.<tailnet>.ts.net:5432/hans" \
-  hans-supabase.dump
+# 4. Load rows into the new schema. --disable-triggers avoids FK ordering
+#    issues; tee'ing to a log lets you grep for silent ERROR lines after.
+pg_restore --data-only --no-owner --no-acl --disable-triggers --verbose \
+  -d "postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db" \
+  hans-legacy.dump 2>&1 | tee restore.log
+grep -i error restore.log || echo "✅ no errors"
 
-# 5. Sanity check
-psql "postgres://hans:****@hans.<tailnet>.ts.net:5432/hans" \
-  -c "\dt" -c "select count(*) from guilds;"
+# 5. Sanity check — verify rows AND that jsonb columns came through
+psql "postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db" \
+  -c "\dt" \
+  -c "select count(*) from guilds;" \
+  -c "select count(*) from guilds_plugins where metadata is not null;"
 
-# 6. Deploy the bot
+# 6. NOW deploy the bot
 ssh deploy@<host> "cd ~/hans && ./infrastructure/ops/deploy.sh"
 ```
 
 `--data-only` is important: step 3 already created the tables, so we
-only restore rows. If the Supabase schema has columns that don't exist
+only restore rows. If the legacy schema has columns that don't exist
 in the current Drizzle schema, those columns are silently skipped —
 diff the two schemas first if you're unsure.
+
+### If you already booted the bot before restoring
+
+`pg_restore --data-only` will have skipped most rows due to PK
+conflicts. Recover by truncating and redoing the restore:
+
+```bash
+# 1. Stop the bot
+ssh deploy@<host> "cd ~/hans && docker compose \
+  -f infrastructure/compose/docker-compose.yaml --project-directory . \
+  stop bot"
+
+# 2. Truncate the data tables (drizzle.__drizzle_migrations stays intact)
+psql "postgres://hans:****@hans.<tailnet>.ts.net:5432/hans_db" <<'SQL'
+TRUNCATE
+  command_usage,
+  guild_quests,
+  users_settings,
+  guilds_plugins,
+  guilds,
+  plugins,
+  configs
+RESTART IDENTITY CASCADE;
+SQL
+
+# 3. Re-run step 4 from above, then step 5, then bring the bot back up.
+```

@@ -14,7 +14,7 @@
 # Migrations are NOT part of deploy. Apply them separately from your
 # laptop over Tailscale:
 #
-#   DATABASE_URL=postgres://hans:****@hans-prod.<tailnet>.ts.net:5432/hans \
+#   DATABASE_URL=postgres://hans:****@hans-prod.<tailnet>.ts.net:5432/hans_db \
 #     yarn db:migrate:remote
 #
 # Apply schema-additive migrations BEFORE running this script; apply
@@ -28,7 +28,7 @@ set -euo pipefail
 DEPLOY_DIR="${DEPLOY_DIR:-$PWD}"
 cd "$DEPLOY_DIR"
 
-COMPOSE_FILE="infrastructure/compose/docker-compose.yaml"
+COMPOSE_FILE="docker-compose.yaml"
 
 if [ ! -f "$COMPOSE_FILE" ]; then
   echo "❌ Missing $COMPOSE_FILE under $DEPLOY_DIR."
