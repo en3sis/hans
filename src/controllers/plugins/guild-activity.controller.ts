@@ -1,22 +1,25 @@
+import { and, eq } from 'drizzle-orm'
 import { CommandInteraction } from 'discord.js'
-import supabase from '../../libs/supabase'
+import { db } from '../../db/client'
+import { guildsPlugins } from '../../db/schema'
+import { deleteFromCache } from '../../libs/node-cache'
 
 export const guildActivitySetChannel = async (interaction: CommandInteraction, channel: string) => {
   try {
-    const { data, error } = await supabase
-      .from('guilds_plugins')
-      .update({ metadata: { channelId: channel } })
-      .eq('name', `serverMembersActivity`)
-      .eq('owner', interaction.guildId)
-    // .or(`name.eq.guildMemberAdd, name.eq.guildMemberRemove`)
-
-    if (error) throw error
+    await db
+      .update(guildsPlugins)
+      .set({ metadata: { channelId: channel } })
+      .where(
+        and(
+          eq(guildsPlugins.name, 'serverMembersActivity'),
+          eq(guildsPlugins.owner, interaction.guildId!),
+        ),
+      )
+    deleteFromCache(`guilds_plugins:${interaction.guildId}:serverMembersActivity`)
 
     await interaction.editReply({
       content: `Enabled guild activity notifications in <#${channel}>`,
     })
-
-    return data
   } catch (error) {
     console.error('❌ ERROR: guildActivitySetChannel(): ', error)
   }

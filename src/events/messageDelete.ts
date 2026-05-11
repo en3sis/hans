@@ -9,7 +9,9 @@ module.exports = {
   enabled: true,
   async execute(Hans: Client, message: Message) {
     try {
-      const { metadata, enabled } = await resolveGuildPlugins(message.guild.id, 'messageDelete')
+      const resolved = await resolveGuildPlugins(message.guild!.id, 'messageDelete')
+      if (!resolved) return
+      const { metadata, enabled } = resolved
 
       if (!enabled) return
       const channel = Hans.channels.cache.get(metadata.logChannelId) as TextChannel

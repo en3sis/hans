@@ -102,16 +102,3 @@ To generate the application's build.
 ### `npm start`
 
 It will run the bot with the production environment.
-
-### With Kubernetes (WIP)
-
-> 💢 NOTE: This is a WIP, it's not fully tested yet, things are missing. Please feel free to contribute.
-
-It's also possible to deploy the bot to a Kubernetes cluster, the necessary files are in the `k8s` folder.
-
-**Steps**:
-
-1. You'll need your K8S cluster, ofc ;P
-2. Create the namespace `kubectl apply -f k8s/namespace.yaml`
-3. Run `cp k8s/secrets.template.yaml k8s/secrets.yaml`, fill it up and apply the secrets `kubectl apply -f k8s/secrets.yaml`
-4. Deploy the workload `kubectl apply -f k8s/deployment.yaml`

@@ -14,7 +14,7 @@ export const summarizeController = async (interaction: CommandInteraction) => {
 
     const guildPlugin = await resolveGuildPlugins(interaction.guildId!, 'summarize')
 
-    if (!guildPlugin.enabled)
+    if (!guildPlugin?.enabled)
       await interaction.editReply('This feature is not enabled for this server.')
 
     let text = interaction.options.get('prompt')!.value as string
@@ -26,7 +26,7 @@ export const summarizeController = async (interaction: CommandInteraction) => {
 
       if (!text)
         await interaction.editReply(
-          `Message not found on this channel or ${Hans.user.username} has no permission to read it.`,
+          `Message not found on this channel or ${Hans.user!.username} has no permission to read it.`,
         )
     }
 

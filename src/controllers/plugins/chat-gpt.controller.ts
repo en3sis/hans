@@ -1,11 +1,13 @@
 import { CommandInteraction } from 'discord.js'
-import supabase from '../../libs/supabase'
+import { and, eq } from 'drizzle-orm'
+import OpenAI from 'openai'
+import { db } from '../../db/client'
+import { guildsPlugins } from '../../db/schema'
 import { GuildPluginChatGTPMetadata } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { CHATGPT_COMMANDS_USAGE_DAILY } from '../../utils/constants'
 import { decrypt } from '../../utils/crypto'
 import { GuildPlugin } from '../bot/guilds.controller'
-import OpenAI from 'openai'
 
 interface IOpenAIRequestSettings {
   model?: string
@@ -29,7 +31,7 @@ export const chatGTPController = async (prompt: string, apiKey: string, organiza
     })
 
     return {
-      response: response.replace('AI:', ''),
+      response: (response ?? '').replace('AI:', ''),
       token,
       model,
     }
@@ -39,11 +41,6 @@ export const chatGTPController = async (prompt: string, apiKey: string, organiza
   }
 }
 
-/**
- * OpenAI API request
- * @param IOpenAIRequestSettings
- * @returns Promise<{response, token, model}>
- */
 export const sendPrompt = async ({
   input,
   model = 'gpt-4o-mini',
@@ -59,10 +56,10 @@ export const sendPrompt = async ({
       messages: [
         {
           role: 'system',
-          content: `You are Hans, your all-knowing assistant. 
-          Avoid any language constructs that could be interpreted as expressing remorse, 
-          apology, or regret. Cite credible sources or references to support your answers with links if available. 
-          Current date: ${new Date().toLocaleDateString()}. 
+          content: `You are Hans, your all-knowing assistant.
+          Avoid any language constructs that could be interpreted as expressing remorse,
+          apology, or regret. Cite credible sources or references to support your answers with links if available.
+          Current date: ${new Date().toLocaleDateString()}.
           For code or commands, use markdown code blocks with the right syntax (e.g., \`\`\`javascript for JS, \`\`\`python for Python). Use Discord-friendly markdown formatting (bold, italics, code blocks)
           When providing measurements, always include both metric and imperial units in this format:
           Always provide the metric unit first, followed by the imperial unit in parentheses.
@@ -76,13 +73,11 @@ export const sendPrompt = async ({
       ],
     })
 
-    const response = {
-      response: completion.choices[0].message.content,
-      token: completion.usage.total_tokens,
+    return {
+      response: completion.choices[0].message.content ?? '',
+      token: completion.usage?.total_tokens ?? 0,
       model: completion.model,
     }
-
-    return response
   } catch (error) {
     throw Error(error.message)
   }
@@ -96,13 +91,15 @@ export const chatGptCommandHandler = async (
 ) => {
   try {
     const API_KEY =
-      guild.premium || usage > 0 ? process.env.OPENAI_API_KEY : decrypt(guildPlugin.api_key)
+      guild.premium || (usage ?? 0) > 0 ? process.env.OPENAI_API_KEY : decrypt(guildPlugin.api_key)
 
     const ORGANIZATION =
-      guild.premium || usage > 0 ? process.env.OPENAI_ORGANIZATION_ID : decrypt(guildPlugin.org)
+      guild.premium || (usage ?? 0) > 0
+        ? process.env.OPENAI_ORGANIZATION_ID
+        : decrypt(guildPlugin.org)
 
     const prompt = interaction.options.get('prompt')!.value as string
-    const answer = await chatGTPController(prompt, API_KEY, ORGANIZATION)
+    const answer = await chatGTPController(prompt, API_KEY!, ORGANIZATION!)
 
     if (!answer?.response || answer?.response === '' || answer?.response === undefined)
       return await interaction.editReply('💢 Something went wrong, please try again later.')
@@ -112,19 +109,19 @@ export const chatGptCommandHandler = async (
         {
           author: {
             name: `${interaction.user.username} asked:`,
-            icon_url: interaction.user.avatarURL(),
+            icon_url: interaction.user.avatarURL() ?? undefined,
           },
           description: `${prompt}`,
           color: 0x5865f2,
         },
         {
           author: {
-            name: `${interaction.client.user.username} answered: `,
-            icon_url: interaction.client.user.avatarURL(),
+            name: `${interaction.client.user!.username} answered: `,
+            icon_url: interaction.client.user!.avatarURL() ?? undefined,
           },
           description: `${answer?.response}`,
           footer: {
-            text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.00015).toFixed(6)} ${!guild.premium ? `| ${usage - 1} usages left for today` : ''} | Model: ${answer.model}`,
+            text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.00015).toFixed(6)} ${!guild.premium ? `| ${(usage ?? 0) - 1} usages left for today` : ''} | Model: ${answer.model}`,
           },
           color: DEFAULT_COLOR,
         },
@@ -139,28 +136,23 @@ export const chatGptCommandHandler = async (
 export const chatGptUsage = async (
   guildPlugin: PluginMetadata,
   guild_id: string,
-): Promise<GuildPlugin> => {
+): Promise<GuildPlugin | undefined> => {
   try {
-    const { data: currentSettings } = await supabase
-      .from('guilds_plugins')
-      .select('*')
-      .eq('name', 'chatGtp')
-      .eq('owner', guild_id)
-      .single()
-
-    const _metadata = JSON.parse(JSON.stringify(currentSettings?.metadata)) || {}
+    const current = await db.query.guildsPlugins.findFirst({
+      where: and(eq(guildsPlugins.name, 'chatGtp'), eq(guildsPlugins.owner, guild_id)),
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const _metadata = (current?.metadata as any) || {}
 
     const usage = guildPlugin === null ? CHATGPT_COMMANDS_USAGE_DAILY - 1 : guildPlugin.usage - 1
 
-    const { data } = await supabase
-      .from('guilds_plugins')
-      .update({ metadata: { ..._metadata, usage } })
-      .eq('owner', guild_id)
-      .eq('name', 'chatGtp')
-      .select()
-      .single()
+    const result = await db
+      .update(guildsPlugins)
+      .set({ metadata: { ..._metadata, usage } })
+      .where(and(eq(guildsPlugins.name, 'chatGtp'), eq(guildsPlugins.owner, guild_id)))
+      .returning()
 
-    return data
+    return result[0]
   } catch (error) {
     console.error('❌ chatGptUsage(): ', error)
     throw Error(error.message)

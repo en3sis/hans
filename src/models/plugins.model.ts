@@ -1,8 +1,8 @@
-import { Database } from '../types/database.types'
+import { GuildPluginRow, Plugin } from '../db/schema'
 
-export type Plugins = Database['public']['Tables']['plugins']['Row']
-export type GuildPlugins = Database['public']['Tables']['guilds_plugins']['Row']
-export type GenericPluginParts = Omit<Plugins, 'id' | 'name'>
+export type Plugins = Plugin
+export type GuildPlugins = GuildPluginRow
+export type GenericPluginParts = Omit<Plugin, 'id' | 'name'>
 
 const genericStructure: GenericPluginParts = {
   created_at: new Date().toISOString(),

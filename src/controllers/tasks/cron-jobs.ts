@@ -1,6 +1,7 @@
+import * as cron from 'cron'
 import { initStadupsSchedules } from '../plugins/standup.controller'
 
-export const scheduledTasks = {}
+export const scheduledTasks: Record<string, cron.CronJob> = {}
 
 export const scheduleCronJobs = async () => {
   try {

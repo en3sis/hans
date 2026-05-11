@@ -18,7 +18,8 @@ module.exports = {
 
       // Plugins
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
-      await threadAutoCreate(message, await Hans.guildPluginSettings(message.guildId, 'threads'))
+      const threadsSettings = await Hans.guildPluginSettings(message.guildId!, 'threads')
+      if (threadsSettings) await threadAutoCreate(message, threadsSettings as any)
 
       // Check quest answers in quest threads
       await checkQuestAnswer(message)

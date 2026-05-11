@@ -34,7 +34,7 @@ export const getUserInformation = (member: GuildMember) => {
       },
       {
         name: 'Joined the server',
-        value: formatFromNow(member.joinedAt),
+        value: formatFromNow(member.joinedAt ?? new Date()),
         inline: true,
       },
       {

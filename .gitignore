@@ -16,3 +16,5 @@
 /supabase/seed.sql
 build/
 package-lock.json
+data/
+.backup

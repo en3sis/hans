@@ -31,5 +31,5 @@ export const inviteBot = (client: Client) => {
 }
 
 export const RenameBot = async (message: Message) => {
-  return await message.guild.members.cache.get(process.env.DISCORD_CLIENT_ID).setNickname('')
+  return await message.guild!.members.cache.get(process.env.DISCORD_CLIENT_ID!)!.setNickname('')
 }

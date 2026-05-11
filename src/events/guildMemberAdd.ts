@@ -8,10 +8,9 @@ module.exports = {
   enabled: true,
   async execute(Hans: Client, member: GuildMember) {
     try {
-      const { enabled, metadata } = await resolveGuildPlugins(
-        member.guild.id,
-        'serverMembersActivity',
-      )
+      const resolved = await resolveGuildPlugins(member.guild.id, 'serverMembersActivity')
+      if (!resolved) return
+      const { enabled, metadata } = resolved
 
       // Check it the guild has enabled the event
       if (!enabled) return

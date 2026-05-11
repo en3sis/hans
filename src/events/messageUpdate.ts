@@ -10,7 +10,9 @@ module.exports = {
     try {
       if (newMessage.author.bot && oldMessage.author.bot) return
 
-      const { enabled, metadata } = await resolveGuildPlugins(oldMessage.guildId, 'messageUpdate')
+      const resolved = await resolveGuildPlugins(oldMessage.guildId!, 'messageUpdate')
+      if (!resolved) return
+      const { enabled, metadata } = resolved
 
       if (!enabled) return
       const channel = Hans.channels.cache.get(metadata.logChannelId) as TextChannel
@@ -22,7 +24,7 @@ module.exports = {
           {
             author: {
               name: `${newMessage.author.username}#${newMessage.author.discriminator}`,
-              icon_url: newMessage.author.displayAvatarURL(),
+              icon_url: newMessage.author.displayAvatarURL() ?? undefined,
             },
             description: `Message edited in <#${newMessage.channel.id}> by <@${newMessage.author.id}> [Jump to message](${newMessage.url}) `,
             fields: [
@@ -32,12 +34,12 @@ module.exports = {
               },
               {
                 name: 'After:',
-                value: newMessage.content,
+                value: newMessage.content ?? '',
               },
             ],
             footer: {
-              icon_url: newMessage.guild.iconURL(),
-              text: `${newMessage.guild.name}`,
+              icon_url: newMessage.guild!.iconURL() ?? undefined,
+              text: `${newMessage.guild!.name}`,
             },
             color: 0x3165ae,
           },
