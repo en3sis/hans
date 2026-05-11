@@ -1,17 +1,23 @@
 #!/usr/bin/env bash
-# Production deploy.
+# Manual production deploy. Run this ON the VPS, from ~/hans.
 #
-# 1. pg_dump backup (if db is running).
-# 2. Pull the new image.
-# 3. `docker compose up -d` (db + bot only — no migrate service).
+# Assumes the host already has:
+#   ~/hans/.env                                         (production secrets)
+#   ~/hans/infrastructure/compose/docker-compose.yaml   (uploaded manually)
+#   ~/hans/infrastructure/ops/{deploy,rollback,backup}.sh
 #
-# Migrations are NOT part of deploy. They are applied separately from
-# your laptop over Tailscale:
+# What it does:
+#   1. pg_dump the current db (skipped on first deploy).
+#   2. Pull the new bot image.
+#   3. `docker compose up -d` (db + bot).
+#
+# Migrations are NOT part of deploy. Apply them separately from your
+# laptop over Tailscale:
 #
 #   DATABASE_URL=postgres://hans:****@hans-prod.<tailnet>.ts.net:5432/hans \
 #     yarn db:migrate:remote
 #
-# Run schema-additive migrations BEFORE deploying new code; run
+# Apply schema-additive migrations BEFORE running this script; apply
 # destructive ones AFTER. See infrastructure/README.md.
 #
 # Environment:
@@ -26,6 +32,7 @@ COMPOSE_FILE="infrastructure/compose/docker-compose.yaml"
 
 if [ ! -f "$COMPOSE_FILE" ]; then
   echo "❌ Missing $COMPOSE_FILE under $DEPLOY_DIR."
+  echo "   Upload it manually from the repo before running deploy."
   exit 1
 fi
 if [ ! -f .env ]; then
@@ -56,7 +63,7 @@ echo "── 🚀 Bringing stack up ──"
 dc up -d --remove-orphans
 
 echo "── 🩺 Stack status ──"
-sleep 4
+sleep 5
 dc ps
 
 echo "── 📜 Recent bot logs ──"
