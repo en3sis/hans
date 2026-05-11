@@ -1,8 +1,8 @@
-import { CommandInteraction, Message, TextChannel } from 'discord.js'
+import { ChatInputCommandInteraction, Message, TextChannel } from 'discord.js'
 import { sentimentAnalysis } from '../../libs/sentiment'
 import { sentimentUrgencyTable } from '../../utils/colors'
 
-export const purgeMessages = async (interaction: CommandInteraction) => {
+export const purgeMessages = async (interaction: ChatInputCommandInteraction) => {
   try {
     const amount = interaction.options.get('n')!.value as number
 

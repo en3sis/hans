@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { weatherController } from '../controllers/plugins/weather.controller'
 import { logger } from '../utils/debugging'
 
@@ -12,7 +12,7 @@ module.exports = {
     .addStringOption((string) =>
       string.setName('city').setDescription('City name').setRequired(true),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       const { location, current } = await weatherController(
         interaction.options.get('city')!.value as string,

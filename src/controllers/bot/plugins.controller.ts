@@ -3,9 +3,15 @@ import { CommandInteraction } from 'discord.js'
 import { db } from '../../db/client'
 import { guilds, guildsPlugins, plugins } from '../../db/schema'
 import { deleteFromCache, getFromCache, setToCache } from '../../libs/node-cache'
-import { initialGuildPluginState, pluginsList } from '../../models/plugins.model'
+import {
+  PLUGIN_NAMES,
+  PLUGIN_REGISTRY,
+  PluginName,
+  isPluginName,
+} from '../../models/plugins.model'
 import {
   GuildPluginData,
+  PluginMetadataMap,
   PluginsThreadsMetadata,
   PluginsThreadsSettings,
 } from '../../types/plugins'
@@ -30,6 +36,10 @@ const onGuildPluginChanged = async (guildId: string, pluginName: string) => {
   }
 }
 
+/** Resolve the initial `enabled` value for (guild, plugin) at insert time. */
+const defaultEnabledFor = (name: string, fallback: boolean): boolean =>
+  isPluginName(name) ? PLUGIN_REGISTRY[name].defaultEnabled : fallback
+
 export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
   try {
     const allPlugins = await db.query.plugins.findMany()
@@ -39,28 +49,38 @@ export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
     })
     const present = new Set(existing.map((e) => e.name))
 
-    const defaults = allPlugins.map((p) => ({
-      name: p.name,
-      enabled:
-        (initialGuildPluginState() as Record<string, { default_enabled: boolean }>)[p.name]
-          ?.default_enabled ??
-        p.enabled ??
-        false,
-    }))
-
-    const toInsert = defaults.filter((d) => !present.has(d.name))
-    if (toInsert.length === 0) return
-
-    await db.insert(guildsPlugins).values(
-      toInsert.map((d) => ({
-        name: d.name,
+    const toInsert = allPlugins
+      .filter((p) => !present.has(p.name))
+      .map((p) => ({
+        name: p.name,
         owner: guild_id,
-        enabled: d.enabled,
+        enabled: defaultEnabledFor(p.name, p.enabled ?? false),
         metadata: null,
-      })),
-    )
+      }))
+
+    if (toInsert.length === 0) return
+    await db.insert(guildsPlugins).values(toInsert)
   } catch (error) {
     console.error('❌ ERROR: insertGuildPlugin', error)
+  }
+}
+
+/**
+ * Ensures every existing guild has a `guilds_plugins` row for every plugin
+ * in the registry. Run at startup so newly-added plugins automatically
+ * appear on existing guilds without manual migration.
+ */
+export const backfillAllGuildPlugins = async (): Promise<void> => {
+  try {
+    const allGuilds = await db.query.guilds.findMany({ columns: { guild_id: true } })
+    for (const g of allGuilds) {
+      await insertGuildPlugin(g.guild_id)
+    }
+    if (allGuilds.length > 0) {
+      console.log(`🔄 Plugin backfill checked ${allGuilds.length} guild(s)`)
+    }
+  } catch (error) {
+    console.error('❌ ERROR: backfillAllGuildPlugins', error)
   }
 }
 
@@ -125,12 +145,36 @@ export const resolveGuildPlugins = async (
       data: data as any,
     }
 
-    if (pluginName !== 'chatGtp') {
+    const cacheable = isPluginName(pluginName) ? PLUGIN_REGISTRY[pluginName].cacheable : true
+    if (cacheable) {
       setToCache(cacheKey(guild_id, pluginName), pluginData, 60 * 5)
     }
     return pluginData
   } catch (error) {
     console.error('❌ ERROR: resolveGuildPlugin', error)
+  }
+}
+
+/**
+ * Type-safe wrapper around resolveGuildPlugins. Returns metadata narrowed
+ * to the shape declared in PluginMetadataMap for the given plugin.
+ *
+ *   const cfg = await getPluginConfig(guildId, 'chatGtp')
+ *   cfg?.metadata.api_key  // string | undefined — no `as any` needed
+ */
+export const getPluginConfig = async <K extends PluginName>(
+  guildId: string,
+  name: K,
+): Promise<
+  | { enabled: boolean; metadata: PluginMetadataMap[K] | null; data: GuildPluginData['data'] }
+  | undefined
+> => {
+  const resolved = await resolveGuildPlugins(guildId, name)
+  if (!resolved) return undefined
+  return {
+    enabled: resolved.enabled,
+    metadata: (resolved.metadata ?? null) as PluginMetadataMap[K] | null,
+    data: resolved.data,
   }
 }
 
@@ -181,14 +225,8 @@ export const updateMetadataGuildPlugin = async (
   }
 }
 
-export const pluginsListNames = (): Array<{ name: string; value: string }> => {
-  return Object.entries(pluginsList).reduce(
-    (acc, [key]) => {
-      return [...acc, { name: key, value: key }]
-    },
-    [] as Array<{ name: string; value: string }>,
-  )
-}
+export const pluginsListNames = (): Array<{ name: string; value: string }> =>
+  PLUGIN_NAMES.map((name) => ({ name, value: name }))
 
 // =+=+=+ Chat GPT Plugin =+=+=+
 export const pluginChatGPTSettings = async (

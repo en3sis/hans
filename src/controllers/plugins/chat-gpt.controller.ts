@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { and, eq } from 'drizzle-orm'
 import OpenAI from 'openai'
 import { db } from '../../db/client'
@@ -84,7 +84,7 @@ export const sendPrompt = async ({
 }
 
 export const chatGptCommandHandler = async (
-  interaction: CommandInteraction,
+  interaction: ChatInputCommandInteraction,
   guild: GuildPlugin & { premium: boolean },
   guildPlugin: PluginMetadata,
   usage?: number,

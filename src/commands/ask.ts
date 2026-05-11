@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
 import { chatGptCommandHandler, chatGptUsage } from '../controllers/plugins/chat-gpt.controller'
 import { GuildPluginChatGTPMetadata } from '../types/plugins'
@@ -18,7 +18,7 @@ module.exports = {
         .setDescription('Enter a prompt or question to generate a response from Hans AI')
         .setRequired(true),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       const {
         enabled,

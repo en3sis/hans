@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
@@ -11,7 +11,7 @@ module.exports = {
     .addStringOption((string) =>
       string.setName('text').setDescription('Your sentence to be mocked').setRequired(true),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       const text = interaction.options.get('text')!.value as string
 

@@ -15,6 +15,41 @@ export type StandupScheduleMetadata = {
   message: string
 }
 
+export type ChatGptMetadata = {
+  api_key?: string
+  org?: string
+  usage?: number
+}
+
+export type VerifyMetadata = {
+  enabled?: boolean
+  roleId?: string
+}
+
+export type ServerActivityMetadata = {
+  channelId?: string
+}
+
+/**
+ * Per-plugin metadata shapes — the JSONB content stored in
+ * guilds_plugins.metadata. Add an entry here whenever a new plugin
+ * stores configuration. Used by getPluginConfig<K> to type results.
+ */
+export interface PluginMetadataMap {
+  serverMembersActivity: ServerActivityMetadata
+  serverMessagesLogs: ServerActivityMetadata
+  removeLinks: Record<string, never>
+  chatGtp: ChatGptMetadata
+  summarize: Record<string, never>
+  twitch: Record<string, never>
+  textClassification: Record<string, never>
+  threads: PluginsThreadsMetadata[]
+  events: Record<string, never>
+  verify: VerifyMetadata
+  standup: StandupScheduleMetadata[]
+  quests: { settings?: Record<string, unknown> }
+}
+
 export type PluginsThreadsSettings = {
   interaction: CommandInteraction
   metadata: PluginsThreadsMetadata

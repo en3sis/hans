@@ -6,6 +6,7 @@ import {
   setPresence,
 } from '../controllers/bot/config.controller'
 import { insertAllGuilds } from '../controllers/bot/guilds.controller'
+import { backfillAllGuildPlugins } from '../controllers/bot/plugins.controller'
 import { notifyPulse } from '../controllers/events/ready.controller'
 import { scheduleCronJobs } from '../controllers/tasks/cron-jobs'
 import { reportErrorToMonitoring } from '../utils/monitoring'
@@ -26,6 +27,8 @@ module.exports = {
       await insertConfiguration()
       await insertPlugins()
       await insertAllGuilds(Hans)
+      // Newly-added plugins reach existing guilds without manual migration.
+      await backfillAllGuildPlugins()
 
       // INFO: Fetches for the configuration.
       Hans.settings = await getBotConfiguration()

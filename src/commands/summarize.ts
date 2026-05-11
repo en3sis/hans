@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { summarizeController } from '../controllers/plugins/summarize.controller'
 import { logger } from '../utils/debugging'
 
@@ -12,7 +12,7 @@ module.exports = {
     .addStringOption((string) =>
       string.setName('prompt').setDescription('Text or message id to summarize').setRequired(true),
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       await summarizeController(interaction)
     } catch (error) {
