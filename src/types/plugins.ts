@@ -22,6 +22,8 @@ export type ChatGptMetadata = {
   api_key?: string
   org?: string
   usage?: number
+  /** OpenAI model id from the curated catalog (see utils/openai-models.ts). */
+  model?: string
 }
 
 export type VerifyMetadata = {
@@ -85,6 +87,8 @@ export interface GuildPluginChatGTPMetadata extends GuildPluginData {
     api_key: string
     org: string
     usage: number
+    /** Selected model id from the OpenAI catalog (utils/openai-models.ts). */
+    model?: string
   }
 }
 

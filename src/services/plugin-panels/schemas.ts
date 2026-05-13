@@ -1,5 +1,6 @@
 import { ChannelType } from 'discord.js'
 import type { PluginName } from '../../models/plugins.model'
+import { DEFAULT_OPENAI_MODEL, OPENAI_MODELS } from '../../utils/openai-models'
 import type { PluginPanelRegistry } from './types'
 
 /**
@@ -24,6 +25,20 @@ export const PLUGIN_PANELS: PluginPanelRegistry = {
         label: 'Organization ID',
         required: true,
         kind: { type: 'secret', max: 100, placeholder: 'org-…' },
+      },
+      {
+        key: 'model',
+        label: 'Model',
+        description: `OpenAI model used for /ask. Defaults to ${DEFAULT_OPENAI_MODEL}.`,
+        kind: {
+          type: 'choice',
+          placeholder: `Pick a model (default: ${DEFAULT_OPENAI_MODEL})`,
+          options: OPENAI_MODELS.map((m) => ({
+            value: m.id,
+            label: `${m.label} — $${m.inputPerMTokens}/$${m.outputPerMTokens} per 1M in/out`,
+            description: m.description,
+          })),
+        },
       },
     ],
   },

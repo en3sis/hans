@@ -44,6 +44,12 @@ export const configs = pgTable('configs', {
   perma_invite: text('perma_invite'),
   website: text('website'),
   monitoring_channel_id: text('monitoring_channel_id'),
+  /**
+   * OpenAI model used when Hans's own API key answers (premium guilds and
+   * free-quota usage). Nullable — falls back to DEFAULT_OPENAI_MODEL in
+   * utils/openai-models.ts when unset or no longer in the catalog.
+   */
+  default_openai_model: text('default_openai_model'),
 })
 
 export const guilds = pgTable('guilds', {
