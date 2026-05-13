@@ -26,6 +26,9 @@ export interface CustomActionContext {
   guildId: string
 }
 
+/** Returning an empty `message` suppresses the success follow-up — use when the
+ * handler already opened its own UI (e.g. a wizard) and an extra "✅ Opened…"
+ * line would just be noise. */
 export type CustomActionHandler = (ctx: CustomActionContext) => Promise<{ message: string }>
 
 /** Map `<plugin>.<actionId>` → handler. */
@@ -92,12 +95,12 @@ export const CUSTOM_ACTIONS: Record<string, CustomActionHandler> = {
 
   'quests.create': async ({ interaction, guildId }) => {
     await openCreateWizard(interaction, guildId)
-    return { message: 'Opened the quest creation wizard.' }
+    return { message: '' }
   },
 
   'quests.list': async ({ interaction, guildId }) => {
     await openQuestList(interaction, guildId)
-    return { message: 'Opened the active-quests list.' }
+    return { message: '' }
   },
 }
 
@@ -116,7 +119,9 @@ export const runCustomAction = async (
   }
   try {
     const { message } = await handler(ctx)
-    await ctx.interaction.followUp({ content: `✅ ${message}`, flags: MessageFlags.Ephemeral })
+    if (message) {
+      await ctx.interaction.followUp({ content: `✅ ${message}`, flags: MessageFlags.Ephemeral })
+    }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     await ctx.interaction.followUp({ content: `❌ ${msg}`, flags: MessageFlags.Ephemeral })

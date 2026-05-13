@@ -1,10 +1,18 @@
-import { ChatInputCommandInteraction } from 'discord.js'
+import {
+  ChatInputCommandInteraction,
+  ContainerBuilder,
+  MessageFlags,
+  SectionBuilder,
+  SeparatorBuilder,
+  SeparatorSpacingSize,
+  TextDisplayBuilder,
+  ThumbnailBuilder,
+} from 'discord.js'
 import { and, eq } from 'drizzle-orm'
 import OpenAI from 'openai'
 import { db } from '../../db/client'
 import { guildsPlugins } from '../../db/schema'
 import { GuildPluginChatGTPMetadata } from '../../types/plugins'
-import { DEFAULT_COLOR } from '../../utils/colors'
 import { CHATGPT_COMMANDS_USAGE_DAILY } from '../../utils/constants'
 import { decrypt } from '../../utils/crypto'
 import { GuildPlugin } from '../bot/guilds.controller'
@@ -104,34 +112,53 @@ export const chatGptCommandHandler = async (
     if (!answer?.response || answer?.response === '' || answer?.response === undefined)
       return await interaction.editReply('💢 Something went wrong, please try again later.')
 
+    const userAvatar = interaction.user.displayAvatarURL({ size: 128 })
+    const botAvatar = interaction.client.user!.displayAvatarURL({ size: 128 })
+    const cost = ((answer.token / 1000) * 0.00015).toFixed(6)
+    const left = !guild.premium ? `  ·  🎟 ${(usage ?? 0) - 1} left today` : ''
+
+    const container = new ContainerBuilder().setAccentColor(0x10a37f) // OpenAI green
+    container.addSectionComponents(
+      new SectionBuilder()
+        .addTextDisplayComponents(
+          new TextDisplayBuilder().setContent(
+            `**${interaction.user.username}** asked\n${prompt}`,
+          ),
+        )
+        .setThumbnailAccessory(new ThumbnailBuilder().setURL(userAvatar)),
+    )
+    container.addSeparatorComponents(
+      new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small),
+    )
+    container.addSectionComponents(
+      new SectionBuilder()
+        .addTextDisplayComponents(
+          new TextDisplayBuilder().setContent(
+            `**${interaction.client.user!.username}** answered\n${truncate(answer.response, 3800)}`,
+          ),
+        )
+        .setThumbnailAccessory(new ThumbnailBuilder().setURL(botAvatar)),
+    )
+    container.addSeparatorComponents(new SeparatorBuilder().setDivider(false))
+    container.addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(
+        `-# 🪙 ${answer.token} tokens  ·  💵 $${cost}${left}  ·  🤖 \`${answer.model}\``,
+      ),
+    )
+
     await interaction.editReply({
-      embeds: [
-        {
-          author: {
-            name: `${interaction.user.username} asked:`,
-            icon_url: interaction.user.avatarURL() ?? undefined,
-          },
-          description: `${prompt}`,
-          color: 0x5865f2,
-        },
-        {
-          author: {
-            name: `${interaction.client.user!.username} answered: `,
-            icon_url: interaction.client.user!.avatarURL() ?? undefined,
-          },
-          description: `${answer?.response}`,
-          footer: {
-            text: `Tokens: ${answer?.token} | Price: $${((answer?.token / 1000) * 0.00015).toFixed(6)} ${!guild.premium ? `| ${(usage ?? 0) - 1} usages left for today` : ''} | Model: ${answer.model}`,
-          },
-          color: DEFAULT_COLOR,
-        },
-      ],
+      flags: MessageFlags.IsComponentsV2,
+      components: [container],
     })
   } catch (error) {
     console.error('❌ chatGptCommandHandler(): ', error)
     throw Error(error.message)
   }
 }
+
+/** Truncate while preserving the ending and adding an ellipsis. */
+const truncate = (s: string, max: number): string =>
+  s.length <= max ? s : `${s.slice(0, max - 1)}…`
 
 export const chatGptUsage = async (
   guildPlugin: PluginMetadata,

@@ -83,21 +83,40 @@ const clearDraft = (guildId: string, userId: string) =>
 const renderWizard = (draft: QuestDraft) => {
   const container = new ContainerBuilder()
 
+  const tick = (ok: boolean) => (ok ? '✅' : '⬜')
+  const basicsComplete = Boolean(draft.title && draft.description && draft.rewardDescription)
+  const modeDetailsComplete =
+    draft.mode === 'quiz'
+      ? Boolean(draft.question && draft.answer)
+      : draft.mode === 'raffle'
+        ? Boolean(draft.winnersCount && draft.winnersCount >= 1)
+        : false
+
   const lines: string[] = []
-  lines.push(`**Title:** ${draft.title ?? '_not set_'}`)
-  lines.push(`**Description:** ${draft.description ? truncate(draft.description, 120) : '_not set_'}`)
-  lines.push(`**Reward:** ${draft.rewardDescription ?? '_not set_'}`)
-  lines.push(`**Mode:** ${draft.mode ? (draft.mode === 'quiz' ? '🎯 Quiz' : '🎉 Raffle') : '_not set_'}`)
-  lines.push(`**Channel:** ${draft.channelId ? `<#${draft.channelId}>` : '_not set_'}`)
-  lines.push(`**Expires in:** ${draft.expirationDays ?? 7} day(s)`)
+  lines.push(`${tick(!!draft.title)} **Title** — ${draft.title ?? '_not set_'}`)
+  lines.push(
+    `${tick(!!draft.description)} **Description** — ${
+      draft.description ? truncate(draft.description, 120) : '_not set_'
+    }`,
+  )
+  lines.push(`${tick(!!draft.rewardDescription)} **Reward** — ${draft.rewardDescription ?? '_not set_'}`)
+  lines.push(
+    `${tick(!!draft.mode)} **Mode** — ${
+      draft.mode ? (draft.mode === 'quiz' ? '🎯 Quiz' : '🎉 Raffle') : '_not set_'
+    }`,
+  )
+  lines.push(`${tick(!!draft.channelId)} **Channel** — ${draft.channelId ? `<#${draft.channelId}>` : '_not set_'}`)
+  lines.push(`-# ⏰ Expires in ${draft.expirationDays ?? 7} day(s)`)
   if (draft.mode === 'quiz') {
-    lines.push(`**Question:** ${draft.question ? truncate(draft.question, 80) : '_not set_'}`)
-    lines.push(`**Answer:** ${draft.answer ? '••• (hidden)' : '_not set_'}`)
+    lines.push(
+      `${tick(!!draft.question)} **Question** — ${draft.question ? truncate(draft.question, 80) : '_not set_'}`,
+    )
+    lines.push(`${tick(!!draft.answer)} **Answer** — ${draft.answer ? '••• (hidden)' : '_not set_'}`)
   } else if (draft.mode === 'raffle') {
-    lines.push(`**Winners:** ${draft.winnersCount ?? 1}`)
+    lines.push(`${tick(!!draft.winnersCount)} **Winners** — ${draft.winnersCount ?? 1}`)
   }
   if (draft.rewardCode) {
-    lines.push(`**Reward code(s):** ${truncate(draft.rewardCode, 80)}`)
+    lines.push(`-# 🎟️ Reward code(s) set: ${truncate(draft.rewardCode, 80)}`)
   }
 
   container.addTextDisplayComponents(
@@ -143,21 +162,30 @@ const renderWizard = (draft: QuestDraft) => {
 
   const modeDetailLabel =
     draft.mode === 'quiz'
-      ? 'Edit quiz details'
+      ? '🎯 Quiz Q&A'
       : draft.mode === 'raffle'
-        ? 'Edit raffle details'
-        : 'Edit details (pick a mode first)'
+        ? '🎉 Raffle setup'
+        : 'Mode details — pick a mode first'
+
+  // Highlight the next incomplete step as Primary so the user knows where to
+  // click next. Once everything's filled, the Create button is the only
+  // green action and there's no Primary at all (so it visually wins).
+  const nextStep: 'basics' | 'mode' | null = !basicsComplete
+    ? 'basics'
+    : draft.mode && !modeDetailsComplete
+      ? 'mode'
+      : null
 
   container.addActionRowComponents(
     new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
         .setCustomId('quest:wiz:editBasics')
-        .setLabel('Edit basics')
-        .setStyle(ButtonStyle.Secondary),
+        .setLabel('📝 Basics')
+        .setStyle(nextStep === 'basics' ? ButtonStyle.Primary : ButtonStyle.Secondary),
       new ButtonBuilder()
         .setCustomId('quest:wiz:editMode')
         .setLabel(modeDetailLabel)
-        .setStyle(ButtonStyle.Secondary)
+        .setStyle(nextStep === 'mode' ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(!draft.mode),
       new ButtonBuilder()
         .setCustomId('quest:wiz:create')

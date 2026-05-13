@@ -9,10 +9,13 @@ export type PluginsThreadsMetadata = {
 }
 
 export type StandupScheduleMetadata = {
-  channelId: string
-  expression: string
-  role: string
-  message: string
+  channelId?: string
+  /** Cron expression derived by the panel's `transform` from hour + days. */
+  expression?: string
+  hour?: number
+  days?: string[]
+  role?: string
+  message?: string
 }
 
 export type ChatGptMetadata = {

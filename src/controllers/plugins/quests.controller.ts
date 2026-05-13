@@ -1,4 +1,15 @@
-import { CommandInteraction, Message, TextChannel, ThreadChannel, User } from 'discord.js'
+import {
+  CommandInteraction,
+  ContainerBuilder,
+  Message,
+  MessageFlags,
+  SeparatorBuilder,
+  SeparatorSpacingSize,
+  TextChannel,
+  TextDisplayBuilder,
+  ThreadChannel,
+  User,
+} from 'discord.js'
 import { and, desc, eq, gt, sql } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '../../db/client'
@@ -6,6 +17,9 @@ import { guilds, guildQuests } from '../../db/schema'
 import { GuildQuest } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { getPluginConfig } from '../bot/plugins.controller'
+
+const QUEST_COLOR_QUIZ = 0x5865f2 // Discord blurple
+const QUEST_COLOR_RAFFLE = 0xfee75c // gold
 
 const guildPkByGuildId = async (guildId: string): Promise<number | null> => {
   const row = await db.query.guilds.findFirst({
@@ -61,38 +75,55 @@ export const createQuest = async (
     const channel = await interaction.guild!.channels.fetch(questData.channel_id)
     if (!channel?.isTextBased()) throw new Error('Invalid channel')
 
-    const questEmbed = {
-      title: `${questData.mode === 'quiz' ? '🎯' : '🎉'} ${newQuest.title}`,
-      description: newQuest.description,
-      fields: [
-        ...(questData.mode === 'quiz'
-          ? [{ name: '❓ Question', value: newQuest.question ?? '' }]
-          : [
-              { name: '🎲 How to Participate', value: 'React with 🎉 to enter the raffle!' },
-              {
-                name: '👥 Winners',
-                value: `${newQuest.winners_count || 1} lucky winner${
-                  newQuest.winners_count !== 1 ? 's' : ''
-                } will be selected`,
-              },
-            ]),
-        { name: '🎁 Reward', value: newQuest.reward },
-        { name: '⏰ Expires', value: new Date(newQuest.expiration_date).toLocaleString() },
-      ],
-      color: DEFAULT_COLOR,
-      footer: { text: `Quest ID: ${newQuest.id}` },
-    }
-
     // Optional: mention a notification role configured in /plugins → Quests.
     const questsCfg = await getPluginConfig(interaction.guildId!, 'quests')
     const notifyRoleId = questsCfg?.enabled ? questsCfg.metadata?.notifyRoleId : undefined
 
+    const isQuiz = questData.mode === 'quiz'
+    const modeIcon = isQuiz ? '🎯' : '🎉'
+    const expiresUnix = Math.floor(new Date(newQuest.expiration_date).getTime() / 1000)
+    const winners = newQuest.winners_count || 1
+
+    const container = new ContainerBuilder().setAccentColor(
+      isQuiz ? QUEST_COLOR_QUIZ : QUEST_COLOR_RAFFLE,
+    )
+    container.addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(
+        `${notifyRoleId ? `<@&${notifyRoleId}>\n` : ''}# ${modeIcon} ${newQuest.title}\n${newQuest.description}`,
+      ),
+    )
+    container.addSeparatorComponents(
+      new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small),
+    )
+    if (isQuiz) {
+      container.addTextDisplayComponents(
+        new TextDisplayBuilder().setContent(
+          `**❓ Question**\n${newQuest.question ?? '_no question set_'}\n\n-# Reply in the thread below — first correct answer wins.`,
+        ),
+      )
+    } else {
+      container.addTextDisplayComponents(
+        new TextDisplayBuilder().setContent(
+          `**🎲 How to enter**\nReact with 🎉 below.\n\n**👥 Winners**\n${winners} lucky winner${winners === 1 ? '' : 's'} will be drawn.`,
+        ),
+      )
+    }
+    container.addSeparatorComponents(new SeparatorBuilder().setDivider(false))
+    container.addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(
+        `**🎁 Reward**  ${newQuest.reward}\n**⏰ Expires**  <t:${expiresUnix}:R>  ·  <t:${expiresUnix}:f>`,
+      ),
+    )
+    container.addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(`-# Quest ID: \`${newQuest.id}\``),
+    )
+
     const questMessage = await channel.send({
-      content: notifyRoleId ? `<@&${notifyRoleId}>` : undefined,
-      embeds: [questEmbed],
+      flags: MessageFlags.IsComponentsV2,
+      components: [container],
       allowedMentions: notifyRoleId ? { roles: [notifyRoleId] } : { roles: [] },
     })
-    if (questData.mode === 'raffle') await questMessage.react('🎉')
+    if (!isQuiz) await questMessage.react('🎉')
 
     let thread: ThreadChannel | null = null
     if (questData.mode === 'quiz') {

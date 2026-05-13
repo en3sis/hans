@@ -1,24 +1,25 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 
-// https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
+/**
+ * Template for new slash commands. Copy this file into `src/commands/` and
+ * rename it. While iterating, keep `wip: true` so the command only ships to
+ * your dev guild (via `yarn slash:dev`). Remove the `wip` line before
+ * running `yarn slash` to make it available in production.
+ *
+ * Files in this `bots-playground/` folder are NOT auto-loaded — the deploy
+ * script reads only `src/commands/` top-level. Treat this as a reference.
+ */
 module.exports = {
   ephemeral: false,
+  wip: true,
   data: new SlashCommandBuilder()
     .setName('test')
     .setDescription('This is a test command')
-    .setDefaultMemberPermissions('0')
-    .addStringOption((string) =>
-      string.setName('user').setDescription('@username or ID').setRequired(true),
-    )
     .setDefaultMemberPermissions(null),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     return interaction.reply({
-      embeds: [
-        {
-          title: 'Test command',
-        },
-      ],
+      embeds: [{ title: 'Test command' }],
     })
   },
 }
