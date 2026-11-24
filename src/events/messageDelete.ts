@@ -1,6 +1,7 @@
 import { Client, Message, TextChannel } from 'discord.js'
 import { getPluginConfig } from '../controllers/bot/plugins.controller'
 import { postDeleteLog } from '../controllers/plugins/audit-log'
+import { log } from '../utils/log'
 
 export default {
   name: 'messageDelete',
@@ -19,7 +20,7 @@ export default {
 
       await postDeleteLog(channel, message)
     } catch (error) {
-      console.error('❌ messageDelete(): ', error)
+      log.error('❌ messageDelete(): ', error)
     }
   },
 }

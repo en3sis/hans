@@ -6,6 +6,7 @@ import { db } from '../../db/client'
 import { usersSettings } from '../../db/schema'
 import { extractHours, getTimeZonesTime } from '../../utils/dates'
 import { TIME_ZONES_REGEX } from '../../utils/regex'
+import { log } from '../../utils/log'
 
 export const timezonesController = async (interaction: ChatInputCommandInteraction) => {
   try {
@@ -131,7 +132,7 @@ export const timezonesController = async (interaction: ChatInputCommandInteracti
       }
     }
   } catch (error) {
-    console.log('💢 ERROR: timezonesController(): ', error)
+    log.info('💢 ERROR: timezonesController(): ', error)
     throw Error(error.message)
   }
 }

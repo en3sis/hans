@@ -8,6 +8,7 @@ import {
   PluginName,
   isPluginName,
 } from '../../models/plugins.model'
+import { log } from '../../utils/log'
 import { GuildPluginData, PluginMetadataMap } from '../../types/plugins'
 import { registerStandupSchedules } from '../plugins/standup.controller'
 import { stopSpecificCronJob } from '../tasks/cron-jobs'
@@ -61,7 +62,7 @@ export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
     if (toInsert.length === 0) return
     await db.insert(guildsPlugins).values(toInsert)
   } catch (error) {
-    console.error('❌ ERROR: insertGuildPlugin', error)
+    log.error('❌ ERROR: insertGuildPlugin', error)
   }
 }
 
@@ -77,10 +78,10 @@ export const backfillAllGuildPlugins = async (): Promise<void> => {
       await insertGuildPlugin(g.guild_id)
     }
     if (allGuilds.length > 0) {
-      console.log(`🔄 Plugin backfill checked ${allGuilds.length} guild(s)`)
+      log.info(`🔄 Plugin backfill checked ${allGuilds.length} guild(s)`)
     }
   } catch (error) {
-    console.error('❌ ERROR: backfillAllGuildPlugins', error)
+    log.error('❌ ERROR: backfillAllGuildPlugins', error)
   }
 }
 
@@ -151,7 +152,7 @@ export const resolveGuildPlugins = async (
     }
     return pluginData
   } catch (error) {
-    console.error('❌ ERROR: resolveGuildPlugin', error)
+    log.error('❌ ERROR: resolveGuildPlugin', error)
   }
 }
 
@@ -200,7 +201,7 @@ export const updateMetadataGuildPlugin = async (
     await onGuildPluginChanged(guildId, name)
     return result[0]
   } catch (error) {
-    console.error('❌ ERROR: updateMetadataGuildPlugin(): ', error)
+    log.error('❌ ERROR: updateMetadataGuildPlugin(): ', error)
     throw error
   }
 }

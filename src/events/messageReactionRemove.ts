@@ -1,4 +1,5 @@
 import { Client, GuildMember, MessageReaction } from 'discord.js'
+import { log } from '../utils/log'
 
 export default {
   name: 'messageReactionRemove',
@@ -10,14 +11,14 @@ export default {
       try {
         await reaction.fetch()
       } catch (error) {
-        console.error('Something went wrong when fetching the message:', error)
+        log.error('Something went wrong when fetching the message:', error)
         // Return as `reaction.message.author` may be undefined/null
         return
       }
     }
 
     // TODO @en3sis: Implement the messageReactionAdd event
-    console.log('💢', {
+    log.info('💢', {
       reaction,
       foo: reaction.emoji.id,
       member,

@@ -10,6 +10,7 @@ import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
 import { Pool } from 'pg'
+import { log } from '../utils/log'
 
 dotenv.config({ path: path.join(process.cwd(), '.env') })
 
@@ -29,7 +30,7 @@ const main = async () => {
   const url = process.env.DATABASE_URL
   // Mask password for display.
   const display = url.replace(/(:)[^:@/]+(@)/, '$1***$2')
-  console.log(`🎯 Target: ${display}\n`)
+  log.info(`🎯 Target: ${display}\n`)
 
   const pool = new Pool({ connectionString: url, connectionTimeoutMillis: 5000 })
 
@@ -50,7 +51,7 @@ const main = async () => {
   } catch (err) {
     const msg = (err as Error).message
     if (msg.includes('does not exist')) {
-      console.log('⚠️  No __drizzle_migrations table — DB has never been migrated.')
+      log.info('⚠️  No __drizzle_migrations table — DB has never been migrated.')
     } else {
       throw err
     }
@@ -58,22 +59,22 @@ const main = async () => {
     await pool.end()
   }
 
-  console.log(`📂 Local files:        ${localFiles.length}`)
-  console.log(`✅ Applied on target:  ${applied.length}`)
+  log.info(`📂 Local files:        ${localFiles.length}`)
+  log.info(`✅ Applied on target:  ${applied.length}`)
 
   const pending = localFiles.length - applied.length
   if (pending > 0) {
-    console.log(`\n⏳ Pending (${pending}):`)
-    for (const f of localFiles.slice(applied.length)) console.log(`   • ${f}`)
-    console.log('\nApply with: yarn db:migrate (local) or yarn db:migrate:remote (host)')
+    log.info(`\n⏳ Pending (${pending}):`)
+    for (const f of localFiles.slice(applied.length)) log.info(`   • ${f}`)
+    log.info('\nApply with: yarn db:migrate (local) or yarn db:migrate:remote (host)')
   } else if (pending < 0) {
-    console.log(`\n❗ Target is AHEAD by ${-pending} — your local /drizzle is missing files.`)
+    log.info(`\n❗ Target is AHEAD by ${-pending} — your local /drizzle is missing files.`)
   } else {
-    console.log('\n✨ Up to date.')
+    log.info('\n✨ Up to date.')
   }
 }
 
 main().catch((err) => {
-  console.error('❌ db:status failed:', err.message ?? err)
+  log.error('❌ db:status failed:', err.message ?? err)
   process.exit(1)
 })

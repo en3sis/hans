@@ -17,6 +17,7 @@ import { guilds, guildQuests } from '../../db/schema'
 import { GuildQuest } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { getPluginConfig } from '../bot/plugins.controller'
+import { log } from '../../utils/log'
 
 const QUEST_COLOR_QUIZ = 0x5865f2 // Discord blurple
 const QUEST_COLOR_RAFFLE = 0xfee75c // gold
@@ -139,7 +140,7 @@ export const createQuest = async (
       .where(eq(guildQuests.id, newQuest.id))
     return thread || questMessage
   } catch (error) {
-    console.error('❌ ERROR: createQuest', error)
+    log.error('❌ ERROR: createQuest', error)
     throw error
   }
 }
@@ -224,7 +225,7 @@ export const checkQuestAnswer = async (message: Message) => {
       }
     }
   } catch (error) {
-    console.error('❌ ERROR: checkQuestAnswer', error)
+    log.error('❌ ERROR: checkQuestAnswer', error)
   }
 }
 
@@ -244,7 +245,7 @@ export const claimQuestReward = async (interaction: CommandInteraction) => {
 
     return await sendQuestReward(interaction.guildId!, quest.id, interaction.user)
   } catch (error) {
-    console.error('Error claiming quest reward:', error)
+    log.error('Error claiming quest reward:', error)
     return { success: false, message: 'An error occurred while claiming your reward.' }
   }
 }
@@ -293,7 +294,7 @@ export const sendQuestReward = async (guildId: string, questId: string, user: Us
 
     return { success: true, message: 'Reward sent successfully' }
   } catch (error) {
-    console.error('Failed to send DM to winner:', error)
+    log.error('Failed to send DM to winner:', error)
 
     const questData = await db.query.guildQuests.findFirst({
       where: eq(guildQuests.id, questId),
@@ -328,7 +329,7 @@ export const getActiveQuests = async (guildId: string) => {
       orderBy: [desc(guildQuests.created_at)],
     })
   } catch (error) {
-    console.error('Error getting active quests:', error)
+    log.error('Error getting active quests:', error)
     return []
   }
 }
@@ -342,7 +343,7 @@ export const getQuestById = async (guildId: string, questId: string) => {
     })
     return quest ?? null
   } catch (error) {
-    console.error('Error getting quest by ID:', error)
+    log.error('Error getting quest by ID:', error)
     return null
   }
 }
@@ -450,7 +451,7 @@ export const drawQuestWinners = async (
           })
           winner.dm_sent = true
         } catch (error) {
-          console.error(`Failed to send DM to winner ${winner.username}:`, error)
+          log.error(`Failed to send DM to winner ${winner.username}:`, error)
           winner.dm_failed = true
         }
       }
@@ -462,7 +463,7 @@ export const drawQuestWinners = async (
       message: `Successfully drew ${winners.length} winner(s) for the quest.`,
     }
   } catch (error) {
-    console.error('Error drawing quest winners:', error)
+    log.error('Error drawing quest winners:', error)
     return { success: false, message: 'An error occurred while drawing winners.' }
   }
 }

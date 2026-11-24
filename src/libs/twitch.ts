@@ -1,5 +1,6 @@
 import { TWITCH_API_URL } from '../utils/constants'
 import { getFromCache, setToCache } from './node-cache'
+import { log } from '../utils/log'
 
 export type TwitchAccessToken = {
   accessToken: string
@@ -56,7 +57,7 @@ export const getAccessToken = async (): Promise<TwitchAccessToken> => {
     setToCache('twitchAccessToken', token)
     return token
   } catch (error) {
-    console.log('💢 ERROR: getAccessToken(): ', error)
+    log.info('💢 ERROR: getAccessToken(): ', error)
     throw error
   }
 }
@@ -109,7 +110,7 @@ export const getStreamerInfo = async (username: string): Promise<TwitchResponse>
       thumbnail: stream.thumbnail_url,
     }
   } catch (error) {
-    console.log('💢 ERROR: getStreamerInfo(): ', error)
+    log.info('💢 ERROR: getStreamerInfo(): ', error)
     throw error
   }
 }

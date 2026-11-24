@@ -2,6 +2,7 @@ import { Client, Message } from 'discord.js'
 import { getPluginConfig } from '../controllers/bot/plugins.controller'
 import { removeLinks } from '../controllers/plugins/moderation.controller'
 import { threadAutoCreate } from '../controllers/plugins/threads.controller'
+import { log } from '../utils/log'
 
 export default {
   name: 'messageCreate',
@@ -40,7 +41,7 @@ export default {
       //   module.default(Hans, message, command, args)
       // }
     } catch (error) {
-      console.log('❌ messageCreate(): ', error)
+      log.info('❌ messageCreate(): ', error)
     }
   },
 }

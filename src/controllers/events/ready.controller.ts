@@ -1,5 +1,6 @@
 import { Client, TextChannel } from 'discord.js'
 import { githubAPI } from '../../libs/github'
+import { log } from '../../utils/log'
 
 export const notifyPulse = async (Hans: Client) => {
   // INFO Disables pulse notification in development
@@ -47,6 +48,6 @@ export const notifyPulse = async (Hans: Client) => {
       ],
     })
   } catch (error) {
-    console.error('❌ ERROR: notifyPulse()', error)
+    log.error('❌ ERROR: notifyPulse()', error)
   }
 }

@@ -44,6 +44,7 @@ import { db } from '../../db/client'
 import { guildQuests } from '../../db/schema'
 import { eq } from 'drizzle-orm'
 import { deleteFromCache, getFromCache, setToCache } from '../../libs/node-cache'
+import { log } from '../../utils/log'
 
 const DRAFT_TTL_MINUTES = 15
 const PANEL_FLAGS = MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral
@@ -410,7 +411,7 @@ export const handleQuestInteraction = async (interaction: Interaction): Promise<
   try {
     await dispatch(interaction, customId)
   } catch (err) {
-    console.error('❌ quest interaction error:', err)
+    log.error('❌ quest interaction error:', err)
     await replyError(interaction, err instanceof Error ? err.message : 'Unexpected error.')
   }
   return true

@@ -3,6 +3,7 @@ import { Hans } from '../..'
 import { db } from '../../db/client'
 import { Config, configs, plugins } from '../../db/schema'
 import { pluginsList } from '../../models/plugins.model'
+import { log } from '../../utils/log'
 
 export type BotConfig = Config
 
@@ -40,10 +41,10 @@ export const insertConfiguration = async (): Promise<BotConfig | undefined> => {
         },
       })
 
-    console.log(`📥 Initial configuration inserted/updated`)
+    log.info(`📥 Initial configuration inserted/updated`)
     return getBotConfiguration()
   } catch (error) {
-    console.log('❌ ERROR: insertConfiguration(): ', error)
+    log.info('❌ ERROR: insertConfiguration(): ', error)
   }
 }
 
@@ -53,7 +54,7 @@ export const getBotConfiguration = async (): Promise<BotConfig | undefined> => {
     if (existing) return existing
     return await insertConfiguration()
   } catch (error) {
-    console.log('❌ ERROR: getBotConfiguration(): ', error)
+    log.info('❌ ERROR: getBotConfiguration(): ', error)
   }
 }
 
@@ -79,9 +80,9 @@ export const insertPlugins = async () => {
           },
         })
     }
-    console.log(`💠 Initial ${Object.keys(pluginsList).length} plugins list inserted/updated`)
+    log.info(`💠 Initial ${Object.keys(pluginsList).length} plugins list inserted/updated`)
   } catch (error) {
-    console.log('❌ ERROR: insertPlugins(): ', error)
+    log.info('❌ ERROR: insertPlugins(): ', error)
   }
 }
 

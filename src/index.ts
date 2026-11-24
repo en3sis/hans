@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import { reportErrorToMonitoring } from './utils/monitoring'
 import { ProjectValidator } from './utils/pre-validation'
+import { log } from './utils/log'
 
 /** =============================================================================
  * 🛠 Initial configuration
@@ -46,12 +47,12 @@ const setCommandsNames = async () => {
       }
     }
 
-    console.info(
+    log.info(
       '🧾  Reading commands files for:',
       Hans.commands.map((ele) => ele.data.name).join(', '),
     )
   } catch (error) {
-    console.error('❌ ERROR: setCommandsNames(): ', error)
+    log.error('❌ ERROR: setCommandsNames(): ', error)
   }
 }
 
@@ -83,8 +84,8 @@ await registerEvents()
 
 Hans.login(process.env.DISCORD_TOKEN!)
 
-Hans.on('error', (err) => !!process.env.ISDEV && console.log('❌ ERROR: initHans()', err))
-Hans.on('debug', (msg) => !!process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))
+Hans.on('error', (err) => !!process.env.ISDEV && log.info('❌ ERROR: initHans()', err))
+Hans.on('debug', (msg) => !!process.env.ISDEV && log.info('🐛 DEBUG: initHans()', msg))
 Hans.on('unhandledRejection', async (error) => {
   const _embed = {
     title: `unhandledRejection`,
@@ -93,5 +94,5 @@ Hans.on('unhandledRejection', async (error) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   !!process.env.ISDEV && (await reportErrorToMonitoring({ embeds: _embed }))
-  console.error('Unhandled promise rejection:', error)
+  log.error('Unhandled promise rejection:', error)
 })

@@ -1,5 +1,6 @@
 import { Client, GuildMember, TextChannel } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
+import { log } from '../utils/log'
 
 export default {
   name: 'guildMemberRemove',
@@ -33,7 +34,7 @@ export default {
         ],
       })
     } catch (error) {
-      console.log('❌ GuildMemberRemove() : ', error)
+      log.info('❌ GuildMemberRemove() : ', error)
     }
   },
 }

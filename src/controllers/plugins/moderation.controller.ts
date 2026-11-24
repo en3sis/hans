@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, Message, TextChannel } from 'discord.js'
 import { RemoveLinksMetadata } from '../../types/plugins'
+import { log } from '../../utils/log'
 
 export const purgeMessages = async (interaction: ChatInputCommandInteraction) => {
   try {
@@ -20,7 +21,7 @@ export const purgeMessages = async (interaction: ChatInputCommandInteraction) =>
       limit: amount,
     })
 
-    await (interaction.channel as TextChannel)!.bulkDelete(fetched).catch(async (err: any) => {
+    await (interaction.channel as TextChannel)!.bulkDelete(fetched).catch(async (err: Error) => {
       await interaction.editReply({ content: err.message })
     })
 
@@ -85,7 +86,7 @@ export const removeLinks = async (
   try {
     await message.delete()
   } catch (err) {
-    console.error('❌ removeLinks: failed to delete message:', err)
+    log.error('❌ removeLinks: failed to delete message:', err)
   }
 }
 

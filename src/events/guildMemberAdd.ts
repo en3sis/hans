@@ -1,6 +1,7 @@
 import { formatDistance } from 'date-fns'
 import { Client, GuildMember, TextChannel } from 'discord.js'
 import { resolveGuildPlugins } from '../controllers/bot/plugins.controller'
+import { log } from '../utils/log'
 
 export default {
   name: 'guildMemberAdd',
@@ -45,7 +46,7 @@ export default {
         ],
       })
     } catch (error) {
-      console.log('❌ GuildMemberAdd() : ', error)
+      log.info('❌ GuildMemberAdd() : ', error)
     }
   },
 }

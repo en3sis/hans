@@ -1,4 +1,5 @@
 import { Client, Message } from 'discord.js'
+import { log } from '../../utils/log'
 
 export const inviteBot = (client: Client) => {
   try {
@@ -26,7 +27,7 @@ export const inviteBot = (client: Client) => {
       ],
     }
   } catch (error) {
-    console.log('ERROR: utils > inviteBot() ', error)
+    log.info('ERROR: utils > inviteBot() ', error)
   }
 }
 

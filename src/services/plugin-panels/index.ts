@@ -10,6 +10,7 @@ import { ChatInputCommandInteraction, Interaction, MessageFlags } from 'discord.
 import { handlePanelComponent, handlePanelModalSubmit } from './handlers'
 import { renderListView } from './render'
 import { isPanelCustomId, parseCustomId } from './router'
+import { log } from '../../utils/log'
 
 export { isPanelCustomId } from './router'
 
@@ -55,7 +56,7 @@ export const routePanelInteraction = async (interaction: Interaction): Promise<b
     try {
       await handlePanelComponent(interaction, parsed)
     } catch (err) {
-      console.error('❌ Panel component handler error:', err)
+      log.error('❌ Panel component handler error:', err)
       if (!interaction.replied && !interaction.deferred) {
         await interaction
           .reply({
@@ -76,7 +77,7 @@ export const routePanelInteraction = async (interaction: Interaction): Promise<b
       await interaction.deferUpdate().catch(() => {})
       await handlePanelModalSubmit(interaction, parsed)
     } catch (err) {
-      console.error('❌ Panel modal handler error:', err)
+      log.error('❌ Panel modal handler error:', err)
       if (!interaction.replied && !interaction.deferred) {
         await interaction
           .reply({

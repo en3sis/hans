@@ -1,3 +1,4 @@
+import { log } from '../utils/log'
 export const githubAPI = async (endpoint: string, auth = false) => {
   try {
     const headers: Record<string, string> = {}
@@ -8,7 +9,7 @@ export const githubAPI = async (endpoint: string, auth = false) => {
 
     return await response.json()
   } catch (error) {
-    console.log('❌ ERROR: githubAPI(): ', error)
+    log.info('❌ ERROR: githubAPI(): ', error)
     if (typeof error === 'string') return error
     if (error instanceof Error) return error.message
   }

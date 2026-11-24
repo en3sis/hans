@@ -1,5 +1,6 @@
 import { Client, Guild } from 'discord.js'
 import { removeOneGuild } from '../controllers/bot/guilds.controller'
+import { log } from '../utils/log'
 
 export default {
   name: 'guildRemove',
@@ -10,7 +11,7 @@ export default {
       // When he joins a guild, insert it into the database
       await removeOneGuild(guild)
     } catch (error) {
-      console.log('❌ guildRemove() : ', error)
+      log.info('❌ guildRemove() : ', error)
     }
   },
 }

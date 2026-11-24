@@ -10,6 +10,7 @@ import { backfillAllGuildPlugins } from '../controllers/bot/plugins.controller'
 import { notifyPulse } from '../controllers/events/ready.controller'
 import { scheduleCronJobs } from '../controllers/tasks/cron-jobs'
 import { reportErrorToMonitoring } from '../utils/monitoring'
+import { log } from '../utils/log'
 
 export default {
   name: 'ready',
@@ -17,8 +18,8 @@ export default {
   enabled: true,
   async execute(Hans: Client) {
     try {
-      console.log(`👾  ${Hans.user?.username} is ready`)
-      console.log(
+      log.info(`👾  ${Hans.user?.username} is ready`)
+      log.info(
         `🔗  Bot invite link: https://discord.com/api/oauth2/authorize?client_id=${process.env
           .DISCORD_CLIENT_ID!}&permissions=0&scope=bot%20applications.commands`,
       )
@@ -44,13 +45,13 @@ export default {
 
       // INFO: Schedule cron jobs.
       await scheduleCronJobs()
-    } catch (error: any) {
-      console.log('❌ ERROR: ready(): ', error)
+    } catch (error) {
+      log.info('❌ ERROR: ready(): ', error)
 
       await reportErrorToMonitoring({
         embeds: {
           title: `Event: ready`,
-          description: `${error.message}`,
+          description: `${(error as Error).message}`,
         },
       })
     }

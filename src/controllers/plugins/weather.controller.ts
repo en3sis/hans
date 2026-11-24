@@ -1,4 +1,5 @@
 import { getFromCache, setToCache } from '../../libs/node-cache'
+import { log } from '../../utils/log'
 
 export const weatherController = async (city: string) => {
   try {
@@ -13,6 +14,6 @@ export const weatherController = async (city: string) => {
     setToCache(city, data, 60 * 5)
     return data
   } catch (error) {
-    console.log('💢 ERROR: weatherController(): ', error)
+    log.info('💢 ERROR: weatherController(): ', error)
   }
 }

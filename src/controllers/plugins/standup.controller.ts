@@ -8,6 +8,7 @@ import { StandupScheduleMetadata } from '../../types/plugins'
 import { ERROR_COLOR } from '../../utils/colors'
 import { reportErrorToMonitoring } from '../../utils/monitoring'
 import { scheduledTasks } from '../tasks/cron-jobs'
+import { log } from '../../utils/log'
 
 /** True when the schedule has everything it needs to run. */
 const isComplete = (s: StandupScheduleMetadata): boolean =>
@@ -55,7 +56,7 @@ export const registerStandupSchedules = async (
             }),
           )
           .catch((err) =>
-            console.error(`❌ standup cron tick failed for ${guildId}#${index}:`, err),
+            log.error(`❌ standup cron tick failed for ${guildId}#${index}:`, err),
           )
       })
 
@@ -66,7 +67,7 @@ export const registerStandupSchedules = async (
       // admin sees it without killing the app.
       const message =
         error instanceof Error ? error.message : 'Unknown standup schedule error'
-      console.error(
+      log.error(
         `❌ registerStandupSchedules[${guildId}#${index}] — invalid schedule:`,
         error,
       )
@@ -101,6 +102,6 @@ export const initStadupsSchedules = async () => {
       )
     }
   } catch (error) {
-    console.error('❌ ERROR: initStadupsSchedules(): ', error)
+    log.error('❌ ERROR: initStadupsSchedules(): ', error)
   }
 }
