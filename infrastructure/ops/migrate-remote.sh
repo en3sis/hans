@@ -12,10 +12,10 @@
 #
 # Usage:
 #   DATABASE_URL=postgres://hans:****@hans-prod.tailnet-name.ts.net:5432/hans_db \
-#     yarn db:migrate:remote
+#     bun run db:migrate:remote
 #
 # Or set it once in your shell rc / direnv and just run:
-#   yarn db:migrate:remote
+#   bun run db:migrate:remote
 
 set -euo pipefail
 
@@ -24,9 +24,9 @@ if [ -z "${DATABASE_URL:-}" ]; then
   echo
   echo "Example (Tailscale):"
   echo "  DATABASE_URL=postgres://hans:****@hans-prod.tailnet-name.ts.net:5432/hans_db \\"
-  echo "    yarn db:migrate:remote"
+  echo "    bun run db:migrate:remote"
   echo
-  echo "Tip: yarn db:status to preview what would be applied without changing anything."
+  echo "Tip: bun run db:status to preview what would be applied without changing anything."
   exit 1
 fi
 

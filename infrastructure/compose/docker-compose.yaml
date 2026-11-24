@@ -35,7 +35,7 @@ services:
   # internal docker network. Holds no durable data on disk.
   #
   # Migrations are NOT applied here. They're an admin action run from
-  # your laptop over Tailscale — see `yarn db:migrate:remote` and
+  # your laptop over Tailscale — see `bun run db:migrate:remote` and
   # infrastructure/README.md.
   # ───────────────────────────────────────────────────────────────
   bot:

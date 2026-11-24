@@ -120,7 +120,7 @@ Don't write to `guildsPlugins` directly — go through the panel, or if you must
 ### After a code change
 
 ```
-yarn build && yarn slash:dev    # registers commands to your dev guild instantly
+bun run build && bun run slash:dev    # registers commands to your dev guild instantly
 ```
 
 No DB migration is needed when adding a plugin — `backfillAllGuildPlugins()` runs on `ready` and inserts the new `guilds_plugins` row for every existing guild with the registry's `defaultEnabled` value.

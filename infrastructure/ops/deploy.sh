@@ -15,7 +15,7 @@
 # laptop over Tailscale:
 #
 #   DATABASE_URL=postgres://hans:****@hans-prod.<tailnet>.ts.net:5432/hans_db \
-#     yarn db:migrate:remote
+#     bun run db:migrate:remote
 #
 # Apply schema-additive migrations BEFORE running this script; apply
 # destructive ones AFTER. See infrastructure/README.md.
@@ -71,4 +71,4 @@ dc logs --tail=40 bot
 
 echo
 echo "ℹ️  If this deploy included schema changes, apply them now from your laptop:"
-echo "    DATABASE_URL=postgres://hans:****@<tailnet-host>:5432/hans yarn db:migrate:remote"
+echo "    DATABASE_URL=postgres://hans:****@<tailnet-host>:5432/hans bun run db:migrate:remote"

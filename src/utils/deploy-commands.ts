@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { REST } from '@discordjs/rest'
-import { Routes } from 'discord-api-types/v9'
+import { Routes } from 'discord-api-types/v10'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
@@ -19,7 +19,7 @@ const registryCommands = async (guild: {
 }) => {
   log.info('📥  Registering commands...')
   const { folderName, id, includeWip } = guild
-  const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN!)
+  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!)
   const { commands, skipped } = await fetchCommands({ folderPath: folderName, includeWip })
 
   if (skipped.length > 0) {
