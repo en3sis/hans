@@ -15,6 +15,13 @@
       "when": 1778672618235,
       "tag": "0001_quiet_swarm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795515579973,
+      "tag": "0002_handy_stark_industries",
+      "breakpoints": true
     }
   ]
 }
