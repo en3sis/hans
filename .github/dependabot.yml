@@ -20,6 +20,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
     labels:
       - ci
 
@@ -27,5 +30,8 @@ updates:
     directory: /infrastructure/docker
     schedule:
       interval: weekly
+    groups:
+      docker:
+        patterns: ['*']
     labels:
       - docker

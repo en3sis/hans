@@ -79,20 +79,25 @@ const registerEvents = async () => {
   }
 }
 
-await setCommandsNames()
-await registerEvents()
+// Only boot the client when this file is the entry point. When another
+// script imports { Hans } (e.g. deploy-commands transitively via
+// config.controller), the Client should be constructed but NOT logged in.
+if (import.meta.main) {
+  await setCommandsNames()
+  await registerEvents()
 
-Hans.login(process.env.DISCORD_TOKEN!)
+  Hans.login(process.env.DISCORD_TOKEN!)
 
-Hans.on('error', (err) => !!process.env.ISDEV && log.info('❌ ERROR: initHans()', err))
-Hans.on('debug', (msg) => !!process.env.ISDEV && log.info('🐛 DEBUG: initHans()', msg))
-Hans.on('unhandledRejection', async (error) => {
-  const _embed = {
-    title: `unhandledRejection`,
-    description: `${error.message}`,
-  }
+  Hans.on('error', (err) => !!process.env.ISDEV && log.info('❌ ERROR: initHans()', err))
+  Hans.on('debug', (msg) => !!process.env.ISDEV && log.info('🐛 DEBUG: initHans()', msg))
+  Hans.on('unhandledRejection', async (error: Error) => {
+    const _embed = {
+      title: `unhandledRejection`,
+      description: `${error.message}`,
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  !!process.env.ISDEV && (await reportErrorToMonitoring({ embeds: _embed }))
-  log.error('Unhandled promise rejection:', error)
-})
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    !!process.env.ISDEV && (await reportErrorToMonitoring({ embeds: _embed }))
+    log.error('Unhandled promise rejection:', error)
+  })
+}
