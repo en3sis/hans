@@ -48,7 +48,7 @@ export type QuestsMetadata = {
 }
 
 export type RemoveLinksMetadata = {
-  /** Newline-separated list of regex patterns OR bare hostnames (e.g. github.com). */
+  /** Newline-separated hostnames (e.g. github.com), mapped to the AutoMod allow list. */
   allowedUrls?: string
   /** Role IDs that bypass the filter. */
   allowedRoles?: string[]
