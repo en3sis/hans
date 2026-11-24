@@ -59,6 +59,7 @@ export const guilds = pgTable('guilds', {
   name: text('name'),
   premium: boolean('premium').default(false),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+  left_at: timestamp('left_at', { withTimezone: true, mode: 'string' }),
 })
 
 export const plugins = pgTable('plugins', {

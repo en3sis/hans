@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull, notInArray, sql } from 'drizzle-orm'
 import { Client, Guild as DiscordGuild } from 'discord.js'
 import { db } from '../../db/client'
 import { Guild as GuildRow, GuildPluginRow, guilds } from '../../db/schema'
@@ -31,8 +31,25 @@ export const insertAllGuilds = async (Hans: Client) => {
         .values(g)
         .onConflictDoUpdate({
           target: guilds.guild_id,
-          set: { name: g.name, avatar: g.avatar },
+          set: { name: g.name, avatar: g.avatar, left_at: null },
         })
+    }
+
+    if (rows.length > 0) {
+      const marked = await db
+        .update(guilds)
+        .set({ left_at: sql`now()` })
+        .where(
+          and(
+            isNull(guilds.left_at),
+            notInArray(
+              guilds.guild_id,
+              rows.map((g) => g.guild_id),
+            ),
+          ),
+        )
+        .returning({ guild_id: guilds.guild_id })
+      if (marked.length > 0) log.info(`🚪 Marked ${marked.length} guild(s) as left`)
     }
 
     for (const g of rows) {
@@ -57,7 +74,7 @@ export const insetOneGuild = async (guild: DiscordGuild) => {
       .values({ guild_id: guild.id, name: guild.name, avatar: guild.icon })
       .onConflictDoUpdate({
         target: guilds.guild_id,
-        set: { name: guild.name, avatar: guild.icon },
+        set: { name: guild.name, avatar: guild.icon, left_at: null },
       })
     await insertGuildPlugin(guild.id)
   } catch (error) {

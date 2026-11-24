@@ -9,7 +9,7 @@ import {
   ThumbnailBuilder,
 } from 'discord.js'
 import { log } from '../../utils/log'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import OpenAI from 'openai'
 import { db } from '../../db/client'
 import { guildsPlugins } from '../../db/schema'
@@ -278,6 +278,21 @@ export const chatGptCommandHandler = async (
 /** Truncate while preserving the ending and adding an ellipsis. */
 const truncate = (s: string, max: number): string =>
   s.length <= max ? s : `${s.slice(0, max - 1)}…`
+
+export const resetChatGptUsage = async () => {
+  try {
+    const reset = await db
+      .update(guildsPlugins)
+      .set({
+        metadata: sql`jsonb_set(${guildsPlugins.metadata}, '{usage}', to_jsonb(${CHATGPT_COMMANDS_USAGE_DAILY}::int))`,
+      })
+      .where(and(eq(guildsPlugins.name, 'chatGtp'), sql`${guildsPlugins.metadata} ? 'usage'`))
+      .returning({ id: guildsPlugins.id })
+    log.info(`🔁 Reset ChatGPT usage for ${reset.length} guild(s)`)
+  } catch (error) {
+    log.error('❌ resetChatGptUsage(): ', error)
+  }
+}
 
 export const chatGptUsage = async (
   guildPlugin: PluginMetadata,

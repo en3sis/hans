@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { db } from '../../db/client'
 import { guilds, guildsPlugins, plugins } from '../../db/schema'
 import { deleteFromCache, getFromCache, setToCache } from '../../libs/node-cache'
@@ -73,7 +73,10 @@ export const insertGuildPlugin = async (guild_id: string): Promise<void> => {
  */
 export const backfillAllGuildPlugins = async (): Promise<void> => {
   try {
-    const allGuilds = await db.query.guilds.findMany({ columns: { guild_id: true } })
+    const allGuilds = await db.query.guilds.findMany({
+      columns: { guild_id: true },
+      where: isNull(guilds.left_at),
+    })
     for (const g of allGuilds) {
       await insertGuildPlugin(g.guild_id)
     }

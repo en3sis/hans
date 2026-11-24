@@ -1,7 +1,8 @@
 import { ActivityType } from 'discord.js'
+import { notInArray } from 'drizzle-orm'
 import { Hans } from '../..'
 import { db } from '../../db/client'
-import { Config, configs, plugins } from '../../db/schema'
+import { Config, configs, guildsPlugins, plugins } from '../../db/schema'
 import { pluginsList } from '../../models/plugins.model'
 import { log } from '../../utils/log'
 
@@ -81,6 +82,21 @@ export const insertPlugins = async () => {
         })
     }
     log.info(`💠 Initial ${Object.keys(pluginsList).length} plugins list inserted/updated`)
+
+    const registered = Object.keys(pluginsList)
+    const prunedRows = await db
+      .delete(guildsPlugins)
+      .where(notInArray(guildsPlugins.name, registered))
+      .returning({ id: guildsPlugins.id })
+    const prunedPlugins = await db
+      .delete(plugins)
+      .where(notInArray(plugins.name, registered))
+      .returning({ name: plugins.name })
+    if (prunedPlugins.length > 0 || prunedRows.length > 0) {
+      log.info(
+        `🧹 Pruned ${prunedPlugins.length} removed plugin(s) and ${prunedRows.length} guild row(s): ${prunedPlugins.map((p) => p.name).join(', ')}`,
+      )
+    }
   } catch (error) {
     log.info('❌ ERROR: insertPlugins(): ', error)
   }
