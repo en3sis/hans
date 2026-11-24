@@ -8,7 +8,7 @@
 set -e
 
 echo "📡 Registering Discord slash commands..."
-node build/utils/deploy-commands.js
+bun run src/utils/deploy-commands.ts
 
 echo "🚀 Starting Hans..."
 exec "$@"

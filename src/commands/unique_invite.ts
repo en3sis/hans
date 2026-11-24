@@ -1,9 +1,10 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction, TextChannel } from 'discord.js'
 import { logger } from '../utils/debugging'
+import { log } from '../utils/log'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
-module.exports = {
+export default {
   ephemeral: true,
   data: new SlashCommandBuilder()
     .setName('unique_invite')
@@ -19,7 +20,7 @@ module.exports = {
           interaction.editReply(`Here's your invite link: ${invite.url}`)
         })
         .catch((error) => {
-          console.error('Error creating invite:', error)
+          log.error('Error creating invite:', error)
           interaction.reply('There was an error creating the invite.')
         })
     } catch (error) {

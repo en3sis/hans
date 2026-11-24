@@ -1,8 +1,9 @@
 import { Client, Message, TextChannel } from 'discord.js'
 import { getPluginConfig } from '../controllers/bot/plugins.controller'
 import { postEditLog } from '../controllers/plugins/audit-log'
+import { log } from '../utils/log'
 
-module.exports = {
+export default {
   name: 'messageUpdate',
   once: false,
   enabled: true,
@@ -20,7 +21,7 @@ module.exports = {
 
       await postEditLog(channel, oldMessage, newMessage)
     } catch (error) {
-      console.error('❌ messageUpdate(): ', error)
+      log.error('❌ messageUpdate(): ', error)
     }
   },
 }

@@ -8,6 +8,7 @@ import {
   TextDisplayBuilder,
   ThumbnailBuilder,
 } from 'discord.js'
+import { log } from '../../utils/log'
 import { and, eq } from 'drizzle-orm'
 import OpenAI from 'openai'
 import { db } from '../../db/client'
@@ -147,7 +148,7 @@ export const chatGTPController = async (
       model,
     }
   } catch (error) {
-    console.log('❌ chatGTPController(): ', error)
+    log.info('❌ chatGTPController(): ', error)
     throw Error(error.message)
   }
 }
@@ -269,7 +270,7 @@ export const chatGptCommandHandler = async (
       components: [container],
     })
   } catch (error) {
-    console.error('❌ chatGptCommandHandler(): ', error)
+    log.error('❌ chatGptCommandHandler(): ', error)
     throw Error(error.message)
   }
 }
@@ -299,7 +300,7 @@ export const chatGptUsage = async (
 
     return result[0]
   } catch (error) {
-    console.error('❌ chatGptUsage(): ', error)
+    log.error('❌ chatGptUsage(): ', error)
     throw Error(error.message)
   }
 }

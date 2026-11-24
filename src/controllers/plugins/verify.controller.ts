@@ -10,6 +10,7 @@ import {
 } from 'discord.js'
 import { Hans } from '../..'
 import { deleteFromCache, getFromCache, setToCache } from '../../libs/node-cache'
+import { log } from '../../utils/log'
 
 export const verifyModal = async (interaction: Interaction) => {
   try {
@@ -54,7 +55,7 @@ export const verifyModal = async (interaction: Interaction) => {
       await interaction.showModal(modal)
     }
   } catch (error) {
-    console.error(error)
+    log.error(error)
     throw new Error('Failed to show the modal.')
   }
 }
@@ -111,7 +112,7 @@ export const verifyModalSubmit = async (interaction: ModalSubmitInteraction) => 
       }
     }
   } catch (error) {
-    console.error(error)
+    log.error(error)
     await interaction.followUp({ content: 'Failed to verify the user.', ephemeral: true })
   }
 }

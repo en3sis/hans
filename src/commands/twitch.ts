@@ -3,7 +3,7 @@ import { ChatInputCommandInteraction } from 'discord.js'
 import { twitchController } from '../controllers/plugins/twitch.controller'
 import { logger } from '../utils/debugging'
 
-module.exports = {
+export default {
   ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('twitch')

@@ -1,5 +1,6 @@
 import * as cron from 'cron'
 import { initStadupsSchedules } from '../plugins/standup.controller'
+import { log } from '../../utils/log'
 
 export const scheduledTasks: Record<string, cron.CronJob> = {}
 
@@ -7,7 +8,7 @@ export const scheduleCronJobs = async () => {
   try {
     await initStadupsSchedules()
   } catch (error) {
-    console.error('❌ ERROR: scheduleCronJobs(): ', error)
+    log.error('❌ ERROR: scheduleCronJobs(): ', error)
   }
 }
 

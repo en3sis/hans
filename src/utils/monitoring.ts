@@ -13,5 +13,5 @@ export const reportErrorToMonitoring = async ({ embeds }: { embeds: any }) => {
     await monitoringChannel.send({
       embeds: [embeds],
     })
-  } catch (error) {}
+  } catch {}
 }

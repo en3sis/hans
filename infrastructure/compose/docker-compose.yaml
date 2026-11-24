@@ -35,7 +35,7 @@ services:
   # internal docker network. Holds no durable data on disk.
   #
   # Migrations are NOT applied here. They're an admin action run from
-  # your laptop over Tailscale — see `yarn db:migrate:remote` and
+  # your laptop over Tailscale — see `bun run db:migrate:remote` and
   # infrastructure/README.md.
   # ───────────────────────────────────────────────────────────────
   bot:
@@ -56,7 +56,7 @@ services:
         max-size: '10m'
         max-file: '5'
     healthcheck:
-      test: ['CMD', 'node', '-e', "process.env.DATABASE_URL || process.exit(1)"]
+      test: ['CMD', 'bun', '-e', "process.env.DATABASE_URL || process.exit(1)"]
       interval: 30s
       timeout: 5s
       retries: 3

@@ -2,9 +2,9 @@ import { Client, Message } from 'discord.js'
 import { getPluginConfig } from '../controllers/bot/plugins.controller'
 import { removeLinks } from '../controllers/plugins/moderation.controller'
 import { threadAutoCreate } from '../controllers/plugins/threads.controller'
-import { checkQuestAnswer } from '../controllers/plugins/quests.controller'
+import { log } from '../utils/log'
 
-module.exports = {
+export default {
   name: 'messageCreate',
   once: false,
   enabled: true,
@@ -28,9 +28,6 @@ module.exports = {
       const removeLinksCfg = await getPluginConfig(message.guildId!, 'removeLinks')
       if (removeLinksCfg?.enabled) await removeLinks(message, removeLinksCfg.metadata)
 
-      // Check quest answers in quest threads
-      await checkQuestAnswer(message)
-
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       // ==-=-=-=-=-=-=-=-=             DEVELOPMENT                    =-=-=-=-=-=-=-= +
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
@@ -44,7 +41,7 @@ module.exports = {
       //   module.default(Hans, message, command, args)
       // }
     } catch (error) {
-      console.log('❌ messageCreate(): ', error)
+      log.info('❌ messageCreate(): ', error)
     }
   },
 }

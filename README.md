@@ -15,7 +15,7 @@
 
 Hans is built with a modular architecture that makes it easy to add and remove functionality on the fly, empowering you to create a bot tailored to your community's needs.
 
-Built with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), [Postgres 17](https://www.postgresql.org/), [Drizzle ORM](https://orm.drizzle.team/), and lots of ❤️
+Built with [Discord.JS](https://discord.js.org/#/), [TypeScript](https://www.typescriptlang.org/), [Postgres 17](https://www.postgresql.org/), [Drizzle ORM](https://orm.drizzle.team/), running on [Bun](https://bun.sh/), and lots of ❤️
 
 ## Invite to server
 
@@ -31,16 +31,15 @@ The list of commands & plugins can be found [here 🔗](https://github.com/en3si
 
 ### 🔅 Prepare environment
 
+Requires [Bun](https://bun.sh/) ≥ 1.3 (`curl -fsSL https://bun.sh/install | bash`) and Docker.
+
 ```bash
-yarn install
+bun install
 cp .env.template .env
 # fill in DISCORD_TOKEN, DISCORD_CLIENT_ID, CRYPTO_KEY, CRYPTO_IV, BOT_GUILD_ID
 ```
 
 To create your Discord application, visit the [Developer Portal](https://discord.com/developers/docs/intro).
-
-Docker is required for local development — the dev script spins up a
-local Postgres 17 container automatically.
 
 ### 💾 Database
 
@@ -49,11 +48,11 @@ Schema is defined in TypeScript at [`src/db/schema.ts`](src/db/schema.ts)
 and migrations are auto-generated into `drizzle/`.
 
 ```bash
-yarn db:up         # start the dev Postgres + apply migrations
-yarn db:psql       # psql into the dev DB
-yarn db:studio     # open Drizzle Studio at https://local.drizzle.studio
-yarn db:down       # stop the dev DB (data preserved)
-yarn db:reset      # wipe and recreate from scratch
+bun run db:up         # start the dev Postgres + apply migrations
+bun run db:psql       # psql into the dev DB
+bun run db:studio     # open Drizzle Studio at https://local.drizzle.studio
+bun run db:down       # stop the dev DB (data preserved)
+bun run db:reset      # wipe and recreate from scratch
 ```
 
 When you change the schema:
@@ -61,9 +60,9 @@ When you change the schema:
 ```bash
 # 1. Edit src/db/schema.ts
 # 2. Generate a migration
-yarn db:generate
+bun run db:generate
 # 3. Apply it locally
-yarn db:migrate
+bun run db:migrate
 # 4. Commit src/db/schema.ts and the new drizzle/ file
 ```
 
@@ -72,34 +71,43 @@ Tailscale — see [infrastructure/README.md](infrastructure/README.md#migrations
 
 ## 👩🏼‍💻 Development
 
-### `yarn dev`
+### `bun run dev`
 
 Starts the dev Postgres container (if not running), applies migrations,
-then launches the bot with `nodemon` for live-reload. Invite link prints
-to the console on first boot.
+then launches the bot with Bun's built-in `--watch` for live-reload.
+Invite link prints to the console on first boot.
 
 ### Slash commands
 
 All commands (under `src/commands`) are built with the [Slash Command](https://discordjs.guide/interactions/slash-commands.html) interaction.
 
-> 🪬 **IMPORTANT**: before developing commands, make sure you invite the bot to your server and that there is a row in the `configs` table whose `bot_guild_id` matches your guild ID. The bot creates this on first connect; otherwise insert one with `yarn db:psql`.
+> 🪬 **IMPORTANT**: before developing commands, make sure you invite the bot to your server and that there is a row in the `configs` table whose `bot_guild_id` matches your guild ID. The bot creates this on first connect; otherwise insert one with `bun run db:psql`.
 
 Commands under the main folder are registered globally (takes a moment
 to propagate). Commands under `bots-playground/` are guild-specific and
 deploy instantly — use that folder for debugging.
 
-To redeploy commands: `yarn slash:dev` for dev, `yarn slash` for production.
+To redeploy commands: `bun run slash:dev` for dev, `bun run slash` for production.
 
 ---
 
 ## 🧪 Tests
 
 ```bash
-yarn test          # runs Jest against ./tests
+bun test           # runs Bun's native test runner against ./tests
 ```
 
 Test coverage is light — contributions welcome, especially around
 command controllers.
+
+Lint and typecheck:
+
+```bash
+bun run lint       # eslint --fix
+bun run typecheck  # tsc --noEmit
+```
+
+CI runs all three on every PR (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 ---
 
@@ -125,4 +133,4 @@ docker run --env-file .env --name hans -d --restart=always \
 
 `.env` must include a `DATABASE_URL` reachable from the container. You
 are responsible for applying schema migrations against that DB before
-the bot connects (`DATABASE_URL=... yarn db:migrate`).
+the bot connects (`DATABASE_URL=... bun run db:migrate`).

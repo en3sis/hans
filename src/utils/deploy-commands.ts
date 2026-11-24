@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { REST } from '@discordjs/rest'
-import { Routes } from 'discord-api-types/v9'
+import { Routes } from 'discord-api-types/v10'
 import * as dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
 import { getBotConfiguration, insertConfiguration } from '../controllers/bot/config.controller'
+import { log } from './log'
 
 dotenv.config({ path: process.cwd() + '/.env' })
 
@@ -16,13 +17,13 @@ const registryCommands = async (guild: {
   id: string | null
   includeWip: boolean
 }) => {
-  console.log('📥  Registering commands...')
+  log.info('📥  Registering commands...')
   const { folderName, id, includeWip } = guild
-  const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN!)
+  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!)
   const { commands, skipped } = await fetchCommands({ folderPath: folderName, includeWip })
 
   if (skipped.length > 0) {
-    console.log(`🚧  Skipped ${skipped.length} WIP command(s): ${skipped.join(', ')}`)
+    log.info(`🚧  Skipped ${skipped.length} WIP command(s): ${skipped.join(', ')}`)
   }
 
   const response = id
@@ -60,8 +61,8 @@ const fetchCommands = async ({
     .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
   for (const file of commandsFiles) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-    const command = require(`${(path.resolve(__dirname), `../commands${folderPath}/${file}`)}`)
+    const mod = await import(path.join(path.resolve(__dirname), `../commands${folderPath}`, file))
+    const command = mod.default ?? mod
     if (!includeWip && command.wip === true) {
       skipped.push(command.data?.name ?? file)
       continue
@@ -76,13 +77,13 @@ const fetchCommands = async ({
 ;(async () => {
   // Registry slash commands global & per guild
   try {
-    console.log('📨 Creates document if not found')
+    log.info('📨 Creates document if not found')
     await insertConfiguration()
 
-    console.log('⏳ Loading configuration for commands...')
+    log.info('⏳ Loading configuration for commands...')
 
     const config = await getBotConfiguration()
-    if (!config) return console.log('Row with the configuration for Hans not found')
+    if (!config) return log.info('Row with the configuration for Hans not found')
 
     // Same source folder (`src/commands/`) for both scripts so the dev guild
     // and production always see the identical command set. Only the scope
@@ -96,16 +97,16 @@ const fetchCommands = async ({
         folderName: '/',
         id: config.bot_guild_id,
         includeWip: true,
-      }).then((response) => console.log('🏗  DEV: ', response))
+      }).then((response) => log.info('🏗  DEV: ', response))
     } else {
       await registryCommands({
         folderName: '/',
         id: null,
         includeWip: false,
-      }).then((response) => console.log('🏗  PROD: ', response))
+      }).then((response) => log.info('🏗  PROD: ', response))
     }
   } catch (error) {
-    console.log('error: ', error)
+    log.info('error: ', error)
   } finally {
     process.exit()
   }

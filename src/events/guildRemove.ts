@@ -1,7 +1,8 @@
 import { Client, Guild } from 'discord.js'
 import { removeOneGuild } from '../controllers/bot/guilds.controller'
+import { log } from '../utils/log'
 
-module.exports = {
+export default {
   name: 'guildRemove',
   once: false,
   enabled: true,
@@ -10,7 +11,7 @@ module.exports = {
       // When he joins a guild, insert it into the database
       await removeOneGuild(guild)
     } catch (error) {
-      console.log('❌ guildRemove() : ', error)
+      log.info('❌ guildRemove() : ', error)
     }
   },
 }

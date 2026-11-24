@@ -2,6 +2,7 @@ import { Message, NewsChannel, StartThreadOptions, TextChannel, ThreadChannel } 
 import { PluginsThreadsMetadata } from '../../types/plugins'
 import { DEFAULT_COLOR } from '../../utils/colors'
 import { isStaff } from '../../utils/permissions'
+import { log } from '../../utils/log'
 
 export const threadAutoCreate = async (
   message: Message,
@@ -48,11 +49,11 @@ export const threadAutoCreate = async (
               },
             ],
           })
-          .catch((err) => console.error('💢 threadAutoCreate: failed to send autoMessage:', err))
+          .catch((err) => log.error('💢 threadAutoCreate: failed to send autoMessage:', err))
       }, 2000)
     }
   } catch (error) {
-    console.error('💢 ERROR: threadAutoCreate(): ', error)
+    log.error('💢 ERROR: threadAutoCreate(): ', error)
   }
 }
 
@@ -72,6 +73,6 @@ export const disallowCommentsInPublicThreads = async (message: Message) => {
       .send('🪬 Only Owner & Staff can comment in public threads in this channel.')
       .then((msg: Message) => setTimeout(() => msg.delete(), 5000))
   } catch (error) {
-    console.log('💢 ERROR: disallowCommentsInPublicThreads: ', error)
+    log.info('💢 ERROR: disallowCommentsInPublicThreads: ', error)
   }
 }

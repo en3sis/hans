@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { ChatInputCommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction, TextChannel } from 'discord.js'
 import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
-module.exports = {
+export default {
   ephemeral: true,
   data: new SlashCommandBuilder()
     .setName('mock')
@@ -15,13 +15,14 @@ module.exports = {
     try {
       const text = interaction.options.get('text')!.value as string
 
-      await (interaction.channel as any)!.send(
+      const channel = interaction.channel as TextChannel
+      await channel.send(
         text
           .split('')
           .map((letter, i) => (i % 2 == 0 ? letter.toUpperCase() : letter.toLowerCase()))
           .join(''),
       )
-      await (interaction.channel as any)!.send('<:mock:1016362569088376924>')
+      await channel.send('<:mock:1016362569088376924>')
 
       await interaction.editReply({ content: 'Done :P' })
     } catch (error) {

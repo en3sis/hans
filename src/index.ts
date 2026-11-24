@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import { reportErrorToMonitoring } from './utils/monitoring'
 import { ProjectValidator } from './utils/pre-validation'
+import { log } from './utils/log'
 
 /** =============================================================================
  * 🛠 Initial configuration
@@ -20,7 +21,6 @@ export const Hans = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.MessageContent,
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 })
@@ -30,58 +30,62 @@ export const Hans = new Client({
   ============================================================================== */
 Hans.commands = new Collection()
 
-const setCommandsNames = () => {
+const setCommandsNames = async () => {
   try {
-    // Paths to global & developed commands
-    ;['/', '/bots-playground'].map((ele) => {
+    for (const ele of ['/', '/bots-playground']) {
+      const dir = path.join(path.resolve(__dirname), `/commands${ele}`)
       const files = fs
-        .readdirSync(path.join(path.resolve(__dirname), `/commands${ele}`))
+        .readdirSync(dir)
         .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
-      files.forEach((file) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-        const command = require(path.join(path.resolve(__dirname), `/commands${ele}/${file}`))
-
+      for (const file of files) {
+        const mod = await import(path.join(dir, file))
+        const command = mod.default ?? mod
         if ('data' in command) {
-          return Hans.commands.set(command.data.name, command)
+          Hans.commands.set(command.data.name, command)
         }
-      })
-    })
+      }
+    }
 
-    console.info(
+    log.info(
       '🧾  Reading commands files for:',
       Hans.commands.map((ele) => ele.data.name).join(', '),
     )
   } catch (error) {
-    console.error('❌ ERROR: setCommandsNames(): ', error)
+    log.error('❌ ERROR: setCommandsNames(): ', error)
   }
 }
 
-setCommandsNames()
 /** =============================================================================
  * 🎆 Events handler
   ============================================================================== */
-const eventFiles = fs
-  .readdirSync(path.join(path.resolve(__dirname), `./events`))
-  .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
+const registerEvents = async () => {
+  const eventsDir = path.join(path.resolve(__dirname), `./events`)
+  const eventFiles = fs
+    .readdirSync(eventsDir)
+    .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
-for (const file of eventFiles) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-  const event = require(`./events/${file}`)
+  for (const file of eventFiles) {
+    const mod = await import(path.join(eventsDir, file))
+    const event = mod.default ?? mod
 
-  if (event.enabled) {
-    if (event.once) {
-      Hans.once(event.name, (...args) => event.execute(Hans, ...args))
-    } else {
-      Hans.on(event.name, (...args) => event.execute(Hans, ...args))
+    if (event.enabled) {
+      if (event.once) {
+        Hans.once(event.name, (...args) => event.execute(Hans, ...args))
+      } else {
+        Hans.on(event.name, (...args) => event.execute(Hans, ...args))
+      }
     }
   }
 }
 
+await setCommandsNames()
+await registerEvents()
+
 Hans.login(process.env.DISCORD_TOKEN!)
 
-Hans.on('error', (err) => !!process.env.ISDEV && console.log('❌ ERROR: initHans()', err))
-Hans.on('debug', (msg) => !!process.env.ISDEV && console.log('🐛 DEBUG: initHans()', msg))
+Hans.on('error', (err) => !!process.env.ISDEV && log.info('❌ ERROR: initHans()', err))
+Hans.on('debug', (msg) => !!process.env.ISDEV && log.info('🐛 DEBUG: initHans()', msg))
 Hans.on('unhandledRejection', async (error) => {
   const _embed = {
     title: `unhandledRejection`,
@@ -90,5 +94,5 @@ Hans.on('unhandledRejection', async (error) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   !!process.env.ISDEV && (await reportErrorToMonitoring({ embeds: _embed }))
-  console.error('Unhandled promise rejection:', error)
+  log.error('Unhandled promise rejection:', error)
 })

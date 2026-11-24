@@ -2,11 +2,11 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "rootDir": "./src",
     // "baseUrl": "./src",
-    "target": "es6",
+    "target": "es2022",
     "sourceMap": false,
     "outDir": "./build",
     "allowSyntheticDefaultImports": true,
@@ -18,7 +18,7 @@
     "strict": true,
     "useUnknownInCatchVariables": false,
     "resolveJsonModule": true,
-    "types": ["jest"],
+    "types": ["bun"],
     "paths": {
       // "@/libs/*": ["libs/*"]
       // "@/types/*": ["src/types/*"],

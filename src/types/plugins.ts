@@ -78,7 +78,9 @@ export type PluginsThreadsSettings = {
 
 export interface GuildPluginData {
   enabled: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: GuildPlugin | any
 }
 

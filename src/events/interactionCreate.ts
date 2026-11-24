@@ -9,8 +9,9 @@ import {
 } from '../services/plugin-panels/quests-flow'
 import { ERROR_COLOR } from '../utils/colors'
 import { reportErrorToMonitoring } from '../utils/monitoring'
+import { log } from '../utils/log'
 
-module.exports = {
+export default {
   name: 'interactionCreate',
   once: false,
   enabled: true,
@@ -70,8 +71,8 @@ module.exports = {
 
     if (!!process.env.ISDEV) {
       // Enables the developer to see details in the console.
-      console.log('🔍 Command Details: ', command)
-      console.log(
+      log.info('🔍 Command Details: ', command)
+      log.info(
         '🤖 Hans registered commands: ',
         Hans.commands.map((ele) => ele.data.name).join(', '),
       )
@@ -83,7 +84,7 @@ module.exports = {
       await command.execute(interaction)
     } catch (error) {
       success = false
-      console.error({
+      log.error({
         message: `❌ ERROR: interactionCreate(): ${error.message}`,
       })
 
@@ -119,7 +120,7 @@ module.exports = {
         })
         .catch((err: unknown) => {
           const msg = err instanceof Error ? err.message : String(err)
-          console.error(`❌ command_usage log failed: ${msg}`)
+          log.error(`❌ command_usage log failed: ${msg}`)
         })
     }
   },

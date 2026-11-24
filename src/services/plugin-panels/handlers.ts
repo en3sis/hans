@@ -16,6 +16,7 @@ import { buildPluginModal, extractModalValues } from './modals'
 import { renderConfirm, renderItemDrilldown, renderListView, renderPluginPanel } from './render'
 import { getPanelSchema } from './schemas'
 import { PanelField } from './types'
+import { log } from '../../utils/log'
 
 /* -------------------------------------------------------------------------- */
 /* DB helpers                                                                  */
@@ -97,7 +98,7 @@ const logPanelAction = (
     })
     .catch((err: unknown) => {
       const msg = err instanceof Error ? err.message : String(err)
-      console.error(`❌ command_usage(panel) failed: ${msg}`)
+      log.error(`❌ command_usage(panel) failed: ${msg}`)
     })
 }
 
@@ -179,7 +180,7 @@ export const handlePanelComponent = async (
     await dispatchComponent(interaction, parsed, guildId)
   } catch (err) {
     ok = false
-    console.error('❌ Panel component handler error:', err)
+    log.error('❌ Panel component handler error:', err)
     await replyError(interaction, err instanceof Error ? err.message : 'Unexpected error.')
   } finally {
     if (parsed.action !== 'sel') {

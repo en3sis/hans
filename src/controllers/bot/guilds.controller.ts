@@ -4,6 +4,7 @@ import { db } from '../../db/client'
 import { Guild as GuildRow, GuildPluginRow, guilds } from '../../db/schema'
 import { Hans } from './../../index'
 import { insertGuildPlugin, resolveGuildPlugins } from './plugins.controller'
+import { log } from '../../utils/log'
 
 export type GuildSettings = GuildRow
 export type GuildPlugin = GuildPluginRow
@@ -12,7 +13,7 @@ export const findOneGuild = async (guildId: string): Promise<GuildSettings | und
   try {
     return await db.query.guilds.findFirst({ where: eq(guilds.guild_id, guildId) })
   } catch (error) {
-    console.error('❌ ERROR: findOneGuild(): ', error)
+    log.error('❌ ERROR: findOneGuild(): ', error)
   }
 }
 
@@ -38,14 +39,14 @@ export const insertAllGuilds = async (Hans: Client) => {
       try {
         await insertGuildPlugin(g.guild_id)
       } catch (error) {
-        console.error('❌ ERROR: insertAllGuilds(): ', error)
+        log.error('❌ ERROR: insertAllGuilds(): ', error)
       }
     }
 
-    console.info(`🪯  Initial ${rows.length} guilds inserted/updated`)
+    log.info(`🪯  Initial ${rows.length} guilds inserted/updated`)
     return rows
   } catch (error) {
-    console.error('❌ ERROR: insertAllGuilds(): ', error)
+    log.error('❌ ERROR: insertAllGuilds(): ', error)
   }
 }
 
@@ -60,7 +61,7 @@ export const insetOneGuild = async (guild: DiscordGuild) => {
       })
     await insertGuildPlugin(guild.id)
   } catch (error) {
-    console.error('❌ ERROR: insetOneGuild: ', error)
+    log.error('❌ ERROR: insetOneGuild: ', error)
   }
 }
 
@@ -68,7 +69,7 @@ export const removeOneGuild = async (guild: DiscordGuild) => {
   try {
     await db.delete(guilds).where(eq(guilds.guild_id, guild.id))
   } catch (error) {
-    console.error('❌ ERROR: removeOneGuild: ', error)
+    log.error('❌ ERROR: removeOneGuild: ', error)
   }
 }
 

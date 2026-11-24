@@ -1,7 +1,8 @@
 import { Client, Guild } from 'discord.js'
 import { insetOneGuild } from '../controllers/bot/guilds.controller'
+import { log } from '../utils/log'
 
-module.exports = {
+export default {
   name: 'guildCreate',
   once: false,
   enabled: true,
@@ -10,7 +11,7 @@ module.exports = {
       // When he joins a guild, insert it into the database
       await insetOneGuild(guild)
     } catch (error) {
-      console.log('❌ guildCreate() : ', error)
+      log.info('❌ guildCreate() : ', error)
     }
   },
 }

@@ -4,7 +4,7 @@ import { inviteBot } from '../controllers/bot/index.controller'
 import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
-module.exports = {
+export default {
   ephemeral: false,
   data: new SlashCommandBuilder()
     .setName('invite')
