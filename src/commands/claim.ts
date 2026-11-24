@@ -7,7 +7,7 @@ import { logger } from '../utils/debugging'
  * Standalone /claim command for users who won a quest but the bot couldn't
  * DM them the reward (DMs disabled). Replaces the legacy `/quests claim`.
  */
-module.exports = {
+export default {
   ephemeral: true,
   data: new SlashCommandBuilder()
     .setName('claim')

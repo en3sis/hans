@@ -10,7 +10,7 @@ import { ChatInputCommandInteraction } from 'discord.js'
  * Files in this `bots-playground/` folder are NOT auto-loaded — the deploy
  * script reads only `src/commands/` top-level. Treat this as a reference.
  */
-module.exports = {
+export default {
   ephemeral: false,
   wip: true,
   data: new SlashCommandBuilder()

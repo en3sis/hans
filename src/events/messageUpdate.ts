@@ -2,7 +2,7 @@ import { Client, Message, TextChannel } from 'discord.js'
 import { getPluginConfig } from '../controllers/bot/plugins.controller'
 import { postEditLog } from '../controllers/plugins/audit-log'
 
-module.exports = {
+export default {
   name: 'messageUpdate',
   once: false,
   enabled: true,

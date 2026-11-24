@@ -7,7 +7,7 @@ import { logger } from '../utils/debugging'
  * Single entry-point for plugin configuration. All settings live in the
  * interactive panel; per-plugin subcommands have been removed.
  */
-module.exports = {
+export default {
   ephemeral: true,
   // Do not auto-defer — the panel reply is a v2-components message which
   // must set IS_COMPONENTS_V2 on the initial response.

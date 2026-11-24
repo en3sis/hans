@@ -11,7 +11,7 @@ import { notifyPulse } from '../controllers/events/ready.controller'
 import { scheduleCronJobs } from '../controllers/tasks/cron-jobs'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 
-module.exports = {
+export default {
   name: 'ready',
   once: true,
   enabled: true,

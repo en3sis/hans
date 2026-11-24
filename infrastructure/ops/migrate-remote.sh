@@ -35,4 +35,4 @@ DISPLAY_URL="$(echo "$DATABASE_URL" | sed -E 's#(://[^:]+:)[^@]+@#\1***@#')"
 echo "🎯 Target: $DISPLAY_URL"
 echo
 
-exec npx drizzle-kit migrate
+exec bunx drizzle-kit migrate

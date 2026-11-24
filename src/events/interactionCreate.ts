@@ -10,7 +10,7 @@ import {
 import { ERROR_COLOR } from '../utils/colors'
 import { reportErrorToMonitoring } from '../utils/monitoring'
 
-module.exports = {
+export default {
   name: 'interactionCreate',
   once: false,
   enabled: true,

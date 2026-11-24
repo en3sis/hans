@@ -1,7 +1,7 @@
 import { Client, Guild } from 'discord.js'
 import { insetOneGuild } from '../controllers/bot/guilds.controller'
 
-module.exports = {
+export default {
   name: 'guildCreate',
   once: false,
   enabled: true,

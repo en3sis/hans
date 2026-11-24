@@ -3,7 +3,7 @@ import { getPluginConfig } from '../controllers/bot/plugins.controller'
 import { removeLinks } from '../controllers/plugins/moderation.controller'
 import { threadAutoCreate } from '../controllers/plugins/threads.controller'
 
-module.exports = {
+export default {
   name: 'messageCreate',
   once: false,
   enabled: true,

@@ -2,7 +2,7 @@ import { Client, Message, TextChannel } from 'discord.js'
 import { getPluginConfig } from '../controllers/bot/plugins.controller'
 import { postDeleteLog } from '../controllers/plugins/audit-log'
 
-module.exports = {
+export default {
   name: 'messageDelete',
   once: false,
   enabled: true,

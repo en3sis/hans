@@ -60,8 +60,8 @@ const fetchCommands = async ({
     .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
   for (const file of commandsFiles) {
-
-    const command = require(`${(path.resolve(__dirname), `../commands${folderPath}/${file}`)}`)
+    const mod = await import(path.join(path.resolve(__dirname), `../commands${folderPath}`, file))
+    const command = mod.default ?? mod
     if (!includeWip && command.wip === true) {
       skipped.push(command.data?.name ?? file)
       continue

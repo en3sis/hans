@@ -29,23 +29,22 @@ export const Hans = new Client({
   ============================================================================== */
 Hans.commands = new Collection()
 
-const setCommandsNames = () => {
+const setCommandsNames = async () => {
   try {
-    // Paths to global & developed commands
-    ;['/', '/bots-playground'].map((ele) => {
+    for (const ele of ['/', '/bots-playground']) {
+      const dir = path.join(path.resolve(__dirname), `/commands${ele}`)
       const files = fs
-        .readdirSync(path.join(path.resolve(__dirname), `/commands${ele}`))
+        .readdirSync(dir)
         .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
-      files.forEach((file) => {
-
-        const command = require(path.join(path.resolve(__dirname), `/commands${ele}/${file}`))
-
+      for (const file of files) {
+        const mod = await import(path.join(dir, file))
+        const command = mod.default ?? mod
         if ('data' in command) {
-          return Hans.commands.set(command.data.name, command)
+          Hans.commands.set(command.data.name, command)
         }
-      })
-    })
+      }
+    }
 
     console.info(
       '🧾  Reading commands files for:',
@@ -56,26 +55,31 @@ const setCommandsNames = () => {
   }
 }
 
-setCommandsNames()
 /** =============================================================================
  * 🎆 Events handler
   ============================================================================== */
-const eventFiles = fs
-  .readdirSync(path.join(path.resolve(__dirname), `./events`))
-  .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
+const registerEvents = async () => {
+  const eventsDir = path.join(path.resolve(__dirname), `./events`)
+  const eventFiles = fs
+    .readdirSync(eventsDir)
+    .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
-for (const file of eventFiles) {
+  for (const file of eventFiles) {
+    const mod = await import(path.join(eventsDir, file))
+    const event = mod.default ?? mod
 
-  const event = require(`./events/${file}`)
-
-  if (event.enabled) {
-    if (event.once) {
-      Hans.once(event.name, (...args) => event.execute(Hans, ...args))
-    } else {
-      Hans.on(event.name, (...args) => event.execute(Hans, ...args))
+    if (event.enabled) {
+      if (event.once) {
+        Hans.once(event.name, (...args) => event.execute(Hans, ...args))
+      } else {
+        Hans.on(event.name, (...args) => event.execute(Hans, ...args))
+      }
     }
   }
 }
+
+await setCommandsNames()
+await registerEvents()
 
 Hans.login(process.env.DISCORD_TOKEN!)
 

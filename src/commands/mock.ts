@@ -3,7 +3,7 @@ import { ChatInputCommandInteraction } from 'discord.js'
 import { logger } from '../utils/debugging'
 
 // https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=replied
-module.exports = {
+export default {
   ephemeral: true,
   data: new SlashCommandBuilder()
     .setName('mock')

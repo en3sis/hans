@@ -1,6 +1,6 @@
 import { Client, GuildMember, MessageReaction } from 'discord.js'
 
-module.exports = {
+export default {
   name: 'messageReactionAdd',
   once: false,
   enabled: false,

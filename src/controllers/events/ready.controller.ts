@@ -1,5 +1,5 @@
 import { Client, TextChannel } from 'discord.js'
-import { githubAPI } from '../../libs/axios'
+import { githubAPI } from '../../libs/github'
 
 export const notifyPulse = async (Hans: Client) => {
   // INFO Disables pulse notification in development
