@@ -13,7 +13,7 @@ import { reportErrorToMonitoring } from '../utils/monitoring'
 import { log } from '../utils/log'
 
 export default {
-  name: 'ready',
+  name: 'clientReady',
   once: true,
   enabled: true,
   async execute(Hans: Client) {
