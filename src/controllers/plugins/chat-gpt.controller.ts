@@ -33,9 +33,12 @@ interface IOpenAIRequestSettings {
   frequency_penalty?: number
   apiKey: string
   organization: string
+  onDelta?: (textSoFar: string) => void
 }
 
 type PluginMetadata = GuildPluginChatGTPMetadata['metadata']
+
+const STREAM_EDIT_INTERVAL_MS = 1200
 
 /**
  * Hans's assistant system prompt.
@@ -127,6 +130,7 @@ export const chatGTPController = async (
   apiKey: string,
   organization: string,
   modelId?: string,
+  onDelta?: (textSoFar: string) => void,
 ) => {
   try {
     const { response, token, promptTokens, completionTokens, cachedPromptTokens, model } =
@@ -137,6 +141,7 @@ export const chatGTPController = async (
         // Validate caller's stored choice against the catalog; fall back to
         // default if a model was removed/renamed since they last configured.
         model: resolveModel(modelId).id,
+        onDelta,
       })
 
     return {
@@ -159,13 +164,18 @@ export const sendPrompt = async ({
   max_tokens = 3000,
   apiKey,
   organization,
+  onDelta,
 }: IOpenAIRequestSettings) => {
   try {
     const OPEN_AI_CLIENT = new OpenAI({ apiKey, organization })
+    const { reasoningEffort } = resolveModel(model)
 
-    const completion = await OPEN_AI_CLIENT.chat.completions.create({
+    const stream = await OPEN_AI_CLIENT.chat.completions.create({
       model,
       max_completion_tokens: max_tokens,
+      ...(reasoningEffort ? { reasoning_effort: reasoningEffort } : {}),
+      stream: true,
+      stream_options: { include_usage: true },
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         {
@@ -178,15 +188,26 @@ export const sendPrompt = async ({
       ],
     })
 
+    let response = ''
+    let usage: OpenAI.CompletionUsage | undefined
+    let resolvedModel: string = model
+    for await (const chunk of stream) {
+      resolvedModel = chunk.model || resolvedModel
+      if (chunk.usage) usage = chunk.usage
+      const delta = chunk.choices[0]?.delta?.content
+      if (delta) {
+        response += delta
+        onDelta?.(response)
+      }
+    }
+
     return {
-      response: completion.choices[0].message.content ?? '',
-      token: completion.usage?.total_tokens ?? 0,
-      promptTokens: completion.usage?.prompt_tokens ?? 0,
-      completionTokens: completion.usage?.completion_tokens ?? 0,
-      // Server-side prompt cache hits (≥1024 token stable prefixes). 0 when
-      // not engaged; the field is present on supported models from late 2024.
-      cachedPromptTokens: completion.usage?.prompt_tokens_details?.cached_tokens ?? 0,
-      model: completion.model,
+      response,
+      token: usage?.total_tokens ?? 0,
+      promptTokens: usage?.prompt_tokens ?? 0,
+      completionTokens: usage?.completion_tokens ?? 0,
+      cachedPromptTokens: usage?.prompt_tokens_details?.cached_tokens ?? 0,
+      model: resolvedModel,
     }
   } catch (error) {
     throw Error(error.message)
@@ -220,13 +241,61 @@ export const chatGptCommandHandler = async (
     const modelId = usesHansKey
       ? (await getCachedBotConfig())?.default_openai_model
       : guildPlugin.model
-    const answer = await chatGTPController(prompt, API_KEY!, ORGANIZATION!, modelId ?? undefined)
-
-    if (!answer?.response || answer?.response === '' || answer?.response === undefined)
-      return await interaction.editReply('💢 Something went wrong, please try again later.')
-
     const userAvatar = interaction.user.displayAvatarURL({ size: 128 })
     const botAvatar = interaction.client.user!.displayAvatarURL({ size: 128 })
+
+    const renderAnswer = (answerText: string, footer: string) => {
+      const container = new ContainerBuilder().setAccentColor(0x10a37f) // OpenAI green
+      container.addSectionComponents(
+        new SectionBuilder()
+          .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent(`**${interaction.user.username}** asked\n${prompt}`),
+          )
+          .setThumbnailAccessory(new ThumbnailBuilder().setURL(userAvatar)),
+      )
+      container.addSeparatorComponents(
+        new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small),
+      )
+      container.addSectionComponents(
+        new SectionBuilder()
+          .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent(
+              `**${interaction.client.user!.username}** answered\n${truncate(answerText, 3800)}`,
+            ),
+          )
+          .setThumbnailAccessory(new ThumbnailBuilder().setURL(botAvatar)),
+      )
+      container.addSeparatorComponents(new SeparatorBuilder().setDivider(false))
+      container.addTextDisplayComponents(new TextDisplayBuilder().setContent(footer))
+      return container
+    }
+
+    let editChain: Promise<unknown> = Promise.resolve()
+    let lastEditAt = 0
+    const onDelta = (textSoFar: string) => {
+      const now = Date.now()
+      if (now - lastEditAt < STREAM_EDIT_INTERVAL_MS) return
+      lastEditAt = now
+      const container = renderAnswer(`${textSoFar} ▌`, '-# ✍️ Writing…')
+      editChain = editChain
+        .then(() =>
+          interaction.editReply({ flags: MessageFlags.IsComponentsV2, components: [container] }),
+        )
+        .catch((error) => log.warn('⚠️ chatGptCommandHandler(): stream edit failed', error))
+    }
+
+    const answer = await chatGTPController(
+      prompt,
+      API_KEY!,
+      ORGANIZATION!,
+      modelId ?? undefined,
+      onDelta,
+    )
+    await editChain
+
+    if (!answer?.response)
+      return await interaction.editReply('💢 Something went wrong, please try again later.')
+
     const cost = estimateCost(
       answer.model,
       answer.promptTokens,
@@ -236,38 +305,14 @@ export const chatGptCommandHandler = async (
     const cacheNote = answer.cachedPromptTokens > 0 ? `  ·  ⚡ ${answer.cachedPromptTokens} cached` : ''
     const left = !guild.premium ? `  ·  🎟 ${(usage ?? 0) - 1} left today` : ''
 
-    const container = new ContainerBuilder().setAccentColor(0x10a37f) // OpenAI green
-    container.addSectionComponents(
-      new SectionBuilder()
-        .addTextDisplayComponents(
-          new TextDisplayBuilder().setContent(
-            `**${interaction.user.username}** asked\n${prompt}`,
-          ),
-        )
-        .setThumbnailAccessory(new ThumbnailBuilder().setURL(userAvatar)),
-    )
-    container.addSeparatorComponents(
-      new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small),
-    )
-    container.addSectionComponents(
-      new SectionBuilder()
-        .addTextDisplayComponents(
-          new TextDisplayBuilder().setContent(
-            `**${interaction.client.user!.username}** answered\n${truncate(answer.response, 3800)}`,
-          ),
-        )
-        .setThumbnailAccessory(new ThumbnailBuilder().setURL(botAvatar)),
-    )
-    container.addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-    container.addTextDisplayComponents(
-      new TextDisplayBuilder().setContent(
-        `-# 🪙 ${answer.token} tokens${cacheNote}  ·  💵 $${cost}${left}  ·  🤖 \`${answer.model}\``,
-      ),
-    )
-
     await interaction.editReply({
       flags: MessageFlags.IsComponentsV2,
-      components: [container],
+      components: [
+        renderAnswer(
+          answer.response,
+          `-# 🪙 ${answer.token} tokens${cacheNote}  ·  💵 $${cost}${left}  ·  🤖 \`${answer.model}\``,
+        ),
+      ],
     })
   } catch (error) {
     log.error('❌ chatGptCommandHandler(): ', error)

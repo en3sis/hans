@@ -1,3 +1,5 @@
+import type { ReasoningEffort } from 'openai/resources/shared'
+
 /**
  * Curated catalog of OpenAI chat models the bot is allowed to use.
  *
@@ -29,6 +31,8 @@ export interface OpenAIModelInfo {
   cachedInputPerMTokens?: number
   /** USD per 1M output tokens. */
   outputPerMTokens: number
+  /** Only set for reasoning models; other models reject the parameter. */
+  reasoningEffort?: ReasoningEffort
 }
 
 /** Ordered cheapest → most expensive so the picker reads as a cost ladder. */
@@ -40,6 +44,7 @@ export const OPENAI_MODELS: readonly OpenAIModelInfo[] = [
     inputPerMTokens: 0.05,
     cachedInputPerMTokens: 0.01,
     outputPerMTokens: 0.4,
+    reasoningEffort: 'minimal',
   },
   {
     id: 'gpt-4.1-nano',
