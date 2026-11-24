@@ -52,7 +52,7 @@ export const PLUGIN_REGISTRY = {
     icon: '🚪',
     description: 'Posts a message in a channel whenever a member joins or leaves.',
     category: 'server',
-    enabled: true,
+    enabled: false,
     premium: false,
     defaultEnabled: false,
     cacheable: true,
