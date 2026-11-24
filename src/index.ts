@@ -20,7 +20,6 @@ export const Hans = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.MessageContent,
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 })
@@ -39,7 +38,7 @@ const setCommandsNames = () => {
         .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
       files.forEach((file) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+
         const command = require(path.join(path.resolve(__dirname), `/commands${ele}/${file}`))
 
         if ('data' in command) {
@@ -66,7 +65,7 @@ const eventFiles = fs
   .filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
 
 for (const file of eventFiles) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+
   const event = require(`./events/${file}`)
 
   if (event.enabled) {

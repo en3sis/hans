@@ -11,7 +11,7 @@ import {
   User,
 } from 'discord.js'
 import { and, desc, eq, gt, sql } from 'drizzle-orm'
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import { db } from '../../db/client'
 import { guilds, guildQuests } from '../../db/schema'
 import { GuildQuest } from '../../types/plugins'
@@ -42,7 +42,7 @@ export const createQuest = async (
 
     const newQuest: GuildQuest = {
       ...questData,
-      id: uuidv4(),
+      id: randomUUID(),
       guild_id: guildPk,
       created_at: new Date().toISOString(),
       is_claimed: false,
