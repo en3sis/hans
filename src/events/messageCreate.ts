@@ -1,6 +1,5 @@
 import { Client, Message } from 'discord.js'
 import { getPluginConfig } from '../controllers/bot/plugins.controller'
-import { removeLinks } from '../controllers/plugins/moderation.controller'
 import { threadAutoCreate } from '../controllers/plugins/threads.controller'
 import { log } from '../utils/log'
 
@@ -22,11 +21,6 @@ export default {
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       const threadsCfg = await getPluginConfig(message.guildId!, 'threads')
       if (threadsCfg?.enabled) await threadAutoCreate(message, threadsCfg.metadata)
-
-      // Link removal — runs before anything that might react to message
-      // content, so deleted messages don't trigger downstream effects.
-      const removeLinksCfg = await getPluginConfig(message.guildId!, 'removeLinks')
-      if (removeLinksCfg?.enabled) await removeLinks(message, removeLinksCfg.metadata)
 
       // +=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+
       // ==-=-=-=-=-=-=-=-=             DEVELOPMENT                    =-=-=-=-=-=-=-= +

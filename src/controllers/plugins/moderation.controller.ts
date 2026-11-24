@@ -1,6 +1,14 @@
-import { ChatInputCommandInteraction, Message, TextChannel } from 'discord.js'
+import {
+  AutoModerationActionType,
+  AutoModerationRuleEventType,
+  AutoModerationRuleTriggerType,
+  ChatInputCommandInteraction,
+  TextChannel,
+} from 'discord.js'
+import { Hans } from '../..'
 import { RemoveLinksMetadata } from '../../types/plugins'
 import { log } from '../../utils/log'
+import { reportErrorToMonitoring } from '../../utils/monitoring'
 
 export const purgeMessages = async (interaction: ChatInputCommandInteraction) => {
   try {
@@ -31,62 +39,71 @@ export const purgeMessages = async (interaction: ChatInputCommandInteraction) =>
   }
 }
 
-// Match URLs in a message body. Catches https?://… and bare www.something.
-const URL_PATTERN =
-  /\b((?:https?:\/\/|www\.)[^\s<>"']+|[a-z0-9-]+(?:\.[a-z0-9-]+)+\/[^\s<>"']*)/gi
+const LINK_RULE_NAME = 'Hans · Link Removal'
+const LINK_PATTERNS = [String.raw`(?i)(?:https?://|www\.)[^\s<>"']+`]
+const MAX_EXEMPT_ROLES = 20
+const MAX_ALLOW_LIST = 100
+const MAX_ALLOW_ENTRY_LENGTH = 60
 
-/** Compile an allow-pattern line into a regex. */
-const compileAllowed = (line: string): RegExp | null => {
-  const trimmed = line.trim()
-  if (!trimmed || trimmed.startsWith('#')) return null
-  try {
-    // Lines that look like regex (start with anchor or contain regex
-    // metacharacters) are used as-is; everything else is treated as a
-    // bare hostname suffix (e.g. github.com matches gist.github.com).
-    const looksLikeRegex = /[\^$*+?()[\]{}|\\]/.test(trimmed)
-    if (looksLikeRegex) return new RegExp(trimmed, 'i')
-    const escaped = trimmed.replace(/\./g, '\\.')
-    return new RegExp(`(?:^|//|\\.)${escaped}(?:[/:?#]|$)`, 'i')
-  } catch {
-    return null
-  }
-}
+const toAllowList = (allowedUrls: string | undefined): string[] =>
+  (allowedUrls ?? '')
+    .split('\n')
+    .map((line) => line.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, ''))
+    .filter((line) => line && !line.startsWith('#') && !/[\^$*+?()[\]{}|\\\s]/.test(line))
+    .map((host) => `*${host}*`)
+    .filter((entry) => entry.length <= MAX_ALLOW_ENTRY_LENGTH)
+    .slice(0, MAX_ALLOW_LIST)
 
 /**
- * Delete a message that contains links unless: (a) author has elevated
- * permissions or any bypass role, or (b) every URL in the message
- * matches an entry in `allowedUrls`.
+ * Mirrors the Link Removal plugin onto a Discord AutoMod rule, which blocks
+ * links without the bot needing the Message Content intent.
  */
-export const removeLinks = async (
-  message: Message,
+export const syncLinkRemovalRule = async (
+  guildId: string,
+  enabled: boolean,
   metadata: RemoveLinksMetadata | null | undefined,
 ): Promise<void> => {
-  if (!message.member) return
-  if (
-    message.member.permissions.has(['Administrator']) ||
-    message.member.permissions.has(['ManageMessages'])
-  ) {
-    return
-  }
-
-  const bypassRoles = metadata?.allowedRoles ?? []
-  if (bypassRoles.some((id) => message.member!.roles.cache.has(id))) return
-
-  const urls = message.content.match(URL_PATTERN)
-  if (!urls || urls.length === 0) return
-
-  const allowed = (metadata?.allowedUrls ?? '')
-    .split('\n')
-    .map(compileAllowed)
-    .filter((re): re is RegExp => re !== null)
-
-  const everyUrlAllowed = urls.every((url) => allowed.some((re) => re.test(url)))
-  if (everyUrlAllowed) return
-
   try {
-    await message.delete()
-  } catch (err) {
-    log.error('❌ removeLinks: failed to delete message:', err)
+    const guild = await Hans.guilds.fetch(guildId)
+    const rules = await guild.autoModerationRules.fetch()
+    const existing = rules.find((r) => r.name === LINK_RULE_NAME && r.creatorId === Hans.user?.id)
+
+    if (!enabled) {
+      if (existing) await existing.delete('Link Removal disabled in Hans')
+      return
+    }
+
+    const options = {
+      name: LINK_RULE_NAME,
+      eventType: AutoModerationRuleEventType.MessageSend,
+      triggerMetadata: {
+        regexPatterns: LINK_PATTERNS,
+        allowList: toAllowList(metadata?.allowedUrls),
+      },
+      actions: [
+        {
+          type: AutoModerationActionType.BlockMessage,
+          metadata: { customMessage: 'Links are not allowed in this server.' },
+        },
+      ],
+      enabled: true,
+      exemptRoles: (metadata?.allowedRoles ?? []).slice(0, MAX_EXEMPT_ROLES),
+    }
+
+    if (existing) await existing.edit(options)
+    else
+      await guild.autoModerationRules.create({
+        ...options,
+        triggerType: AutoModerationRuleTriggerType.Keyword,
+      })
+  } catch (error) {
+    log.error(`❌ syncLinkRemovalRule(${guildId}):`, error)
+    reportErrorToMonitoring({
+      embeds: {
+        title: 'Link Removal: AutoMod sync failed',
+        description: `Guild ${guildId}: ${(error as Error).message}`,
+      },
+    }).catch(() => {})
   }
 }
 

@@ -70,9 +70,9 @@ export const PLUGIN_REGISTRY = {
   removeLinks: {
     label: 'Link Removal',
     icon: '🔗',
-    description: 'Auto-removes links unless the channel, URL or role is allowed.',
+    description: 'Blocks links with a Discord AutoMod rule, except allowed sites and roles.',
     category: 'moderation',
-    enabled: false,
+    enabled: true,
     premium: false,
     defaultEnabled: false,
     cacheable: true,

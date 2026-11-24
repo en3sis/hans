@@ -9,7 +9,8 @@ import {
   isPluginName,
 } from '../../models/plugins.model'
 import { log } from '../../utils/log'
-import { GuildPluginData, PluginMetadataMap } from '../../types/plugins'
+import { GuildPluginData, PluginMetadataMap, RemoveLinksMetadata } from '../../types/plugins'
+import { syncLinkRemovalRule } from '../plugins/moderation.controller'
 import { registerStandupSchedules } from '../plugins/standup.controller'
 import { stopSpecificCronJob } from '../tasks/cron-jobs'
 
@@ -34,6 +35,40 @@ export const onGuildPluginChanged = async (guildId: string, pluginName: string) 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await registerStandupSchedules(guildId, row.metadata as any)
     }
+  }
+  if (pluginName === 'removeLinks') {
+    const row = await db.query.guildsPlugins.findFirst({
+      where: and(eq(guildsPlugins.owner, guildId), eq(guildsPlugins.name, 'removeLinks')),
+    })
+    await syncLinkRemovalRule(
+      guildId,
+      !!row?.enabled && PLUGIN_REGISTRY.removeLinks.enabled,
+      row?.metadata as RemoveLinksMetadata | null,
+    )
+  }
+}
+
+/** Re-applies the AutoMod rule for every guild that has Link Removal on. */
+export const syncAllLinkRemovalRules = async (): Promise<void> => {
+  if (!PLUGIN_REGISTRY.removeLinks.enabled) return
+  try {
+    const rows = await db
+      .select({ owner: guildsPlugins.owner, metadata: guildsPlugins.metadata })
+      .from(guildsPlugins)
+      .innerJoin(guilds, eq(guilds.guild_id, guildsPlugins.owner))
+      .where(
+        and(
+          eq(guildsPlugins.name, 'removeLinks'),
+          eq(guildsPlugins.enabled, true),
+          isNull(guilds.left_at),
+        ),
+      )
+    for (const row of rows) {
+      await syncLinkRemovalRule(row.owner, true, row.metadata as RemoveLinksMetadata | null)
+    }
+    if (rows.length > 0) log.info(`🔗 Synced Link Removal AutoMod rule for ${rows.length} guild(s)`)
+  } catch (error) {
+    log.error('❌ ERROR: syncAllLinkRemovalRules', error)
   }
 }
 

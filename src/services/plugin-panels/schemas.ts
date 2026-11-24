@@ -205,18 +205,18 @@ export const PLUGIN_PANELS: PluginPanelRegistry = {
       {
         key: 'allowedRoles',
         label: 'Bypass roles',
-        description: 'Members with any of these roles can post links freely.',
+        description:
+          'Members with any of these roles can post links (up to 20). Admins and members with Manage Server are always exempt.',
         kind: { type: 'role', multi: true },
       },
       {
         key: 'allowedUrls',
-        label: 'Allowed URLs',
-        description:
-          'One per line. Bare hostnames (github.com) or full regex (^https?://.*\\.youtube\\.com).',
+        label: 'Allowed sites',
+        description: 'One hostname per line, e.g. github.com. Links containing it are allowed.',
         kind: {
           type: 'text',
           max: 2000,
-          placeholder: 'github.com\nyoutube.com\n^https?://docs\\..*',
+          placeholder: 'github.com\nyoutube.com',
         },
       },
     ],
