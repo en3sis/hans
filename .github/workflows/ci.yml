@@ -26,3 +26,6 @@ jobs:
 
       - name: Test
         run: bun test
+        env:
+          CRYPTO_KEY: ci-test-key-32-chars-abcdefghijklmn
+          CRYPTO_IV: ci-test-iv-16-ch
